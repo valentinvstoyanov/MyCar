@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_my_cars"
+            android:icon="@drawable/ic_menu_car"
+            android:title="My cars" />
+        <item
+            android:id="@+id/nav_services"
+            android:icon="@drawable/ic_menu_service"
+            android:title="Services" />
+        <item
+            android:id="@+id/nav_expenses"
+            android:icon="@drawable/ic_menu_expense"
+            android:title="Expenses" />
+        <item
+            android:id="@+id/nav_refuelings"
+            android:icon="@drawable/ic_menu_refueling"
+            android:title="Refuelings" />
+        <item
+            android:id="@+id/nav_insurances"
+            android:icon="@drawable/ic_menu_insurance"
+            android:title="Insurances" />
+        <item
+            android:id="@+id/nav_reminders"
+            android:icon="@drawable/ic_menu_reminder"
+            android:title="Reminders" />
+        <item
+            android:id="@+id/nav_statistics"
+            android:icon="@drawable/ic_menu_statistic"
+            android:title="Statistics" />
+        <item
+            android:id="@+id/nav_upcoming_events"
+            android:icon="@drawable/ic_menu_upcoming_event"
+            android:title="Upcoming events"/>
+    </group>
+
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/nav_history"
+                android:icon="@drawable/ic_menu_history"
+                android:title="History" />
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_about"
+                android:title="About" />
+        </menu>
+    </item>
+
+</menu>
