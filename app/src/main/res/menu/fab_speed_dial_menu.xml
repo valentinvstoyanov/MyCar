@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add_car"
+        android:icon="@drawable/ic_menu_car"
+        android:title="Car" />
+    <item
+        android:id="@+id/action_add_service"
+        android:icon="@drawable/ic_menu_service"
+        android:title="Service"/>
+    <item
+        android:id="@+id/action_add_expense"
+        android:icon="@drawable/ic_menu_expense"
+        android:title="Expense" />
+    <item
+        android:id="@+id/action_add_reminder"
+        android:icon="@drawable/ic_menu_reminder"
+        android:title="Reminder" />
+    <item
+        android:id="@+id/action_add_refueling"
+        android:icon="@drawable/ic_menu_refueling"
+        android:title="Refueling" />
+    <item
+        android:id="@+id/action_add_insurance"
+        android:icon="@drawable/ic_menu_insurance"
+        android:title="Insurance" />
+</menu>
