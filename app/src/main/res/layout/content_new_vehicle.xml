@@ -1,16 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_new_vehicle"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="stoyanov.valentin.mycar.activities.NewVehicleActivity"
     tools:showIn="@layout/activity_new_vehicle">
 
-</RelativeLayout>
+    <Spinner
+        android:id="@+id/spn_new_vehicle_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/et_new_vehicle_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/car_name" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv_new_vehicle_brand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/car_brand" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv_new_vehicle_model"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/car_model" />
+
+    <EditText
+        android:id="@+id/et_new_vehicle_odometer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Odometer" />
+
+    <TextView
+        android:id="@+id/tv_new_vehicle_manifacture_date"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manifacture date"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/et_new_vehicle_hp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Horse power" />
+
+    <EditText
+        android:id="@+id/et_new_vehicle_cc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Cubic centimeters" />
+
+    <View
+        android:id="@+id/view_new_vehicle_color"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/shape_vehicle_color"/>
+
+    <ToggleButton
+        android:textOn="One fuel tank"
+        android:textOff="Two fuel tanks"
+        android:checked="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tbtn_additional_fuel_tank" />
+
+    <Spinner
+        android:id="@+id/spn_new_vehicle_fuel_tank_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/et_new_vehicle_fuel_tank_capacity"
+            android:hint="Capacity"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/et_new_vehicle_fuel_tank_consumption"
+            android:hint="Consumption"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_new_vehicle_second_fuel_tank"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <Spinner
+            android:id="@+id/spn_new_vehicle_second_fuel_tank_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_new_vehicle_second_fuel_tank_capacity"
+                android:hint="Capacity"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_new_vehicle_second_fuel_tank_consumption"
+                android:hint="Consumption"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_new_vehicle_registration_plate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Registration plate"/>
+
+    <EditText
+        android:id="@+id/et_new_vehicle_vin_plate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="VIN plate"/>
+
+    <EditText
+        android:id="@+id/et_new_vehicle_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Notes"/>
+</LinearLayout>
