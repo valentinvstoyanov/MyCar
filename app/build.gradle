@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
@@ -27,5 +28,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'io.github.yavski:fab-speed-dial:1.0.6'
+    compile 'com.android.support:support-v4:25.0.1'
     testCompile 'junit:junit:4.12'
 }

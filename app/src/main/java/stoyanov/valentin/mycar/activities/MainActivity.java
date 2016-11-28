@@ -1,9 +1,8 @@
-package stoyanov.valentin.mycar;
+package stoyanov.valentin.mycar.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
+import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import io.github.yavski.fabspeeddial.FabSpeedDial;
+import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.fragments.MyListFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -20,7 +24,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -31,6 +35,40 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
+        fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
+            @Override
+            public boolean onMenuItemSelected(MenuItem menuItem) {
+                Intent intent;
+                if(menuItem.getItemId() == R.id.action_add_car) {
+                    intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_service) {
+                    intent = new Intent(getApplicationContext(), NewServiceActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_expense) {
+                    intent = new Intent(getApplicationContext(), NewExpenseActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_reminder) {
+                    intent = new Intent(getApplicationContext(), NewReminderActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_refueling) {
+                    intent = new Intent(getApplicationContext(), NewRefuelingActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_insurance) {
+                    intent = new Intent(getApplicationContext(), NewInsuranceActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -46,7 +84,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main_settings, menu);
         return true;
     }
 
@@ -67,11 +105,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_my_cars) {
-
+            Fragment fragment = new MyListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_content_main, fragment).commit();
         } else if (id == R.id.nav_services) {
 
         } else if (id == R.id.nav_expenses) {
