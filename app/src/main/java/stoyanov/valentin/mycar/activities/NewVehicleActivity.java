@@ -46,7 +46,7 @@ public class NewVehicleActivity extends AppCompatActivity {
                     llSecondFuelTank = (LinearLayout) findViewById(R.id.ll_new_vehicle_second_fuel_tank);
                     llSecondFuelTank.setVisibility(View.VISIBLE);
                 } else {
-                    llSecondFuelTank.setVisibility(View.INVISIBLE);
+                    llSecondFuelTank.setVisibility(View.GONE);
                     llSecondFuelTank = null;
                 }
             }
@@ -65,7 +65,7 @@ public class NewVehicleActivity extends AppCompatActivity {
                                 viewVehicleColor.setBackgroundColor(i);
                             }
                         })
-                        .showColorIndicator(true) // Default false, choose to show text indicator showing the current color in HEX or DEC (see images) or not
+                        //.showColorIndicator(true) // Default false, choose to show text indicator showing the current color in HEX or DEC (see images) or not
                         .create()
                         .show(getSupportFragmentManager(), "Choose your vehicle color");
             }

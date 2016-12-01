@@ -22,4 +22,15 @@
     <string name="title_activity_new_reminder">New Reminder</string>
     <string name="title_activity_new_refueling">New Refueling</string>
     <string name="title_activity_new_insurance">New Insurance</string>
+    <string name="odometer">Odometer</string>
+    <string name="horse_power">Horse power</string>
+    <string name="cubic_centimeters">Cubic centimeters</string>
+    <string name="manifacture_date">Manifacture date</string>
+    <string name="color">Color</string>
+    <string name="one_fuel_tank">One fuel tank</string>
+    <string name="two_fuel_tanks">Two fuel tanks</string>
+    <string name="capacity">Capacity</string>
+    <string name="consumption">Consumption</string>
+    <string name="registration_plate">Registration plate</string>
+    <string name="vin_plate">VIN plate</string>
 </resources>

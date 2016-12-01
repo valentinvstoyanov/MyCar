@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_new_vehicle"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="stoyanov.valentin.mycar.activities.NewVehicleActivity"
     tools:showIn="@layout/activity_new_vehicle">
@@ -40,41 +39,55 @@
         android:id="@+id/et_new_vehicle_odometer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Odometer" />
-
-    <TextView
-        android:id="@+id/tv_new_vehicle_manifacture_date"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manifacture date"
-        android:textSize="18sp" />
+        android:hint="@string/odometer" />
 
     <EditText
         android:id="@+id/et_new_vehicle_hp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Horse power" />
+        android:hint="@string/horse_power" />
 
     <EditText
         android:id="@+id/et_new_vehicle_cc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Cubic centimeters" />
+        android:hint="@string/cubic_centimeters" />
 
-    <View
-        android:id="@+id/view_new_vehicle_color"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
+    <TextView
+        android:id="@+id/tv_new_vehicle_manifacture_date"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/shape_vehicle_color"/>
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center_horizontal"
+        android:hint="@string/manifacture_date" />
+
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/color"/>
+
+        <View
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:id="@+id/view_new_vehicle_color"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_vehicle_color"/>
+    </LinearLayout>
 
     <ToggleButton
-        android:textOn="One fuel tank"
-        android:textOff="Two fuel tanks"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textOn="@string/one_fuel_tank"
+        android:textOff="@string/two_fuel_tanks"
         android:checked="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,14 +105,14 @@
 
         <EditText
             android:id="@+id/et_new_vehicle_fuel_tank_capacity"
-            android:hint="Capacity"
+            android:hint="@string/capacity"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/et_new_vehicle_fuel_tank_consumption"
-            android:hint="Consumption"
+            android:hint="@string/consumption"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
@@ -124,14 +137,14 @@
 
             <EditText
                 android:id="@+id/et_new_vehicle_second_fuel_tank_capacity"
-                android:hint="Capacity"
+                android:hint="@string/capacity"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/et_new_vehicle_second_fuel_tank_consumption"
-                android:hint="Consumption"
+                android:hint="@string/consumption"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
@@ -142,17 +155,17 @@
         android:id="@+id/et_new_vehicle_registration_plate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Registration plate"/>
+        android:hint="@string/registration_plate"/>
 
     <EditText
         android:id="@+id/et_new_vehicle_vin_plate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="VIN plate"/>
+        android:hint="@string/vin_plate"/>
 
     <EditText
         android:id="@+id/et_new_vehicle_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Notes"/>
+        android:hint="@string/notes"/>
 </LinearLayout>
