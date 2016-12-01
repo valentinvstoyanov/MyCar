@@ -33,4 +33,11 @@
     <string name="consumption">Consumption</string>
     <string name="registration_plate">Registration plate</string>
     <string name="vin_plate">VIN plate</string>
+    <string name="date">Date</string>
+    <string name="price">Price</string>
+    <string name="company_name">Company name</string>
+    <string name="expiration_date">Expiration date</string>
+    <string name="notification_date">Notification date</string>
+    <string name="gas_station_name">Gas station name</string>
+    <string name="total_cost">Total cost</string>
 </resources>
