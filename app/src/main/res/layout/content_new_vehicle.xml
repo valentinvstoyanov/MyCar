@@ -53,14 +53,13 @@
         android:layout_height="wrap_content"
         android:hint="@string/cubic_centimeters" />
 
-    <TextView
-        android:id="@+id/tv_new_vehicle_manifacture_date"
+    <EditText
+        android:id="@+id/et_new_vehicle_manifacture_date"
+        android:focusable="false"
+        android:cursorVisible="false"
+        android:hint="@string/manifacture_date"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:gravity="center_horizontal"
-        android:hint="@string/manifacture_date" />
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:gravity="center_horizontal"
@@ -83,6 +82,12 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/shape_vehicle_color"/>
     </LinearLayout>
+<!--
+    <ListView
+        android:id="@+id/lv_fuel_tanks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+        -->
 
     <ToggleButton
         android:layout_marginTop="@dimen/activity_vertical_margin"

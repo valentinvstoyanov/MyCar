@@ -1,4 +1,4 @@
-package stoyanov.valentin.mycar.db;
+package stoyanov.valentin.mycar.realm.models;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

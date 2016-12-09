@@ -1,16 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_new_reminder"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_height="wrap_content"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="stoyanov.valentin.mycar.activities.NewReminderActivity"
     tools:showIn="@layout/activity_new_reminder">
 
-</RelativeLayout>
+    <EditText
+        android:id="@+id/et_new_reminder_date"
+        android:focusable="false"
+        android:cursorVisible="false"
+        android:hint="@string/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/et_new_reminder_odometer"
+        android:hint="@string/odometer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Spinner
+        android:id="@+id/spn_remind_on_reach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/et_new_reminder_notification"
+        android:hint="Reach event"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/et_new_reminder_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/notes"/>
+</LinearLayout>
