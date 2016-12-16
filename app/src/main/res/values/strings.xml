@@ -3,7 +3,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -40,4 +39,21 @@
     <string name="notification_date">Notification date</string>
     <string name="gas_station_name">Gas station name</string>
     <string name="total_cost">Total cost</string>
+    <string name="add_fuel_tank">+ Add fuel tank</string>
+    
+    <string name="next">NEXT</string>
+    <string name="got_it">GOT IT!</string>
+    <string name="title_slide_1">Welcome to MyCar</string>
+    <string name="text_slide_1">Manage your car effortlessly!</string>
+    <string name="title_slide_2">Car records!</string>
+    <string name="text_slide_2">Save your car activities instantly and retrieve them later&#8230;</string>
+    <string name="title_slide_3">Car statistics</string>
+    <string name="text_slide_3">See your car stats!</string>
+
+    <string-array name="vehicle_types">
+        <item>Car</item>
+        <item>Bus</item>
+        <item>Motorcycle</item>
+        <item>Truck</item>
+    </string-array>
 </resources>

@@ -96,7 +96,7 @@ public class VehicleRepository implements IVehicleRepository {
                 oldVehicle.setManufactureDate(newVehicle.getManufactureDate());
                 oldVehicle.setNote(newVehicle.getNote());
                 oldVehicle.setOdometer(newVehicle.getOdometer());
-                oldVehicle.setPlate(newVehicle.getPlate());
+               // oldVehicle.setPlate(newVehicle.getPlate());
                 oldVehicle.setRefuelings(newVehicle.getRefuelings());
                 oldVehicle.setReminders(newVehicle.getReminders());
                 oldVehicle.setServices(newVehicle.getServices());

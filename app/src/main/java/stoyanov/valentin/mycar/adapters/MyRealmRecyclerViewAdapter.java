@@ -1,16 +1,19 @@
 package stoyanov.valentin.mycar.adapters;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Date;
 
 import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
+import stoyanov.valentin.mycar.utils.DateUtils;
 
 public class MyRealmRecyclerViewAdapter extends
         RealmBasedRecyclerViewAdapter<Vehicle, MyRealmRecyclerViewAdapter.ViewHolder>{
@@ -33,10 +36,15 @@ public class MyRealmRecyclerViewAdapter extends
     public void onBindRealmViewHolder(final ViewHolder viewHolder, int position) {
         Vehicle vehicle = realmResults.get(position);
         viewHolder.imageView.setColorFilter(vehicle.getColor());
-        viewHolder.tvVehicleName.setText(/*vehicle.getName()*/"MyCar" + position);
+        viewHolder.tvVehicleName.setText(vehicle.getName());
         viewHolder.tvVehicleBrand.setText(/*vehicle.getBrand().getName()*/"Audi");
         viewHolder.tvVehicleModel.setText("RS7");
-        viewHolder.tvVehicleManufactureDate.setText("09.12.2016"/*vehicle.getManufactureDate().toString()*/);
+        Date vehicleDate = vehicle.getManufactureDate();
+        if (vehicleDate != null) {
+            viewHolder.tvVehicleManufactureDate.setText(DateUtils.manufactureDateToString(vehicleDate));
+        }else{
+            Log.d("DATE IS NULLL !", "!!!!!!!!!!!!!!!!!!!!!!");
+        }
     }
 
     public class ViewHolder extends RealmViewHolder {

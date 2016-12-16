@@ -18,7 +18,8 @@ public class Vehicle extends RealmObject {
     private VehicleType type;
     private Brand brand;
     private Model model;
-    private Plate plate;
+    private String registrationPlate;
+    private String vinPlate;
     private RealmList<FuelTank> fuelTanks;
     private RealmList<Service> services;
     private RealmList<Insurance> insurances;
@@ -109,12 +110,20 @@ public class Vehicle extends RealmObject {
         this.model = model;
     }
 
-    public Plate getPlate() {
-        return plate;
+    public String getRegistrationPlate() {
+        return registrationPlate;
     }
 
-    public void setPlate(Plate plate) {
-        this.plate = plate;
+    public void setRegistrationPlate(String registrationPlate) {
+        this.registrationPlate = registrationPlate;
+    }
+
+    public String getVinPlate() {
+        return vinPlate;
+    }
+
+    public void setVinPlate(String vinPlate) {
+        this.vinPlate = vinPlate;
     }
 
     public RealmList<FuelTank> getFuelTanks() {

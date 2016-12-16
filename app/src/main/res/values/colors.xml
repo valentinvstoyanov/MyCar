@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--App theme colors-->
     <color name="colorPrimary">#673AB7</color>
     <color name="colorPrimaryDark">#512DA8</color>
     <color name="colorAccent">#009688</color>
@@ -8,4 +9,29 @@
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
+
+    <!--Welcome screens background colors-->
+    <color name="colorWelcome1">#F57C00</color>
+    <color name="colorWelcome2">#8BC34A</color>
+    <color name="colorWelcome3">#03A9F4</color>
+
+    <!--Active dots welcome screen-->
+    <color name="colorActiveViews1">#FFEB3B</color>
+    <color name="colorActiveViews2">#CDDC39</color>
+    <color name="colorActiveViews3">#536DFE</color>
+    <array name="activeColors">
+        <item>@color/colorActiveViews1</item>
+        <item>@color/colorActiveViews2</item>
+        <item>@color/colorActiveViews3</item>
+    </array>
+
+    <!--Inactive dots welcome screen-->
+    <color name="colorInactiveViews1">#FFC107</color>
+    <color name="colorInactiveViews2">#388E3C</color>
+    <color name="colorInactiveViews3">#303F9F</color>
+    <array name="inactiveColors">
+        <item>@color/colorInactiveViews1</item>
+        <item>@color/colorInactiveViews2</item>
+        <item>@color/colorInactiveViews3</item>
+    </array>
 </resources>
