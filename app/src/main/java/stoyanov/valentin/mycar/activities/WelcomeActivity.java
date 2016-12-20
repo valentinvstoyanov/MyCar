@@ -3,21 +3,38 @@ package stoyanov.valentin.mycar.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 import stoyanov.valentin.mycar.PreferenceManager;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.VehicleType;
+import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.IVehicleTypeRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.VehicleTypeRepository;
+import stoyanov.valentin.mycar.utils.CsvUtils;
 
 public class WelcomeActivity extends BaseActivity
                         implements ViewPager.OnPageChangeListener{
@@ -33,12 +50,61 @@ public class WelcomeActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         preferenceManager = new PreferenceManager(getApplicationContext(), MODE_PRIVATE);
         if (!preferenceManager.isFirstLaunch()) {
-            preferenceManager.setFirstTimeLaunch(false);
             launchMainActivity();
             finish();
         }
+        //new BrandRepository().deleteAllBrands();
         setContentView(R.layout.activity_welcome);
         setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.colorWelcome1, null));
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.pb_realm_seeding);
+        progressBar.setMax(100);
+        progressBar.getIndeterminateDrawable().setColorFilter(
+                ResourcesCompat.getColor(getResources(),
+                R.color.colorAccent, null), PorterDuff.Mode.MULTIPLY);
+        progressBar.setProgress(50);
+        Log.d("kur", "va");
+        /*Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("kur", "va1");
+                final BrandRepository brandRepository = new BrandRepository();
+                InputStream inputStream = getResources().openRawResource(R.raw.brands);
+                String[] brandNames = CsvUtils.getParsedCsv(inputStream);
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                progressBar.setProgress(20);
+                brandRepository.addManyBrands(brandNames, new IBrandRepository.OnAddBrandListCallback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.incrementProgressBy(40);
+                    }
+
+                    @Override
+                    public void onError() {
+                        progressBar.setProgress(1);
+                        Log.d("Error======","Brand !!");
+                    }
+                });
+                String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
+                VehicleTypeRepository vehicleTypeRepository = new VehicleTypeRepository();
+                vehicleTypeRepository.addManyVehicleTypes(vehicleTypes, new IVehicleTypeRepository.OnVehicleTypesAdded() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.incrementProgressBy(40);
+                    }
+
+                    @Override
+                    public void onError() {
+                        progressBar.setProgress(2);
+                        Log.d("Error======","VehicleType !!");
+                    }
+                });
+            }
+        });
+        thread.run();*/
         initComponents();
         setComponentListeners();
         WelcomeViewPagerAdapter viewPagerAdapter = new WelcomeViewPagerAdapter();
@@ -87,6 +153,7 @@ public class WelcomeActivity extends BaseActivity
     }
 
     private void launchMainActivity() {
+        //preferenceManager.setFirstTimeLaunch(false);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }

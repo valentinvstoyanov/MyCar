@@ -13,8 +13,7 @@ public class VehicleTypeRepository implements IVehicleTypeRepository {
             @Override
             public void execute(Realm realm) {
                 for (String name : names) {
-                    VehicleType vehicleType = realm.createObject(VehicleType.class);
-                    vehicleType.setId(UUID.randomUUID().toString());
+                    VehicleType vehicleType = realm.createObject(VehicleType.class,UUID.randomUUID().toString());
                     vehicleType.setName(name);
                 }
             }

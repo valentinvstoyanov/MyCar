@@ -3,6 +3,8 @@ package stoyanov.valentin.mycar.realm.repositories.impl;
 import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
@@ -15,12 +17,23 @@ public class VehicleRepository implements IVehicleRepository {
 
     @Override
     public void addVehicle(final Vehicle vehicle, final OnWritesCallback callback) {
-        vehicle.setId(UUID.randomUUID().toString());
+        //vehicle.setId(UUID.randomUUID().toString());
         final Realm realmInstance = Realm.getDefaultInstance();
         realmInstance.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealm(vehicle);
+                Vehicle realmVehicle = realm.createObject(Vehicle.class,UUID.randomUUID().toString());
+                realmVehicle.setName(vehicle.getName());
+                realmVehicle.setBrand(realm.where(Brand.class)
+                        .equalTo(RealmTable.ID, vehicle.getBrand().getId()).findFirst());
+                realmVehicle.setModel(realm.where(Model.class)
+                        .equalTo(RealmTable.ID, vehicle.getModel().getId()).findFirst());
+                realmVehicle.setColor(vehicle.getColor());
+                realmVehicle.setType(vehicle.getType());
+                realmVehicle.setOdometer(vehicle.getOdometer());
+                realmVehicle.setCubicCentimeter(vehicle.getCubicCentimeter());
+                realmVehicle.setHorsePower(vehicle.getHorsePower());
+                realmVehicle.setManufactureDate(vehicle.getManufactureDate());
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override

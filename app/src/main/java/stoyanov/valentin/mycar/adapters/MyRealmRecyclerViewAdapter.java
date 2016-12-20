@@ -37,8 +37,8 @@ public class MyRealmRecyclerViewAdapter extends
         Vehicle vehicle = realmResults.get(position);
         viewHolder.imageView.setColorFilter(vehicle.getColor());
         viewHolder.tvVehicleName.setText(vehicle.getName());
-        viewHolder.tvVehicleBrand.setText(/*vehicle.getBrand().getName()*/"Audi");
-        viewHolder.tvVehicleModel.setText("RS7");
+        viewHolder.tvVehicleBrand.setText(vehicle.getBrand().getName());
+        viewHolder.tvVehicleModel.setText(vehicle.getModel().getName());
         Date vehicleDate = vehicle.getManufactureDate();
         if (vehicleDate != null) {
             viewHolder.tvVehicleManufactureDate.setText(DateUtils.manufactureDateToString(vehicleDate));

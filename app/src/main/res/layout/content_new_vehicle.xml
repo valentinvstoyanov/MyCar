@@ -14,8 +14,9 @@
 
     <Spinner
         android:id="@+id/spn_new_vehicle_type"
+        android:popupBackground="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="35dp" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_vehicle_name"
@@ -37,9 +38,12 @@
         android:layout_height="wrap_content">
 
         <AutoCompleteTextView
-            android:inputType="textCapCharacters|textAutoComplete"
+            android:id="@+id/actv_brand"
+            android:inputType="textCapSentences|textAutoComplete"
+            android:completionThreshold="1"
             android:maxLength="32"
             android:maxLines="1"
+            android:popupBackground="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/car_brand" />
@@ -51,9 +55,12 @@
         android:layout_height="wrap_content">
 
         <AutoCompleteTextView
-            android:inputType="textCapCharacters|textAutoComplete"
+            android:id="@+id/actv_model"
+            android:inputType="textCapSentences|textAutoComplete"
             android:maxLength="32"
             android:maxLines="1"
+            android:popupBackground="@color/colorAccent"
+            android:completionThreshold="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/car_model" />

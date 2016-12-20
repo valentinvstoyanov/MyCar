@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -36,19 +37,18 @@ import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.adapters.NewFuelTankRecyclerViewAdapter;
 import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.IModelRepository;
 import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.ModelRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.VehicleRepository;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
 
 public class NewVehicleActivity extends BaseActivity{
-
-    private static final String MY_CAR_PREFERENCES = "myCarPreferences";
-    private static final String IS_FIRST_LAUNCH = "isFirstLaunch";
-
     private Spinner spnVehicleType;
     private TextInputLayout tilName, tilBrand, tilModel, tilOdometer, tilHorsePower,
             tilCubicCentimeters, tilRegistrationPlate, tilVinPlate, tilNotes, tilManufactureDate;
@@ -61,16 +61,34 @@ public class NewVehicleActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_vehicle);
         initComponents();
-        setComponentListeners();
-        /*BrandRepository brandRepository = new BrandRepository();
+        BrandRepository brandRepository = new BrandRepository();
         brandRepository.getAllBrands(new IBrandRepository.OnGetAllBrandsCallback() {
             @Override
             public void onSuccess(RealmResults<Brand> results) {
                 String[] brandNames = BrandRepository.getBrandNames(results.toArray(new Brand[0]));
                 ArrayAdapter<String> actvBrandsAdapter = new ArrayAdapter<>(getApplicationContext(),
                         android.R.layout.simple_dropdown_item_1line, brandNames);
+                AutoCompleteTextView actvBrand = (AutoCompleteTextView) findViewById(R.id.actv_brand);
+                actvBrand.setAdapter(actvBrandsAdapter);
             }
-        });*/
+        });
+        final ModelRepository modelRepository = new ModelRepository();
+        modelRepository.getAllModels(new IModelRepository.OnGetAllModelsCallback() {
+            @Override
+            public void onSuccess(RealmResults<Model> results) {
+                String[] modelNames = ModelRepository.getModelNames(results.toArray(new Model[0]));
+                ArrayAdapter<String> actvModelsAdapter = new ArrayAdapter<>(getApplicationContext(),
+                        android.R.layout.simple_dropdown_item_1line, modelNames);
+                AutoCompleteTextView actvModel = (AutoCompleteTextView) findViewById(R.id.actv_model);
+                actvModel.setAdapter(actvModelsAdapter);
+            }
+        });
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter
+                .createFromResource(getApplicationContext(),
+                        R.array.vehicle_types, R.layout.textview_spinner);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnVehicleType.setAdapter(spinnerAdapter);
+        setComponentListeners();
     }
 
     @Override
@@ -204,8 +222,28 @@ public class NewVehicleActivity extends BaseActivity{
     }
 
     private Vehicle getVehicle() {
-        Vehicle vehicle = new Vehicle();
+        final Vehicle vehicle = new Vehicle();
         vehicle.setName(tilName.getEditText().getText().toString());
+        new BrandRepository().addOrGetBrand(tilBrand.getEditText().getText().toString(),
+                new IBrandRepository.OnAddOrGetBrandCallback() {
+                    @Override
+                    public void onSuccess(Brand brand) {
+                        Brand b = new Brand();
+                        b.setId(brand.getId());
+                        b.setName(brand.getName());
+                        vehicle.setBrand(b);
+                    }
+                });
+        new ModelRepository().addOrGetModel(tilModel.getEditText().getText().toString(),
+                new IModelRepository.OnAddOrGetModelCallback() {
+                    @Override
+                    public void onSuccess(Model model) {
+                        Model m = new Model();
+                        m.setId(model.getId());
+                        m.setName(model.getName());
+                        vehicle.setModel(m);
+                    }
+                });
         vehicle.setColor(Integer.parseInt(etColor.getText().toString()));
         vehicle.setRegistrationPlate(tilRegistrationPlate.getEditText().getText().toString());
         vehicle.setVinPlate(tilVinPlate.getEditText().getText().toString());
