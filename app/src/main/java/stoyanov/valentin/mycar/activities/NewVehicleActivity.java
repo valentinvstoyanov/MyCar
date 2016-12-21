@@ -2,41 +2,40 @@ package stoyanov.valentin.mycar.activities;
 
 import android.app.DatePickerDialog;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+
 import es.dmoral.coloromatic.ColorOMaticDialog;
 import es.dmoral.coloromatic.IndicatorMode;
 import es.dmoral.coloromatic.OnColorSelectedListener;
 import es.dmoral.coloromatic.colormode.ColorMode;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.adapters.NewFuelTankRecyclerViewAdapter;
+import stoyanov.valentin.mycar.dialogs.NewFuelTankDialog;
 import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
@@ -55,6 +54,8 @@ public class NewVehicleActivity extends BaseActivity{
     private EditText etColor;
     private View viewColor;
     private Button btnAddFuelTank;
+    private LinearLayout llFuelTanks;
+    private ArrayList<FuelTank> fuelTanks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +122,7 @@ public class NewVehicleActivity extends BaseActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        llFuelTanks = (LinearLayout) findViewById(R.id.ll_new_vehicle_fuel_tanks);
         spnVehicleType = (Spinner) findViewById(R.id.spn_new_vehicle_type);
         tilName = (TextInputLayout) findViewById(R.id.til_new_vehicle_name);
         tilBrand = (TextInputLayout) findViewById(R.id.til_new_vehicle_brand);
@@ -136,6 +138,7 @@ public class NewVehicleActivity extends BaseActivity{
         viewColor = findViewById(R.id.view_new_vehicle_color);
         etColor.setText(String.valueOf(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null)));
         btnAddFuelTank = (Button) findViewById(R.id.btn_new_vehicle_add_ft);
+        fuelTanks = new ArrayList<>();
      }
 
     @Override
@@ -159,7 +162,47 @@ public class NewVehicleActivity extends BaseActivity{
                 datePickerDialog.show();
             }
         });
+        btnAddFuelTank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final NewFuelTankDialog fuelTankDialog = new NewFuelTankDialog();
+                fuelTankDialog.setListener(new NewFuelTankDialog.OnAddFuelTankListener() {
+                    @Override
+                    public void onAddFuelTank(FuelTank fuelTank) {
+                        fuelTankDialog.dismiss();
+                        fuelTanks.add(fuelTank);
+                        displayNewFuelTank(fuelTank);
+                    }
+                });
+                fuelTankDialog.show(getSupportFragmentManager(), getString(R.string.new_fuel_tank));
+            }
+        });
+    }
 
+    private void displayNewFuelTank(final FuelTank fuelTank) {
+        View view = getLayoutInflater().inflate(R.layout.row_new_fuel_tank, llFuelTanks, false);
+        TextView tvFuelTank = (TextView) view.findViewById(R.id.tv_row_ft_number);
+        TextView tvFuelType = (TextView) view.findViewById(R.id.tv_row_ft_fuel_type);
+        TextView tvFuelCapacity = (TextView) view.findViewById(R.id.tv_row_ft_capacity);
+        TextView tvFuelConsumption = (TextView) view.findViewById(R.id.tv_row_ft_consumption);
+        ImageButton imgBtnRemove = (ImageButton) view.findViewById(R.id.img_btn_remove);
+        String text = String.format(getString(R.string.fuel_tank_placeholder), fuelTanks.size());
+        tvFuelTank.setText(text);
+        text = String.format(getString(R.string.fuel_type_placeholder),
+                fuelTank.getFuelType().getName());
+        tvFuelType.setText(text);
+        text = String.format(getString(R.string.capacity_placeholder), fuelTank.getCapacity());
+        tvFuelCapacity.setText(text);
+        text = String.format(getString(R.string.consumption_placeholder), fuelTank.getConsumption());
+        tvFuelConsumption.setText(text);
+        imgBtnRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fuelTanks.remove(fuelTank);
+                ((ViewGroup)view.getParent().getParent()).removeView((ViewGroup)view.getParent());
+            }
+        });
+        llFuelTanks.addView(view);
     }
 
     public void colorPicker(View view) {

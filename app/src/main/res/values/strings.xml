@@ -40,6 +40,8 @@
     <string name="gas_station_name">Gas station name</string>
     <string name="total_cost">Total cost</string>
     <string name="add_fuel_tank">+ Add fuel tank</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
     
     <string name="next">NEXT</string>
     <string name="got_it">GOT IT!</string>
@@ -49,6 +51,7 @@
     <string name="text_slide_2">Save your car activities instantly and retrieve them later&#8230;</string>
     <string name="title_slide_3">Car statistics</string>
     <string name="text_slide_3">See your car stats!</string>
+    <string name="new_fuel_tank">New fuel tank</string>
 
     <string-array name="vehicle_types">
         <item>Car</item>
@@ -56,4 +59,16 @@
         <item>Motorcycle</item>
         <item>Truck</item>
     </string-array>
+
+    <string-array name="fuel_types">
+        <item>Liquid</item>
+        <item>Electric</item>
+        <item>LNG</item>
+        <item>CNG</item>
+    </string-array>
+    
+    <string name="fuel_tank_placeholder"><b>Fuel tank %d</b></string>
+    <string name="fuel_type_placeholder">Fuel Type: %s</string>
+    <string name="capacity_placeholder">Capacity: %d</string>
+    <string name="consumption_placeholder">Consumption: %.1f</string>
 </resources>

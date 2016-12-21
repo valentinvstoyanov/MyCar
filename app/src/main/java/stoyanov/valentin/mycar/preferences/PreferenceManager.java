@@ -1,4 +1,4 @@
-package stoyanov.valentin.mycar;
+package stoyanov.valentin.mycar.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

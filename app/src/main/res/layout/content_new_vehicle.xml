@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_new_vehicle"
+    android:id="@+id/ll_content_new_vehicle"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -148,16 +148,18 @@
             android:background="@drawable/shape_vehicle_color"/>
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_new_fuel_tank"
+    <LinearLayout
+        android:id="@+id/ll_new_vehicle_fuel_tanks"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_new_vehicle_add_ft"
         android:background="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:text="@string/add_fuel_tank"/>
 
     <android.support.design.widget.TextInputLayout

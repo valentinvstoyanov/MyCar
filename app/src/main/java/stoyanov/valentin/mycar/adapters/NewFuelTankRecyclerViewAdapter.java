@@ -41,9 +41,9 @@ public class NewFuelTankRecyclerViewAdapter
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.spnFuelType = (Spinner) itemView.findViewById(R.id.spn_row_ft_fuel_type);
+            /*this.spnFuelType = (Spinner) itemView.findViewById(R.id.spn_row_ft_fuel_type);
             this.tilCapacity = (TextInputLayout) itemView.findViewById(R.id.til_row_ft_capacity);
-            this.tilConsumption = (TextInputLayout) itemView.findViewById(R.id.til_row_ft_consumption);
+            this.tilConsumption = (TextInputLayout) itemView.findViewById(R.id.til_row_ft_consumption);*/
         }
     }
 }

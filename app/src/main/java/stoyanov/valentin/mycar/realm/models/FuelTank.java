@@ -6,9 +6,9 @@ import io.realm.annotations.PrimaryKey;
 public class FuelTank extends RealmObject {
     @PrimaryKey
     private int id;
+    private FuelType fuelType;
     private int capacity;
     private double consumption;
-    private boolean isMain;
 
     public int getId() {
         return id;
@@ -16,6 +16,14 @@ public class FuelTank extends RealmObject {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public FuelType getFuelType() {
+        return fuelType;
+    }
+
+    public void setFuelType(FuelType fuelType) {
+        this.fuelType = fuelType;
     }
 
     public int getCapacity() {
@@ -32,13 +40,5 @@ public class FuelTank extends RealmObject {
 
     public void setConsumption(double consumption) {
         this.consumption = consumption;
-    }
-
-    public boolean getIsMain() {
-        return isMain;
-    }
-
-    public void setIsMain(boolean main) {
-        isMain = main;
     }
 }

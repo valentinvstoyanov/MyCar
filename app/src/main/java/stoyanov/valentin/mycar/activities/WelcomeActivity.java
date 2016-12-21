@@ -2,13 +2,11 @@ package stoyanov.valentin.mycar.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,23 +16,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.UUID;
-
-import io.realm.Realm;
-import io.realm.RealmResults;
-import stoyanov.valentin.mycar.PreferenceManager;
+import stoyanov.valentin.mycar.preferences.PreferenceManager;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.realm.models.Brand;
-import stoyanov.valentin.mycar.realm.models.VehicleType;
-import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
-import stoyanov.valentin.mycar.realm.repositories.IVehicleTypeRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.VehicleTypeRepository;
-import stoyanov.valentin.mycar.utils.CsvUtils;
 
 public class WelcomeActivity extends BaseActivity
                         implements ViewPager.OnPageChangeListener{
