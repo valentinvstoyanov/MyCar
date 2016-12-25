@@ -33,25 +33,20 @@ public class NewFuelTankDialog extends DialogFragment {
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (isValidInput()) {
-                    FuelTank fuelTank = new FuelTank();
-                    FuelType fuelType = new FuelType();
-                    fuelType.setName(spnFTfuelType.getSelectedItem().toString());
-                    fuelTank.setFuelType(fuelType);
-                    fuelTank.setCapacity(Integer.parseInt(tilFTCapacity.getEditText()
-                            .getText().toString()));
-                    fuelTank.setConsumption(Integer.parseInt(tilFTConsumption.getEditText()
-                            .getText().toString()));
-                    listener.onAddFuelTank(fuelTank);
-                }
+               if (isValidInput()) {
+                   FuelTank fuelTank = new FuelTank();
+                   FuelType fuelType = new FuelType();
+                   fuelType.setName(spnFTfuelType.getSelectedItem().toString());
+                   fuelTank.setFuelType(fuelType);
+                   fuelTank.setCapacity(Integer.parseInt(tilFTCapacity.getEditText()
+                           .getText().toString()));
+                   fuelTank.setConsumption(Integer.parseInt(tilFTConsumption.getEditText()
+                           .getText().toString()));
+                   listener.onAddFuelTank(fuelTank);
+               }
             }
         })
-        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dismiss();
-            }
-        });
+        .setNegativeButton(R.string.cancel, null);
         return builder.create();
     }
 
