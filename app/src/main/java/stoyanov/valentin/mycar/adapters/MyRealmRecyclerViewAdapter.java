@@ -2,8 +2,10 @@ package stoyanov.valentin.mycar.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +46,7 @@ public class MyRealmRecyclerViewAdapter extends
 
     @Override
     public void onBindRealmViewHolder(final ViewHolder viewHolder, final int position) {
-        Vehicle vehicle = realmResults.get(position);
+        final Vehicle vehicle = realmResults.get(position);
         viewHolder.relativeLayout.setBackgroundColor(vehicle.getColor());
         //imageview
         viewHolder.tvVehicleName.setText(vehicle.getName());
@@ -54,7 +56,7 @@ public class MyRealmRecyclerViewAdapter extends
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onItemSwipedDismiss(position);
+               onItemSwipedDismiss(position);
             }
         });
         viewHolder.btnOpen.setOnClickListener(new View.OnClickListener() {
@@ -65,28 +67,9 @@ public class MyRealmRecyclerViewAdapter extends
                 getContext().startActivity(intent);
             }
         });
-       /* viewHolder.imageView.setColorFilter(vehicle.getColor());
-        viewHolder.tvVehicleName.setText(vehicle.getName());
-        viewHolder.tvVehicleBrand.setText(vehicle.getBrand().getName());
-        viewHolder.tvVehicleModel.setText(vehicle.getModel().getName());
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ViewVehicleActivity.class);
-                intent.putExtra(ViewVehicleActivity.CAR_NAME, realmResults.get(position).getId());
-                getContext().startActivity(intent);
-            }
-        });
-        Date vehicleDate = vehicle.getManufactureDate();
-        if (vehicleDate != null) {
-            viewHolder.tvVehicleManufactureDate.setText(DateUtils.manufactureDateToString(vehicleDate));
-        }else{
-            Log.d("DATE IS NULLL !", "!!!!!!!!!!!!!!!!!!!!!!");
-        }*/
     }
 
     public class ViewHolder extends RealmViewHolder {
-        //public View viewColor;
         public RelativeLayout relativeLayout;
         public ImageView imageView;
         public TextView tvVehicleName;
@@ -97,9 +80,7 @@ public class MyRealmRecyclerViewAdapter extends
 
         public ViewHolder(View itemView) {
             super(itemView);
-            //
             this.relativeLayout = (RelativeLayout) itemView.findViewById(R.id.rl_cardview);
-           // this.viewColor = itemView.findViewById(R.id.view_recyclerview_shape_color);
             this.imageView = (ImageView) itemView.findViewById(R.id.imgv_recyclerview_vehicle_type);
             this.tvVehicleName = (TextView) itemView.findViewById(R.id.tv_recyclerview_name);
             this.tvVehicleBrandAndModel = (TextView) itemView.findViewById(R.id.tv_recyclerview_brand_model);

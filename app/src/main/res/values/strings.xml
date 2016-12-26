@@ -45,9 +45,9 @@
 
     <string name="next">NEXT</string>
     <string name="got_it">GOT IT!</string>
-    <string name="title_slide_1">Welcome to MyCar</string>
-    <string name="text_slide_1">Manage your car effortlessly!</string>
-    <string name="title_slide_2">Car records!</string>
+    <string name="title_slide_1">Welcome to MyCar!</string>
+    <string name="text_slide_1">Manage your car effortlessly</string>
+    <string name="title_slide_2">Car records</string>
     <string name="text_slide_2">Save your car activities instantly and retrieve them later&#8230;</string>
     <string name="title_slide_3">Car statistics</string>
     <string name="text_slide_3">See your car stats!</string>
@@ -65,6 +65,18 @@
         <item>Electric</item>
         <item>LNG</item>
         <item>CNG</item>
+    </string-array>
+    
+    <string-array name="vehicle_info">
+        <item>@string/car_brand</item>
+        <item>@string/car_model</item>
+        <item>@string/odometer</item>
+        <item>@string/horse_power</item>
+        <item>@string/cubic_centimeters</item>
+        <item>@string/manifacture_date</item>
+        <item>@string/registration_plate</item>
+        <item>@string/vin_plate</item>
+        <item>@string/notes</item>
     </string-array>
 
     <string name="fuel_tank_placeholder"><b>Fuel tank %d</b></string>
