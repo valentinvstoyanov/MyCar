@@ -4,8 +4,11 @@ import android.app.DatePickerDialog;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -15,6 +18,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,19 +37,26 @@ import es.dmoral.coloromatic.ColorOMaticDialog;
 import es.dmoral.coloromatic.IndicatorMode;
 import es.dmoral.coloromatic.OnColorSelectedListener;
 import es.dmoral.coloromatic.colormode.ColorMode;
+import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.dialogs.NewFuelTankDialog;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
+import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.realm.models.Model;
+import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.IFuelTankRepository;
 import stoyanov.valentin.mycar.realm.repositories.IModelRepository;
 import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.FuelTankRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.ModelRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.VehicleRepository;
+import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
 
@@ -105,7 +116,7 @@ public class NewVehicleActivity extends BaseActivity{
         int id = item.getItemId();
         if (id == R.id.action_save) {
             if (isInputValid()) {
-                saveToRealm(getVehicle());
+                saveToRealm(/*getVehicle()*/);
                 finish();
             }else {
                 showMessage("Incorrect input");
@@ -188,9 +199,8 @@ public class NewVehicleActivity extends BaseActivity{
         TextView tvFuelCapacity = (TextView) view.findViewById(R.id.tv_row_ft_capacity);
         TextView tvFuelConsumption = (TextView) view.findViewById(R.id.tv_row_ft_consumption);
         ImageButton imgBtnRemove = (ImageButton) view.findViewById(R.id.img_btn_remove);
-        String text = String.format(getString(R.string.fuel_tank_placeholder), fuelTanks.size());
-        tvFuelTank.setText(text);
-        text = String.format(getString(R.string.fuel_type_placeholder),
+        tvFuelTank.setText(getString(R.string.fuel_tank));
+        String text = String.format(getString(R.string.fuel_type_placeholder),
                 fuelTank.getFuelType().getName());
         tvFuelType.setText(text);
         text = String.format(getString(R.string.capacity_placeholder), fuelTank.getCapacity());
@@ -265,8 +275,8 @@ public class NewVehicleActivity extends BaseActivity{
         }
         return valid;
     }
-
-    private Vehicle getVehicle() {
+private Realm myRealm;
+    /*private Vehicle getVehicle() {
         final Vehicle vehicle = new Vehicle();
         vehicle.setName(tilName.getEditText().getText().toString());
         new BrandRepository().addOrGetBrand(tilBrand.getEditText().getText().toString(),
@@ -289,6 +299,19 @@ public class NewVehicleActivity extends BaseActivity{
                         vehicle.setModel(m);
                     }
                 });
+        realm = Realm.getDefaultInstance();
+        new FuelTankRepository(realm).addManyFuelTanks(fuelTanks.toArray(new FuelTank[0]),
+                new IFuelTankRepository.OnAddManyFuelTanksCallback() {
+                    @Override
+                    public void onSuccess(RealmList l) {
+                        //RealmList<FuelTank> jak = new RealmList<FuelTank>(fts);
+                        //Log.d("onSuccess: ", "asdasd======== " + jak.size());
+                        Log.d("execute: ", "asda====== " + l.size());
+                        vehicle.setFuelTanks(new RealmList<FuelTank>());
+                        vehicle.getFuelTanks().addAll(l);
+                        Log.d("execute: ", "asda====== " + vehicle.getFuelTanks().size());
+                    }
+                });
         vehicle.setColor(Integer.parseInt(etColor.getText().toString()));
         vehicle.setRegistrationPlate(tilRegistrationPlate.getEditText().getText().toString());
         vehicle.setVinPlate(tilVinPlate.getEditText().getText().toString());
@@ -305,10 +328,81 @@ public class NewVehicleActivity extends BaseActivity{
             return null;
         }
         return vehicle;
-    }
+    }*/
 
-    private void saveToRealm(Vehicle vehicle) {
-        if (vehicle != null) {
+    private void saveToRealm(/*Vehicle vehicle*/) {
+
+        myRealm = Realm.getDefaultInstance();
+        myRealm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Vehicle realmVehicle = realm.createObject(Vehicle.class,
+                        UUID.randomUUID().toString());
+                realmVehicle.setName(tilName.getEditText().getText().toString());
+                try {
+                    realmVehicle.setManufactureDate(DateUtils.manufactureStringToDate(tilManufactureDate.getEditText().getText().toString()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                realmVehicle.setColor(Integer.parseInt(etColor.getText().toString()));
+                realmVehicle.setRegistrationPlate(tilRegistrationPlate.getEditText().getText().toString());
+                realmVehicle.setVinPlate(tilVinPlate.getEditText().getText().toString());
+                realmVehicle.setOdometer(Long.parseLong(tilOdometer.getEditText().getText().toString()));
+                realmVehicle.setHorsePower(Integer.parseInt(tilHorsePower.getEditText().getText().toString()));
+                realmVehicle.setCubicCentimeter(Integer.parseInt(tilCubicCentimeters.getEditText().getText().toString()));
+
+                String brandName = tilBrand.getEditText().getText().toString();
+                Brand brand = realm.where(Brand.class).equalTo(RealmTable.NAME, brandName).findFirst();
+                if (brand == null) {
+                    brand = realm.createObject(Brand.class, UUID.randomUUID().toString());
+                    brand.setName(brandName);
+                }
+                realmVehicle.setBrand(brand);
+
+                String modelName = tilModel.getEditText().getText().toString();
+                Model model = realm.where(Model.class).equalTo(RealmTable.NAME, modelName).findFirst();
+                if (model == null) {
+                    model = realm.createObject(Model.class, UUID.randomUUID().toString());
+                    model.setName(modelName);
+                }
+                realmVehicle.setModel(model);
+
+                for (FuelTank fuelTank : fuelTanks) {
+                    FuelTank realmFuelTank = realm.createObject(FuelTank.class,
+                            UUID.randomUUID().toString());
+                    realmFuelTank.setCapacity(fuelTank.getCapacity());
+                    realmFuelTank.setConsumption(fuelTank.getConsumption());
+                    String fuelTypeName = fuelTank.getFuelType().getName();
+                    FuelType fuelType = realm.where(FuelType.class)
+                            .equalTo(RealmTable.NAME, fuelTypeName).findFirst();
+                    if (fuelType == null) {
+                        fuelType = realm.createObject(FuelType.class, UUID.randomUUID().toString());
+                        fuelType.setName(fuelTypeName);
+                    }
+                    realmFuelTank.setFuelType(fuelType);
+                    realmVehicle.getFuelTanks().add(realmFuelTank);
+                }
+
+                String notes = tilNotes.getEditText().getText().toString();
+                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
+                note.setContent(notes);
+                realmVehicle.setNote(note);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                myRealm.close();
+                showMessage("New vehicle added!");
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                showMessage("Something went wrong...");
+                new Exception(error).printStackTrace();
+                myRealm.close();
+            }
+        });
+        /*if (vehicle != null) {
             VehicleRepository repository = new VehicleRepository();
             repository.addVehicle(vehicle, new IVehicleRepository.OnWritesCallback() {
                 @Override
@@ -323,5 +417,6 @@ public class NewVehicleActivity extends BaseActivity{
                 }
             });
         }
+        realm.close();*/
     }
 }

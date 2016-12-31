@@ -1,9 +1,12 @@
 package stoyanov.valentin.mycar.realm.repositories.impl;
 
+import android.util.Log;
+
 import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
@@ -22,7 +25,8 @@ public class VehicleRepository implements IVehicleRepository {
         realmInstance.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Vehicle realmVehicle = realm.createObject(Vehicle.class,UUID.randomUUID().toString());
+                Vehicle realmVehicle = realm.createObject(Vehicle.class,
+                        UUID.randomUUID().toString());
                 realmVehicle.setName(vehicle.getName());
                 realmVehicle.setBrand(realm.where(Brand.class)
                         .equalTo(RealmTable.ID, vehicle.getBrand().getId()).findFirst());
@@ -34,6 +38,16 @@ public class VehicleRepository implements IVehicleRepository {
                 realmVehicle.setCubicCentimeter(vehicle.getCubicCentimeter());
                 realmVehicle.setHorsePower(vehicle.getHorsePower());
                 realmVehicle.setManufactureDate(vehicle.getManufactureDate());
+                realmVehicle.setFuelTanks(vehicle.getFuelTanks());
+                realmVehicle.setRegistrationPlate(vehicle.getRegistrationPlate());
+                realmVehicle.setVinPlate(vehicle.getVinPlate());
+                Log.d("execute: ", "asda====== " + vehicle.getFuelTanks().size());
+                Log.d("execute: ", "asda====== " + realmVehicle.getFuelTanks().size());
+               /* for (FuelTank fuelTank: vehicle.getFuelTanks()) {
+                    realmVehicle.getFuelTanks().add(realm.where(FuelTank.class)
+                            .equalTo(RealmTable.ID, fuelTank.getId()).findFirst());
+                }
+                Log.d("execute: ", "asda====== " + realmVehicle.getFuelTanks().size());*/
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override

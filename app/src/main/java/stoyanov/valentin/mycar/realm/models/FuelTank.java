@@ -5,16 +5,16 @@ import io.realm.annotations.PrimaryKey;
 
 public class FuelTank extends RealmObject {
     @PrimaryKey
-    private int id;
+    private String id;
     private FuelType fuelType;
     private int capacity;
     private double consumption;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

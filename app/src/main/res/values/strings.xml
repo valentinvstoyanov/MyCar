@@ -52,6 +52,7 @@
     <string name="title_slide_3">Car statistics</string>
     <string name="text_slide_3">See your car stats!</string>
     <string name="new_fuel_tank">New fuel tank</string>
+    <string name="fuel_tank">Fuel Tank</string>
 
     <string-array name="vehicle_types">
         <item>Car</item>

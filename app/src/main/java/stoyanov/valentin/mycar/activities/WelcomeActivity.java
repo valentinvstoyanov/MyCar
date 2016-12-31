@@ -17,8 +17,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import stoyanov.valentin.mycar.preferences.PreferenceManager;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.IFuelTypeRepository;
+import stoyanov.valentin.mycar.realm.repositories.IVehicleTypeRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.FuelTypesRepository;
+import stoyanov.valentin.mycar.realm.repositories.impl.VehicleTypeRepository;
+import stoyanov.valentin.mycar.utils.CsvUtils;
 
 public class WelcomeActivity extends BaseActivity
                         implements ViewPager.OnPageChangeListener{
@@ -47,7 +57,7 @@ public class WelcomeActivity extends BaseActivity
                 R.color.colorAccent, null), PorterDuff.Mode.MULTIPLY);
         progressBar.setProgress(50);
         Log.d("kur", "va");
-        /*Thread thread = new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.d("kur", "va1");
@@ -77,7 +87,7 @@ public class WelcomeActivity extends BaseActivity
                 vehicleTypeRepository.addManyVehicleTypes(vehicleTypes, new IVehicleTypeRepository.OnVehicleTypesAdded() {
                     @Override
                     public void onSuccess() {
-                        progressBar.incrementProgressBy(40);
+                        progressBar.incrementProgressBy(20);
                     }
 
                     @Override
@@ -86,9 +96,23 @@ public class WelcomeActivity extends BaseActivity
                         Log.d("Error======","VehicleType !!");
                     }
                 });
+                String[] fuelTypes = getResources().getStringArray(R.array.fuel_types);
+                FuelTypesRepository fuelTypesRepository = new FuelTypesRepository();
+                fuelTypesRepository.addManyFuelTypes(fuelTypes, new IFuelTypeRepository.OnAddManyFuelTypesCallback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.incrementProgressBy(20);
+                    }
+
+                    @Override
+                    public void onError() {
+                        progressBar.setProgress(3);
+                        Log.d("Error======","FuelType !!");
+                    }
+                });
             }
         });
-        thread.run();*/
+        thread.run();
         initComponents();
         setComponentListeners();
         WelcomeViewPagerAdapter viewPagerAdapter = new WelcomeViewPagerAdapter();
@@ -137,7 +161,7 @@ public class WelcomeActivity extends BaseActivity
     }
 
     private void launchMainActivity() {
-        //preferenceManager.setFirstTimeLaunch(false);
+        preferenceManager.setFirstTimeLaunch(false);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }

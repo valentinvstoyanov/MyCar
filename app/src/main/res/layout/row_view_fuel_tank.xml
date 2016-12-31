@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imgv_row_view_ft_fuel_type"
+        android:src="@drawable/ic_menu_refueling"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="24dp"
+        android:layout_height="24dp" />
+
+    <TextView
+        android:id="@+id/id_tv_row_view_ft_fuel_tank"
+        android:layout_toEndOf="@id/imgv_row_view_ft_fuel_type"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:text="@string/fuel_tank"
+        android:textSize="16sp"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:id="@+id/tv_row_view_ft_fuel_type"
+        android:layout_below="@id/id_tv_row_view_ft_fuel_tank"
+        android:textSize="14sp"
+        android:layout_toEndOf="@id/imgv_row_view_ft_fuel_type"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:id="@+id/tv_row_view_ft_capacity"
+        android:layout_below="@id/tv_row_view_ft_fuel_type"
+        android:textSize="14sp"
+        android:layout_toEndOf="@id/imgv_row_view_ft_fuel_type"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:layout_toEndOf="@id/imgv_row_view_ft_fuel_type"
+        android:id="@+id/tv_row_view_ft_consumption"
+        android:textSize="14sp"
+        android:layout_below="@id/tv_row_view_ft_capacity"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>
