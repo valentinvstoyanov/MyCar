@@ -273,6 +273,10 @@ public class NewVehicleActivity extends BaseActivity{
             tilHorsePower.setError("No cubic centimeters value");
             valid = false;
         }
+        if (fuelTanks.size() < 1) {
+            valid = false;
+            showMessage("No fuel tank added");
+        }
         return valid;
     }
 private Realm myRealm;

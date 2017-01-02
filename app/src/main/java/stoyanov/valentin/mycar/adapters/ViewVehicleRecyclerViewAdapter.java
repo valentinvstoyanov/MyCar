@@ -2,16 +2,12 @@ package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 
@@ -22,8 +18,11 @@ public class ViewVehicleRecyclerViewAdapter
     private ArrayList<String> titles;
     private String[] values;
     private FuelTank[] fuelTanks;
+    private OnRecyclerViewItemClickListener listener;
 
-    public ViewVehicleRecyclerViewAdapter(Context context, ArrayList<String> titles, String[] values, FuelTank[] fuelTanks) {
+    public ViewVehicleRecyclerViewAdapter(Context context,
+                                          ArrayList<String> titles,
+                                          String[] values, FuelTank[] fuelTanks) {
         this.context = context;
         this.titles = titles;
         this.values = values;
@@ -34,7 +33,6 @@ public class ViewVehicleRecyclerViewAdapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view;
-        Log.d("onCreateViewHolder: ", "sad" + fuelTanks.length);
         if (viewType == 0) {
             view = inflater.inflate(R.layout.row_view_vehicle, parent, false);
             return new ViewHolder(view);
@@ -45,9 +43,9 @@ public class ViewVehicleRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder.getItemViewType() == 0) {
-            ViewHolder viewHolder = (ViewHolder) holder;
+            final ViewHolder viewHolder = (ViewHolder) holder;
             viewHolder.tvTitle.setText(titles.get(position));
             int elementPosition = values.length;
             if (position >= elementPosition) {
@@ -56,6 +54,12 @@ public class ViewVehicleRecyclerViewAdapter
                 elementPosition = position;
             }
             viewHolder.tvValue.setText(values[elementPosition]);
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onClick(position, viewHolder.tvTitle.getText().toString());
+                }
+            });
         }else {
             ViewHolderFuelTank viewHolderFuelTank = (ViewHolderFuelTank) holder;
             int elementPosition = titles.indexOf(titles.get(position)) + 1 - values.length;
@@ -85,19 +89,13 @@ public class ViewVehicleRecyclerViewAdapter
         return titles.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvTitle;
         public TextView tvValue;
         public ViewHolder(View itemView) {
             super(itemView);
             this.tvTitle = (TextView) itemView.findViewById(R.id.tv_row_view_vehicle_title);
             this.tvValue = (TextView) itemView.findViewById(R.id.tv_row_view_vehicle_value);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
         }
     }
 
@@ -113,5 +111,24 @@ public class ViewVehicleRecyclerViewAdapter
             tvCapacity = (TextView) itemView.findViewById(R.id.tv_row_view_ft_capacity);
             tvConsumption = (TextView) itemView.findViewById(R.id.tv_row_view_ft_consumption);
         }
+    }
+
+    public void changeValue(int position, String value) {
+        int elementPosition = values.length;
+        if (position >= elementPosition) {
+            elementPosition--;
+        }else {
+            elementPosition = position;
+        }
+        values[elementPosition] = value;
+        notifyItemChanged(position);
+    }
+
+    public void setListener(OnRecyclerViewItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnRecyclerViewItemClickListener{
+        void onClick(int position, String title);
     }
 }

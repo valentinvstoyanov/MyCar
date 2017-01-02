@@ -10,9 +10,11 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.BaseActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.FuelType;
 
@@ -21,32 +23,33 @@ public class NewFuelTankDialog extends DialogFragment {
     private Spinner spnFTfuelType;
     private TextInputLayout tilFTCapacity;
     private TextInputLayout tilFTConsumption;
+    private Button btnAdd;
     private OnAddFuelTankListener listener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_new_fuel_tank, null);
         initComponents(view);
-        builder.setView(view)
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-               if (isValidInput()) {
-                   FuelTank fuelTank = new FuelTank();
-                   FuelType fuelType = new FuelType();
-                   fuelType.setName(spnFTfuelType.getSelectedItem().toString());
-                   fuelTank.setFuelType(fuelType);
-                   fuelTank.setCapacity(Integer.parseInt(tilFTCapacity.getEditText()
-                           .getText().toString()));
-                   fuelTank.setConsumption(Integer.parseInt(tilFTConsumption.getEditText()
-                           .getText().toString()));
-                   listener.onAddFuelTank(fuelTank);
-               }
+            public void onClick(View view) {
+                if (isInputValid()) {
+                    FuelTank fuelTank = new FuelTank();
+                    FuelType fuelType = new FuelType();
+                    fuelType.setName(spnFTfuelType.getSelectedItem().toString());
+                    fuelTank.setFuelType(fuelType);
+                    fuelTank.setCapacity(Integer.parseInt(tilFTCapacity.getEditText()
+                            .getText().toString()));
+                    fuelTank.setConsumption(Integer.parseInt(tilFTConsumption.getEditText()
+                            .getText().toString()));
+                    listener.onAddFuelTank(fuelTank);
+                }
             }
-        })
-        .setNegativeButton(R.string.cancel, null);
+        });
+        builder.setCancelable(true);
+        builder.setView(view);
         return builder.create();
     }
 
@@ -59,9 +62,10 @@ public class NewFuelTankDialog extends DialogFragment {
         spnFTfuelType.setAdapter(spinnerAdapter);
         tilFTCapacity = (TextInputLayout) view.findViewById(R.id.til_new_ft_capacity);
         tilFTConsumption = (TextInputLayout) view.findViewById(R.id.til_new_ft_consumption);
+        btnAdd = (Button) view.findViewById(R.id.btn_dialog_new_ft_add);
     }
 
-    private boolean isValidInput() {
+    private boolean isInputValid() {
         boolean valid = true;
         if (tilFTCapacity.getEditText().getText().toString().length() < 1) {
             valid = false;

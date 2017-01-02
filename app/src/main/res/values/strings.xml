@@ -85,6 +85,7 @@
     <string name="capacity_placeholder">Capacity: %d</string>
     <string name="consumption_placeholder">Consumption: %.1f</string>
     <string name="title_activity_view_vehicle">ViewVehicleActivity</string>
+    <string name="change_placeholder">Change %s</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -176,4 +177,5 @@
     </string>
     <string name="delete">Delete</string>
     <string name="open">Open</string>
+    <string name="set">Set</string>
 </resources>

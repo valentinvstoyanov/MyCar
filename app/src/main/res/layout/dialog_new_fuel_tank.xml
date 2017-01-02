@@ -43,4 +43,12 @@
             android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>
 
+    <Button
+        android:gravity="end"
+        android:id="@+id/btn_dialog_new_ft_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add"
+        android:textColor="@color/colorAccent"
+        style="@style/Widget.AppCompat.Button.Borderless"/>
 </LinearLayout>
