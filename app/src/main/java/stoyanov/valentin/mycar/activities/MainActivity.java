@@ -1,6 +1,5 @@
 package stoyanov.valentin.mycar.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,69 +7,65 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+
+import java.util.ArrayList;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.fragments.MyListFragment;
+import stoyanov.valentin.mycar.realm.models.Vehicle;
+import stoyanov.valentin.mycar.realm.table.RealmTable;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Spinner spnChooseVehicle;
+    private Realm myRealm;
+    private RealmResults<Vehicle> results;
+    private ArrayAdapter<String> spinnerAdapter;
+    private ArrayList<String> spinnerDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(toolbar);
+        initComponents();
+        spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_dropdown_item_1line, spinnerDataset);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnChooseVehicle.setAdapter(spinnerAdapter);
+        setComponentListeners();
+    }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+    private ArrayList<String> getVehicleNamesFromResults() {
+        ArrayList<String> names = new ArrayList<>(results.size());
+        for (Vehicle vehicle : results) {
+            names.add(vehicle.getName());
+        }
+        return names;
+    }
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
-        fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
-            @Override
-            public boolean onMenuItemSelected(MenuItem menuItem) {
-                Intent intent;
-                if(menuItem.getItemId() == R.id.action_add_car) {
-                    intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_service) {
-                    intent = new Intent(getApplicationContext(), NewServiceActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_expense) {
-                    intent = new Intent(getApplicationContext(), NewExpenseActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_reminder) {
-                    intent = new Intent(getApplicationContext(), NewReminderActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_refueling) {
-                    intent = new Intent(getApplicationContext(), NewRefuelingActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_insurance) {
-                    intent = new Intent(getApplicationContext(), NewInsuranceActivity.class);
-                    startActivity(intent);
-                    return true;
-                }
-                return false;
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RealmResults<Vehicle> newResults = myRealm.where(Vehicle.class)
+                .findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+        if (newResults.size() > results.size()) {
+            results = newResults;
+            spinnerDataset = getVehicleNamesFromResults();
+            spinnerAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -81,6 +76,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        myRealm.close();
     }
 
     @Override
@@ -138,5 +139,64 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void initComponents() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        spnChooseVehicle = (Spinner) findViewById(R.id.spn_main_choose_vehicle);
+        myRealm = Realm.getDefaultInstance();
+        results = myRealm.where(Vehicle.class)
+                .findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+        spinnerDataset = getVehicleNamesFromResults();
+    }
+
+    @Override
+    protected void setComponentListeners() {
+        FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
+        fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
+            @Override
+            public boolean onMenuItemSelected(MenuItem menuItem) {
+                Intent intent;
+                if(menuItem.getItemId() == R.id.action_add_car) {
+                    intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_service) {
+                    intent = new Intent(getApplicationContext(), NewServiceActivity.class);
+                    String vehicleName = spnChooseVehicle.getSelectedItem().toString();
+                    Vehicle vehicle = results.where()
+                            .equalTo(RealmTable.NAME, vehicleName).findFirst();
+                    intent.putExtra(ViewVehicleActivity.VEHICLE_ID, vehicle.getId());
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_expense) {
+                    intent = new Intent(getApplicationContext(), NewExpenseActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_reminder) {
+                    intent = new Intent(getApplicationContext(), NewReminderActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_refueling) {
+                    intent = new Intent(getApplicationContext(), NewRefuelingActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(menuItem.getItemId() == R.id.action_add_insurance) {
+                    intent = new Intent(getApplicationContext(), NewInsuranceActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }

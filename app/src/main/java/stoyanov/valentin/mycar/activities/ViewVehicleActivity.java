@@ -36,7 +36,7 @@ import stoyanov.valentin.mycar.utils.DateUtils;
 
 public class ViewVehicleActivity extends BaseActivity {
 
-    public static final String CAR_NAME = "car_name";
+    public static final String VEHICLE_ID = "vehicle_id";
     private Toolbar toolbar;
     private Realm myRealm;
 
@@ -46,7 +46,7 @@ public class ViewVehicleActivity extends BaseActivity {
         setContentView(R.layout.activity_view_vehicle);
         initComponents();
         Intent intent = getIntent();
-        final String vehicleId = intent.getStringExtra(CAR_NAME);
+        final String vehicleId = intent.getStringExtra(VEHICLE_ID);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_view_vehicle);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);

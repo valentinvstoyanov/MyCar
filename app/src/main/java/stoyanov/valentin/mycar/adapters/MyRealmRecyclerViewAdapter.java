@@ -63,7 +63,7 @@ public class MyRealmRecyclerViewAdapter extends
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewVehicleActivity.class);
-                intent.putExtra(ViewVehicleActivity.CAR_NAME, realmResults.get(position).getId());
+                intent.putExtra(ViewVehicleActivity.VEHICLE_ID, realmResults.get(position).getId());
                 getContext().startActivity(intent);
             }
         });

@@ -178,4 +178,6 @@
     <string name="delete">Delete</string>
     <string name="open">Open</string>
     <string name="set">Set</string>
+    <string name="time">Time</string>
+    <string name="service_type">Service type</string>
 </resources>

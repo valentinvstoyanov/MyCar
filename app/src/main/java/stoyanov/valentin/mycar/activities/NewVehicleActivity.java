@@ -164,6 +164,7 @@ public class NewVehicleActivity extends BaseActivity{
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                calendar.set(year, month, day);
                                 tilManufactureDate.getEditText()
                                         .setText(DateUtils.manufactureDateToString(calendar.getTime()));
                             }
