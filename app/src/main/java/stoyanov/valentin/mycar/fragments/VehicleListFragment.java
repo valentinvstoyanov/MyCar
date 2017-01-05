@@ -7,29 +7,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
-import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.adapters.MyRealmRecyclerViewAdapter;
+import stoyanov.valentin.mycar.adapters.VehicleRealmRecyclerViewAdapter;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.VehicleRepository;
 
-public class MyListFragment extends Fragment {
+public class VehicleListFragment extends Fragment {
 
-    public MyListFragment() {}
+    public VehicleListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         VehicleRepository vehicleRepository = new VehicleRepository();
-        final View view = inflater.inflate(R.layout.fragment_my_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
         final RealmRecyclerView recyclerView = (RealmRecyclerView) view.findViewById(R.id.realm_recycler_view);
         vehicleRepository.getAllVehicles(new IVehicleRepository.OnGetAllVehiclesCallback() {
             @Override
             public void onSuccess(RealmResults<Vehicle> vehicles) {
-                MyRealmRecyclerViewAdapter recyclerViewAdapter =
-                        new MyRealmRecyclerViewAdapter(getContext(), vehicles, true, true);
+                VehicleRealmRecyclerViewAdapter recyclerViewAdapter =
+                        new VehicleRealmRecyclerViewAdapter(getContext(), vehicles, true, true);
                     recyclerView.setAdapter(recyclerViewAdapter);
             }
         });

@@ -7,23 +7,26 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.fragments.MyListFragment;
+import stoyanov.valentin.mycar.fragments.VehicleListFragment;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
@@ -34,15 +37,23 @@ public class MainActivity extends BaseActivity
     private Realm myRealm;
     private RealmResults<Vehicle> results;
     private ArrayAdapter<String> spinnerAdapter;
-    private ArrayList<String> spinnerDataset;
+    private ArrayList<String> spinnerDataSet;
+    private RealmChangeListener<RealmResults<Vehicle>> callback =
+            new RealmChangeListener<RealmResults<Vehicle>>() {
+                @Override
+                public void onChange(RealmResults<Vehicle> element) {
+                    spinnerDataSet = getVehicleNamesFromResults();
+                    spinnerAdapter.clear();
+                    spinnerAdapter.addAll(spinnerDataSet);
+                    spinnerAdapter.notifyDataSetChanged();
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
-        spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_dropdown_item_1line, spinnerDataset);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnChooseVehicle.setAdapter(spinnerAdapter);
         setComponentListeners();
@@ -54,18 +65,6 @@ public class MainActivity extends BaseActivity
             names.add(vehicle.getName());
         }
         return names;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        RealmResults<Vehicle> newResults = myRealm.where(Vehicle.class)
-                .findAllSorted(RealmTable.NAME, Sort.ASCENDING);
-        if (newResults.size() > results.size()) {
-            results = newResults;
-            spinnerDataset = getVehicleNamesFromResults();
-            spinnerAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -81,6 +80,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        results.removeChangeListener(callback);
         myRealm.close();
     }
 
@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity
         getSupportActionBar().setTitle(item.getTitle());
         int id = item.getItemId();
         if (id == R.id.nav_my_cars) {
-            Fragment fragment = new MyListFragment();
+            Fragment fragment = new VehicleListFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fl_content_main, fragment).commit();
         } else if (id == R.id.nav_services) {
@@ -155,8 +155,11 @@ public class MainActivity extends BaseActivity
         spnChooseVehicle = (Spinner) findViewById(R.id.spn_main_choose_vehicle);
         myRealm = Realm.getDefaultInstance();
         results = myRealm.where(Vehicle.class)
-                .findAllSorted(RealmTable.NAME, Sort.ASCENDING);
-        spinnerDataset = getVehicleNamesFromResults();
+                .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
+        spinnerDataSet = getVehicleNamesFromResults();
+        spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_dropdown_item_1line, spinnerDataSet);
+        results.addChangeListener(callback);
     }
 
     @Override

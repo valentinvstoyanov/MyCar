@@ -67,7 +67,7 @@
         <item>LNG</item>
         <item>CNG</item>
     </string-array>
-    
+
     <string-array name="vehicle_info">
         <item>@string/car_brand</item>
         <item>@string/car_model</item>

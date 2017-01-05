@@ -31,9 +31,7 @@
                     android:id="@+id/imgv_recyclerview_vehicle_type"
                     android:scaleType="fitXY"
                     android:layout_width="@dimen/img_size"
-                    android:layout_height="@dimen/img_size"
-                    android:tint="@color/colorTextIcons"
-                    android:src="@drawable/ic_menu_car" />
+                    android:layout_height="@dimen/img_size" />
             </RelativeLayout>
 
             <TextView

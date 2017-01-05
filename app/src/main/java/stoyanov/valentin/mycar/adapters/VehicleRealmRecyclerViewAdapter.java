@@ -1,12 +1,10 @@
 package stoyanov.valentin.mycar.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,27 +12,22 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.MainActivity;
 import stoyanov.valentin.mycar.activities.ViewVehicleActivity;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.utils.DateUtils;
 
-import static android.support.design.R.styleable.CoordinatorLayout;
-
-public class MyRealmRecyclerViewAdapter extends
-        RealmBasedRecyclerViewAdapter<Vehicle, MyRealmRecyclerViewAdapter.ViewHolder>{
+public class VehicleRealmRecyclerViewAdapter extends
+        RealmBasedRecyclerViewAdapter<Vehicle, VehicleRealmRecyclerViewAdapter.ViewHolder>{
 
 
-    public MyRealmRecyclerViewAdapter(Context context,
-                                      RealmResults<Vehicle> realmResults,
-                                      boolean automaticUpdate,
-                                      boolean animateResults) {
+    public VehicleRealmRecyclerViewAdapter(Context context,
+                                           RealmResults<Vehicle> realmResults,
+                                           boolean automaticUpdate,
+                                           boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
     }
 
@@ -48,7 +41,26 @@ public class MyRealmRecyclerViewAdapter extends
     public void onBindRealmViewHolder(final ViewHolder viewHolder, final int position) {
         final Vehicle vehicle = realmResults.get(position);
         viewHolder.relativeLayout.setBackgroundColor(vehicle.getColor());
-        //imageview
+        Drawable drawable;
+        switch (vehicle.getType().getName()) {
+            case "Bus":
+                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
+                        R.drawable.ic_bus_black, null);
+                break;
+            case "Motorcycle":
+                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
+                        R.drawable.ic_motorcycle_black, null);
+                break;
+            case "Truck":
+                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
+                        R.drawable.ic_truck_black_24dp, null);
+                break;
+            default:
+                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
+                        R.drawable.ic_car_black, null);
+                break;
+        }
+        viewHolder.imageView.setBackground(drawable);
         viewHolder.tvVehicleName.setText(vehicle.getName());
         String text = String.format("%s %s", vehicle.getBrand().getName(), vehicle.getModel().getName());
         viewHolder.tvVehicleBrandAndModel.setText(text);

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="stoyanov.valentin.mycar.fragments.MyListFragment">
+    tools:context="stoyanov.valentin.mycar.fragments.VehicleListFragment">
 
     <co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView
         android:id="@+id/realm_recycler_view"

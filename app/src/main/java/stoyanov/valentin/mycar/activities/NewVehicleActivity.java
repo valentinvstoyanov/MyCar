@@ -48,6 +48,7 @@ import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
+import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
 import stoyanov.valentin.mycar.realm.repositories.IFuelTankRepository;
 import stoyanov.valentin.mycar.realm.repositories.IModelRepository;
@@ -343,6 +344,15 @@ private Realm myRealm;
             public void execute(Realm realm) {
                 Vehicle realmVehicle = realm.createObject(Vehicle.class,
                         UUID.randomUUID().toString());
+                String vehicleTypeName = spnVehicleType.getSelectedItem().toString();
+                VehicleType vehicleType = realm.where(VehicleType.class)
+                        .equalTo(RealmTable.NAME, vehicleTypeName)
+                        .findFirst();
+                if (vehicleType == null) {
+                    vehicleType = realm.createObject(VehicleType.class, UUID.randomUUID().toString());
+                    vehicleType.setName(vehicleTypeName);
+                }
+                realmVehicle.setType(vehicleType);
                 realmVehicle.setName(tilName.getEditText().getText().toString());
                 try {
                     realmVehicle.setManufactureDate(DateUtils.manufactureStringToDate(tilManufactureDate.getEditText().getText().toString()));

@@ -11,6 +11,7 @@ public class DateUtils {
     private static final String manufacturePattern = "MMM yyyy";
     private static final String pattern = "dd.MM.yyyy";
     private static final String timePattern = "hh:mm";
+    private static final String datePattern = pattern + timePattern;
 
     public static String manufactureDateToString(Date date) {
         DateFormat dateFormat = new SimpleDateFormat(manufacturePattern, Locale.getDefault());
@@ -40,5 +41,10 @@ public class DateUtils {
     public static Date stringToTime(String time) throws ParseException {
         DateFormat dateFormat = new SimpleDateFormat(timePattern, Locale.getDefault());
         return dateFormat.parse(time);
+    }
+
+    public static String datetimeToString(Date datetime) {
+        DateFormat dateFormat = new SimpleDateFormat(datePattern, Locale.getDefault());
+        return dateFormat.format(datetime);
     }
 }

@@ -41,6 +41,7 @@ import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class NewServiceActivity extends BaseActivity {
 
@@ -106,10 +107,11 @@ public class NewServiceActivity extends BaseActivity {
                         }
                         action.setOdometer(Long.parseLong(
                                 tilOdometer.getEditText().getText().toString()));
-                        BigDecimal bigDecimal = new BigDecimal(tilOdometer.getEditText()
+                        long price = MoneyUtils.stringToLong(tilOdometer.getEditText()
                                 .getText().toString());
-                        action.setPrice(bigDecimal.longValue());
+                        action.setPrice(price);
                         service.setAction(action);
+                        vehicle.getServices().add(service);
                     }
                 }, new Realm.Transaction.OnSuccess() {
                     @Override
