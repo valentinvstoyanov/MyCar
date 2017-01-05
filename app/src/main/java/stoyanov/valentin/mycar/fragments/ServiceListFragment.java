@@ -31,9 +31,7 @@ public class ServiceListFragment extends Fragment {
                 .equalTo(RealmTable.ID, vehicleId).findFirst();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rv_services);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        ServiceRecyclerViewAdapter adapter = new ServiceRecyclerViewAdapter(vehicle
-                .getServices().toArray(new Service[0]));
-        recyclerView.setAdapter(adapter);
+
         return view;
     }
 }

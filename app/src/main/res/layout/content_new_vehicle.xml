@@ -159,7 +159,7 @@
         android:id="@+id/btn_new_vehicle_add_ft"
         android:background="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:text="@string/add_fuel_tank"/>
 
     <android.support.design.widget.TextInputLayout

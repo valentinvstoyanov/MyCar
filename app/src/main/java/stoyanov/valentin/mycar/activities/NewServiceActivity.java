@@ -45,10 +45,12 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class NewServiceActivity extends BaseActivity {
 
+    public static final String VEHICLE_ODOMETER = "odometer";
     private TextInputLayout tilDate, tilTime, tilOdometer, tilPrice, tilNotes, tilType;
-    private Vehicle vehicle;
     private Realm myRealm;
     private RealmResults<ServiceType> results;
+    private String vehicleId;
+    private long vehicleOdometer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +59,8 @@ public class NewServiceActivity extends BaseActivity {
         initComponents();
         setComponentListeners();
         Intent intent = getIntent();
-        String vehicleId = intent.getStringExtra(ViewVehicleActivity.VEHICLE_ID);
-        vehicle = myRealm.where(Vehicle.class).equalTo(RealmTable.ID, vehicleId).findFirstAsync();
+        vehicleId = intent.getStringExtra(ViewVehicleActivity.VEHICLE_ID);
+        vehicleOdometer = intent.getLongExtra(VEHICLE_ODOMETER, 0);
         AutoCompleteTextView actvType = (AutoCompleteTextView) findViewById(R.id.actv_new_service_type);
         results = myRealm.where(ServiceType.class).findAll();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
@@ -111,6 +113,7 @@ public class NewServiceActivity extends BaseActivity {
                                 .getText().toString());
                         action.setPrice(price);
                         service.setAction(action);
+                        Vehicle vehicle = realm.where(Vehicle.class).equalTo(RealmTable.ID, vehicleId).findFirst();
                         vehicle.getServices().add(service);
                     }
                 }, new Realm.Transaction.OnSuccess() {
@@ -151,7 +154,7 @@ public class NewServiceActivity extends BaseActivity {
 
     private boolean isInputValid() {
         boolean valid = true;
-        if (Long.parseLong(tilOdometer.getEditText().getText().toString()) < vehicle.getOdometer()) {
+        if (Long.parseLong(tilOdometer.getEditText().getText().toString()) < vehicleOdometer) {
             valid = false;
             tilOdometer.setError("The value is smaller than expected");
         }

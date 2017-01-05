@@ -33,6 +33,7 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String FRAGMENT_TYPE = "fragment_type";
     private Spinner spnChooseVehicle;
     private Realm myRealm;
     private RealmResults<Vehicle> results;
@@ -110,10 +111,8 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         getSupportActionBar().setTitle(item.getTitle());
         int id = item.getItemId();
-        if (id == R.id.nav_my_cars) {
-            Fragment fragment = new VehicleListFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fl_content_main, fragment).commit();
+        /*if (id == R.id.nav_my_cars) {
+
         } else if (id == R.id.nav_services) {
 
         } else if (id == R.id.nav_expenses) {
@@ -134,8 +133,14 @@ public class MainActivity extends BaseActivity
 
         } else if (id == R.id.nav_about) {
 
-        }
-
+        }*/
+        Bundle bundle = new Bundle();
+        bundle.putInt(FRAGMENT_TYPE, id);
+        bundle.putString(ViewVehicleActivity.VEHICLE_ID, spnChooseVehicle.getSelectedItem().toString());
+        Fragment fragment = new VehicleListFragment();
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_content_main, fragment).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -179,6 +184,7 @@ public class MainActivity extends BaseActivity
                     Vehicle vehicle = results.where()
                             .equalTo(RealmTable.NAME, vehicleName).findFirst();
                     intent.putExtra(ViewVehicleActivity.VEHICLE_ID, vehicle.getId());
+                    intent.putExtra(NewServiceActivity.VEHICLE_ODOMETER, vehicle.getOdometer());
                     startActivity(intent);
                     return true;
                 } else if(menuItem.getItemId() == R.id.action_add_expense) {

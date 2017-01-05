@@ -1,58 +1,58 @@
 package stoyanov.valentin.mycar.adapters;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import java.math.BigDecimal;
+
+import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmResults;
+import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class ServiceRecyclerViewAdapter
-                extends RecyclerView.Adapter<ServiceRecyclerViewAdapter.ViewHolder>{
+                extends RealmBasedRecyclerViewAdapter<Service, ServiceRecyclerViewAdapter.ViewHolder> {
 
-    private Service[] services;
 
-    public ServiceRecyclerViewAdapter(Service[] services) {
-        this.services = services;
+    public ServiceRecyclerViewAdapter(Context context, RealmResults<Service> realmResults,
+                                      boolean automaticUpdate, boolean animateResults) {
+        super(context, realmResults, automaticUpdate, animateResults);
     }
 
     @Override
-    public ServiceRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.row_services_recycler_view, parent, false);
+    public ServiceRecyclerViewAdapter.ViewHolder onCreateRealmViewHolder(ViewGroup viewGroup, int i) {
+        View view = inflater.inflate(R.layout.row_services_recycler_view, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ServiceRecyclerViewAdapter.ViewHolder holder, int position) {
-        Service service = services[position];
-        holder.tvDatetime.setText(DateUtils.datetimeToString(service.getAction().getDate()));
-        //notifdate
-        holder.tvType.setText(service.getType().getName());
-        String price = MoneyUtils.longToString(new BigDecimal(service.getAction().getPrice()));
-        holder.tvPrice.setText(price);
+    public void onBindRealmViewHolder(ServiceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
+        Service service = realmResults.get(position);
+        viewHolder.tvType.setText(service.getType().getName());
+        viewHolder.tvDatetime.setText(DateUtils
+                .datetimeToString(service.getAction().getDate()));
+        viewHolder.tvNotifDatetime.setText("PROVIDE ME NOTIFDATE");
+        viewHolder.tvPrice.setText(MoneyUtils
+                .longToString(new BigDecimal(service.getAction().getPrice())));
+        //click listener => dialog
     }
 
-    @Override
-    public int getItemCount() {
-        return services.length;
-    }
+    public class ViewHolder extends RealmViewHolder{
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView tvDatetime, tvNotificationDatetime, tvType, tvPrice;
+        public TextView tvType, tvDatetime, tvNotifDatetime, tvPrice;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            tvDatetime = (TextView) itemView.findViewById(R.id.tv_service_datetime);
-            tvNotificationDatetime = (TextView) itemView
-                    .findViewById(R.id.tv_service_notification_datetime);
-            tvType = (TextView) itemView.findViewById(R.id.tv_service_type);
-            tvPrice = (TextView) itemView.findViewById(R.id.tv_service_price);
+            tvType = (TextView) itemView.findViewById(R.id.tv_row_service_type);
+            tvDatetime = (TextView) itemView.findViewById(R.id.tv_row_service_datetime);
+            tvNotifDatetime = (TextView) itemView.findViewById(
+                    R.id.tv_row_service_notification_datetime);
+            tvPrice = (TextView) itemView.findViewById(R.id.tv_row_service_price);
         }
     }
 }
