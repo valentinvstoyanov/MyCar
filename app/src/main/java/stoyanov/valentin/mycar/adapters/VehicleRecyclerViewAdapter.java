@@ -2,7 +2,6 @@ package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
@@ -18,16 +17,17 @@ import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewVehicleActivity;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
+import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 
-public class VehicleRealmRecyclerViewAdapter extends
-        RealmBasedRecyclerViewAdapter<Vehicle, VehicleRealmRecyclerViewAdapter.ViewHolder>{
+public class VehicleRecyclerViewAdapter extends
+        RealmBasedRecyclerViewAdapter<Vehicle, VehicleRecyclerViewAdapter.ViewHolder>{
 
 
-    public VehicleRealmRecyclerViewAdapter(Context context,
-                                           RealmResults<Vehicle> realmResults,
-                                           boolean automaticUpdate,
-                                           boolean animateResults) {
+    public VehicleRecyclerViewAdapter(Context context,
+                                      RealmResults<Vehicle> realmResults,
+                                      boolean automaticUpdate,
+                                      boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
     }
 
@@ -75,7 +75,7 @@ public class VehicleRealmRecyclerViewAdapter extends
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewVehicleActivity.class);
-                intent.putExtra(ViewVehicleActivity.VEHICLE_ID, realmResults.get(position).getId());
+                intent.putExtra(RealmTable.ID, vehicle.getId());
                 getContext().startActivity(intent);
             }
         });

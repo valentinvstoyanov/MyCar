@@ -3,23 +3,19 @@ package stoyanov.valentin.mycar.activities;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
-
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.adapters.ViewVehicleRecyclerViewAdapter;
@@ -29,14 +25,11 @@ import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.VehicleRepository;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 
 public class ViewVehicleActivity extends BaseActivity {
 
-    public static final String VEHICLE_ID = "vehicle_id";
     private Toolbar toolbar;
     private Realm myRealm;
 
@@ -46,7 +39,7 @@ public class ViewVehicleActivity extends BaseActivity {
         setContentView(R.layout.activity_view_vehicle);
         initComponents();
         Intent intent = getIntent();
-        final String vehicleId = intent.getStringExtra(VEHICLE_ID);
+        final String vehicleId = intent.getStringExtra(RealmTable.ID);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_view_vehicle);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);

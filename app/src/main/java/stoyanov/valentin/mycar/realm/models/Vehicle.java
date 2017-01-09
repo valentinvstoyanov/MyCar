@@ -20,15 +20,13 @@ public class Vehicle extends RealmObject {
     private Model model;
     private String registrationPlate;
     private String vinPlate;
+    private RealmList<Refueling> refuelings;
     private RealmList<FuelTank> fuelTanks;
     private RealmList<Service> services;
     private RealmList<Insurance> insurances;
     private RealmList<Expense> expenses;
-    private RealmList<Refueling> refuelings;
     private RealmList<Reminder> reminders;
     private Note note;
-
-    public Vehicle(){}
 
     public String getId() {
         return id;
@@ -126,6 +124,14 @@ public class Vehicle extends RealmObject {
         this.vinPlate = vinPlate;
     }
 
+    public RealmList<Refueling> getRefuelings() {
+        return refuelings;
+    }
+
+    public void setRefuelings(RealmList<Refueling> refuelings) {
+        this.refuelings = refuelings;
+    }
+
     public RealmList<FuelTank> getFuelTanks() {
         return fuelTanks;
     }
@@ -156,14 +162,6 @@ public class Vehicle extends RealmObject {
 
     public void setExpenses(RealmList<Expense> expenses) {
         this.expenses = expenses;
-    }
-
-    public RealmList<Refueling> getRefuelings() {
-        return refuelings;
-    }
-
-    public void setRefuelings(RealmList<Refueling> refuelings) {
-        this.refuelings = refuelings;
     }
 
     public RealmList<Reminder> getReminders() {

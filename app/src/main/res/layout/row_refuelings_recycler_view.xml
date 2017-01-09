@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         card_view:cardCornerRadius="2dp"
         card_view:cardBackgroundColor="@color/cardview_light_background"
         card_view:cardElevation="2dp">
@@ -17,26 +18,26 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/tv_row_service_type"
+                android:id="@+id/tv_row_refueling_fuel_type"
                 android:layout_alignParentTop="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/tv_row_service_datetime"
-                android:layout_below="@id/tv_row_service_type"
+                android:id="@+id/tv_row_refueling_quantity"
+                android:layout_below="@id/tv_row_refueling_fuel_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/tv_row_service_notification_datetime"
-                android:layout_below="@id/tv_row_service_datetime"
+                android:id="@+id/tv_row_refueling_price"
+                android:layout_below="@id/tv_row_refueling_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/tv_row_service_price"
-                android:layout_below="@id/tv_row_service_notification_datetime"
+                android:id="@+id/tv_row_refueling_fuel_price"
+                android:layout_below="@id/tv_row_refueling_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>

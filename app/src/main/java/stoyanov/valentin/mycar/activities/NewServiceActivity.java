@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -45,7 +46,6 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class NewServiceActivity extends BaseActivity {
 
-    public static final String VEHICLE_ODOMETER = "odometer";
     private TextInputLayout tilDate, tilTime, tilOdometer, tilPrice, tilNotes, tilType;
     private Realm myRealm;
     private RealmResults<ServiceType> results;
@@ -58,15 +58,6 @@ public class NewServiceActivity extends BaseActivity {
         setContentView(R.layout.activity_new_service);
         initComponents();
         setComponentListeners();
-        Intent intent = getIntent();
-        vehicleId = intent.getStringExtra(ViewVehicleActivity.VEHICLE_ID);
-        vehicleOdometer = intent.getLongExtra(VEHICLE_ODOMETER, 0);
-        AutoCompleteTextView actvType = (AutoCompleteTextView) findViewById(R.id.actv_new_service_type);
-        results = myRealm.where(ServiceType.class).findAll();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                getStringsFromServiceTypes());
-        actvType.setAdapter(adapter);
     }
 
     @Override
@@ -107,14 +98,16 @@ public class NewServiceActivity extends BaseActivity {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-                        action.setOdometer(Long.parseLong(
-                                tilOdometer.getEditText().getText().toString()));
+                        long odometer = Long.parseLong(tilOdometer.getEditText()
+                                .getText().toString());
+                        action.setOdometer(odometer);
                         long price = MoneyUtils.stringToLong(tilOdometer.getEditText()
                                 .getText().toString());
                         action.setPrice(price);
                         service.setAction(action);
                         Vehicle vehicle = realm.where(Vehicle.class).equalTo(RealmTable.ID, vehicleId).findFirst();
                         vehicle.getServices().add(service);
+                        vehicle.setOdometer(odometer);
                     }
                 }, new Realm.Transaction.OnSuccess() {
                     @Override
@@ -128,8 +121,8 @@ public class NewServiceActivity extends BaseActivity {
                         showMessage("Something went wrong...");
                     }
                 });
+                finish();
             }
-            finish();
             return true;
         }else if(id == android.R.id.home) {
             onBackPressed();
@@ -158,9 +151,9 @@ public class NewServiceActivity extends BaseActivity {
             valid = false;
             tilOdometer.setError("The value is smaller than expected");
         }
-        if (tilPrice.getEditText().toString().length() < 1) {
+        if (tilPrice.getEditText().getText().toString().length() < 1) {
             valid = false;
-            tilOdometer.setError("No price entered");
+            tilPrice.setError("No price entered");
         }
         if (tilType.getEditText().getText().toString().length() < 1) {
             valid = false;
@@ -177,11 +170,26 @@ public class NewServiceActivity extends BaseActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         tilDate = (TextInputLayout) findViewById(R.id.til_new_service_date);
         tilTime = (TextInputLayout) findViewById(R.id.til_new_service_time);
+        Calendar calendar = Calendar.getInstance();
+        tilDate.getEditText().setText(DateUtils.dateToString(calendar.getTime()));
+        tilTime.getEditText().setText(DateUtils.timeToString(calendar.getTime()));
         tilOdometer = (TextInputLayout) findViewById(R.id.til_new_service_odometer);
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_service_price);
         tilNotes = (TextInputLayout) findViewById(R.id.til_new_service_notes);
         tilType = (TextInputLayout) findViewById(R.id.til_new_service_type);
+        Intent intent = getIntent();
+        vehicleId = intent.getStringExtra(RealmTable.ID);
+        vehicleOdometer = intent.getLongExtra(RealmTable.ODOMETER, 0);
         myRealm = Realm.getDefaultInstance();
+        results = myRealm.where(ServiceType.class).findAll();
+        AutoCompleteTextView actvType = (AutoCompleteTextView) findViewById(R.id.actv_new_service_type);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                getStringsFromServiceTypes());
+        actvType.setAdapter(adapter);
+        TextView tvLastOdometer = (TextView) findViewById(R.id.tv_new_service_last_odometer);
+        String text = String.format(getString(R.string.last_odometer_placeholder), vehicleOdometer);
+        tvLastOdometer.setText(text);
     }
 
     @Override

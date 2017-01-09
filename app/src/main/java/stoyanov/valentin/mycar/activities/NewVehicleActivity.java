@@ -148,6 +148,9 @@ public class NewVehicleActivity extends BaseActivity{
         tilVinPlate = (TextInputLayout) findViewById(R.id.til_new_vehicle_vin_plate);
         tilNotes = (TextInputLayout) findViewById(R.id.til_new_vehicle_notes);
         tilManufactureDate = (TextInputLayout) findViewById(R.id.til_new_vehicle_manufacture_date);
+        Calendar calendar = Calendar.getInstance();
+        tilManufactureDate.getEditText()
+                .setText(DateUtils.manufactureDateToString(calendar.getTime()));
         etColor = (EditText) findViewById(R.id.et_vehicle_color);
         viewColor = findViewById(R.id.view_new_vehicle_color);
         etColor.setText(String.valueOf(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null)));

@@ -23,7 +23,7 @@
                 android:id="@+id/spn_main_choose_vehicle"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:popupBackground="@color/colorAccent"
+                android:popupBackground="@color/colorPrimary"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"/>
         </android.support.v7.widget.Toolbar>

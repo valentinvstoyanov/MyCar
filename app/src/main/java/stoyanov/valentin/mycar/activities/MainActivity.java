@@ -11,13 +11,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
@@ -26,7 +23,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.fragments.VehicleListFragment;
+import stoyanov.valentin.mycar.fragments.ListFragment;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
@@ -136,8 +133,9 @@ public class MainActivity extends BaseActivity
         }*/
         Bundle bundle = new Bundle();
         bundle.putInt(FRAGMENT_TYPE, id);
-        bundle.putString(ViewVehicleActivity.VEHICLE_ID, spnChooseVehicle.getSelectedItem().toString());
-        Fragment fragment = new VehicleListFragment();
+        bundle.putString(RealmTable.ID,
+                results.get(spnChooseVehicle.getSelectedItemPosition()).getId());
+        Fragment fragment = new ListFragment();
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_content_main, fragment).commit();
@@ -180,15 +178,16 @@ public class MainActivity extends BaseActivity
                     return true;
                 } else if(menuItem.getItemId() == R.id.action_add_service) {
                     intent = new Intent(getApplicationContext(), NewServiceActivity.class);
-                    String vehicleName = spnChooseVehicle.getSelectedItem().toString();
-                    Vehicle vehicle = results.where()
-                            .equalTo(RealmTable.NAME, vehicleName).findFirst();
-                    intent.putExtra(ViewVehicleActivity.VEHICLE_ID, vehicle.getId());
-                    intent.putExtra(NewServiceActivity.VEHICLE_ODOMETER, vehicle.getOdometer());
+                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
+                    intent.putExtra(RealmTable.ID, vehicle.getId());
+                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
                     startActivity(intent);
                     return true;
                 } else if(menuItem.getItemId() == R.id.action_add_expense) {
                     intent = new Intent(getApplicationContext(), NewExpenseActivity.class);
+                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
+                    intent.putExtra(RealmTable.ID, vehicle.getId());
+                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
                     startActivity(intent);
                     return true;
                 } else if(menuItem.getItemId() == R.id.action_add_reminder) {
@@ -197,10 +196,16 @@ public class MainActivity extends BaseActivity
                     return true;
                 } else if(menuItem.getItemId() == R.id.action_add_refueling) {
                     intent = new Intent(getApplicationContext(), NewRefuelingActivity.class);
+                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
+                    intent.putExtra(RealmTable.ID, vehicle.getId());
+                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
                     startActivity(intent);
                     return true;
                 } else if(menuItem.getItemId() == R.id.action_add_insurance) {
                     intent = new Intent(getApplicationContext(), NewInsuranceActivity.class);
+                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
+                    intent.putExtra(RealmTable.ID, vehicle.getId());
+                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
                     startActivity(intent);
                     return true;
                 }

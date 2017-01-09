@@ -86,6 +86,7 @@
     <string name="consumption_placeholder">Consumption: %.1f</string>
     <string name="title_activity_view_vehicle">ViewVehicleActivity</string>
     <string name="change_placeholder">Change %s</string>
+    <string name="last_odometer_placeholder">Last odometer: %d</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -180,4 +181,9 @@
     <string name="set">Set</string>
     <string name="time">Time</string>
     <string name="service_type">Service type</string>
+    <string name="expense_type">Expense type</string>
+    <string name="full_fuel_tank">Full fuel tank</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="quantity">Quantity</string>
 </resources>

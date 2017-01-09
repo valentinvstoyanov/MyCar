@@ -32,7 +32,6 @@
                 android:layout_height="wrap_content" />
         </android.support.design.widget.TextInputLayout>
 
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_service_time"
             android:layout_width="0dp"
@@ -60,6 +59,12 @@
             android:layout_height="wrap_content"
             android:hint="@string/odometer"/>
     </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tv_new_service_last_odometer"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_service_type"
