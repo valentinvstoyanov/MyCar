@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import io.realm.Realm;
 import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
@@ -78,7 +80,7 @@ public class VehicleRecyclerViewAdapter extends
 
     @Override
     public void onItemSwipedDismiss(final int position) {
-        Vehicle vehicle = realmResults.get(position);
+        final Vehicle vehicle = realmResults.get(position);
         String text = vehicle.getType().getName() + " " + vehicle.getName() + " deleted";
         Snackbar snackbar = Snackbar.make(viewForSnackbar, text, Snackbar.LENGTH_LONG);
         snackbar.setAction("Undo", new View.OnClickListener() {
@@ -91,7 +93,14 @@ public class VehicleRecyclerViewAdapter extends
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
-                    VehicleRecyclerViewAdapter.super.onItemSwipedDismiss(position);
+                    Realm myRealm = Realm.getDefaultInstance();
+                    myRealm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            vehicle.deleteFromRealm();
+                        }
+                    });
+                    myRealm.close();
                 }
                 super.onDismissed(transientBottomBar, event);
             }

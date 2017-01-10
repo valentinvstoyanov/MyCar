@@ -48,7 +48,6 @@
         </activity>
         <activity
             android:name=".activities.ViewVehicleActivity"
-            android:label="@string/title_activity_view_vehicle"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver

@@ -1,24 +1,16 @@
 package stoyanov.valentin.mycar.activities;
 
 import android.app.DatePickerDialog;
-
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
-
-import android.content.DialogInterface;
-import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,18 +19,12 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import es.dmoral.coloromatic.ColorOMaticDialog;
-import es.dmoral.coloromatic.IndicatorMode;
-import es.dmoral.coloromatic.OnColorSelectedListener;
-import es.dmoral.coloromatic.colormode.ColorMode;
+import com.thebluealliance.spectrum.SpectrumDialog;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.dialogs.NewFuelTankDialog;
@@ -50,13 +36,9 @@ import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
-import stoyanov.valentin.mycar.realm.repositories.IFuelTankRepository;
 import stoyanov.valentin.mycar.realm.repositories.IModelRepository;
-import stoyanov.valentin.mycar.realm.repositories.IVehicleRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.FuelTankRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.ModelRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.VehicleRepository;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
@@ -65,11 +47,10 @@ public class NewVehicleActivity extends BaseActivity{
     private Spinner spnVehicleType;
     private TextInputLayout tilName, tilBrand, tilModel, tilOdometer, tilHorsePower,
             tilCubicCentimeters, tilRegistrationPlate, tilVinPlate, tilNotes, tilManufactureDate;
-    private EditText etColor;
-    private View viewColor;
-    private Button btnAddFuelTank;
+    private Button btnAddFuelTank, btnColor;
     private LinearLayout llFuelTanks;
     private ArrayList<FuelTank> fuelTanks;
+    private Realm myRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,10 +132,8 @@ public class NewVehicleActivity extends BaseActivity{
         Calendar calendar = Calendar.getInstance();
         tilManufactureDate.getEditText()
                 .setText(DateUtils.manufactureDateToString(calendar.getTime()));
-        etColor = (EditText) findViewById(R.id.et_vehicle_color);
-        viewColor = findViewById(R.id.view_new_vehicle_color);
-        etColor.setText(String.valueOf(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null)));
         btnAddFuelTank = (Button) findViewById(R.id.btn_new_vehicle_add_ft);
+        btnColor = (Button) findViewById(R.id.btn_new_vehicle_color);
         fuelTanks = new ArrayList<>();
      }
 
@@ -183,18 +162,22 @@ public class NewVehicleActivity extends BaseActivity{
         btnAddFuelTank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final NewFuelTankDialog fuelTankDialog = new NewFuelTankDialog();
-                fuelTankDialog.setListener(new NewFuelTankDialog.OnAddFuelTankListener() {
-                    @Override
-                    public void onAddFuelTank(FuelTank fuelTank) {
-                        fuelTankDialog.dismiss();
-                        fuelTanks.add(fuelTank);
-                        displayNewFuelTank(fuelTank);
-                    }
-                });
-                fuelTankDialog.show(getSupportFragmentManager(), getString(R.string.new_fuel_tank));
+                addFuelTank();
             }
         });
+    }
+
+    private void addFuelTank() {
+        final NewFuelTankDialog fuelTankDialog = new NewFuelTankDialog();
+        fuelTankDialog.setListener(new NewFuelTankDialog.OnAddFuelTankListener() {
+            @Override
+            public void onAddFuelTank(FuelTank fuelTank) {
+                fuelTankDialog.dismiss();
+                fuelTanks.add(fuelTank);
+                displayNewFuelTank(fuelTank);
+            }
+        });
+        fuelTankDialog.show(getSupportFragmentManager(), getString(R.string.new_fuel_tank));
     }
 
     private void displayNewFuelTank(final FuelTank fuelTank) {
@@ -223,21 +206,20 @@ public class NewVehicleActivity extends BaseActivity{
     }
 
     public void colorPicker(View view) {
-        new ColorOMaticDialog.Builder()
-                .initialColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null))
-                .colorMode(ColorMode.ARGB) // RGB, ARGB, HVS
-                .indicatorMode(IndicatorMode.HEX) // HEX or DECIMAL; Note that using HSV with IndicatorMode.HEX is not recommended
-                .onColorSelected(new OnColorSelectedListener() {
-                    @Override
-                    public void onColorSelected(@ColorInt int i) {
-                        etColor.setText(String.valueOf(i));
-                        viewColor.setBackgroundColor(i);
-                        btnAddFuelTank.setBackgroundColor(i);
-                    }
-                })
-                //.showColorIndicator(true) // Default false, choose to show text indicator showing the current color in HEX or DEC (see images) or not
-                .create()
-                .show(getSupportFragmentManager(), "choose_vehicle_color");
+        SpectrumDialog.Builder builder = new SpectrumDialog.Builder(NewVehicleActivity.this);
+        builder.setColors(R.array.vehicles_primary_colors);
+        builder.setDismissOnColorSelected(true);
+        ColorDrawable colorDrawable = (ColorDrawable) btnColor.getBackground();
+        builder.setSelectedColor(colorDrawable.getColor());
+        builder.setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(boolean positiveResult, @ColorInt int color) {
+                if (positiveResult) {
+                    btnColor.setBackgroundColor(color);
+                }
+            }
+        });
+        builder.build().show(getSupportFragmentManager(), "color_picker");
     }
 
     private boolean isInputValid() {
@@ -280,67 +262,20 @@ public class NewVehicleActivity extends BaseActivity{
         }
         if (fuelTanks.size() < 1) {
             valid = false;
-            showMessage("No fuel tank added");
+            Snackbar snackbar = Snackbar
+                    .make(llFuelTanks, "No fuel tank added", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("Add", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addFuelTank();
+                }
+            });
+            snackbar.show();
         }
         return valid;
     }
-private Realm myRealm;
-    /*private Vehicle getVehicle() {
-        final Vehicle vehicle = new Vehicle();
-        vehicle.setName(tilName.getEditText().getText().toString());
-        new BrandRepository().addOrGetBrand(tilBrand.getEditText().getText().toString(),
-                new IBrandRepository.OnAddOrGetBrandCallback() {
-                    @Override
-                    public void onSuccess(Brand brand) {
-                        Brand b = new Brand();
-                        b.setId(brand.getId());
-                        b.setName(brand.getName());
-                        vehicle.setBrand(b);
-                    }
-                });
-        new ModelRepository().addOrGetModel(tilModel.getEditText().getText().toString(),
-                new IModelRepository.OnAddOrGetModelCallback() {
-                    @Override
-                    public void onSuccess(Model model) {
-                        Model m = new Model();
-                        m.setId(model.getId());
-                        m.setName(model.getName());
-                        vehicle.setModel(m);
-                    }
-                });
-        realm = Realm.getDefaultInstance();
-        new FuelTankRepository(realm).addManyFuelTanks(fuelTanks.toArray(new FuelTank[0]),
-                new IFuelTankRepository.OnAddManyFuelTanksCallback() {
-                    @Override
-                    public void onSuccess(RealmList l) {
-                        //RealmList<FuelTank> jak = new RealmList<FuelTank>(fts);
-                        //Log.d("onSuccess: ", "asdasd======== " + jak.size());
-                        Log.d("execute: ", "asda====== " + l.size());
-                        vehicle.setFuelTanks(new RealmList<FuelTank>());
-                        vehicle.getFuelTanks().addAll(l);
-                        Log.d("execute: ", "asda====== " + vehicle.getFuelTanks().size());
-                    }
-                });
-        vehicle.setColor(Integer.parseInt(etColor.getText().toString()));
-        vehicle.setRegistrationPlate(tilRegistrationPlate.getEditText().getText().toString());
-        vehicle.setVinPlate(tilVinPlate.getEditText().getText().toString());
-        vehicle.setOdometer(Long.parseLong(tilOdometer.getEditText().getText().toString()));
-        vehicle.setHorsePower(Integer.parseInt(tilHorsePower.getEditText().getText().toString()));
-        vehicle.setCubicCentimeter(Integer.parseInt(tilCubicCentimeters.getEditText().getText().toString()));
-        try {
-            Date manufactureDate = DateUtils.manufactureStringToDate(tilManufactureDate.getEditText()
-                .getText().toString());
-            vehicle.setManufactureDate(manufactureDate);
-        } catch (ParseException e) {
-            tilManufactureDate.setError("Incorrect date");
-            e.printStackTrace();
-            return null;
-        }
-        return vehicle;
-    }*/
 
-    private void saveToRealm(/*Vehicle vehicle*/) {
-
+    private void saveToRealm() {
         myRealm = Realm.getDefaultInstance();
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
@@ -362,7 +297,8 @@ private Realm myRealm;
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                realmVehicle.setColor(Integer.parseInt(etColor.getText().toString()));
+                ColorDrawable colorDrawable = (ColorDrawable) btnColor.getBackground();
+                realmVehicle.setColor(colorDrawable.getColor());
                 realmVehicle.setRegistrationPlate(tilRegistrationPlate.getEditText().getText().toString());
                 realmVehicle.setVinPlate(tilVinPlate.getEditText().getText().toString());
                 realmVehicle.setOdometer(Long.parseLong(tilOdometer.getEditText().getText().toString()));
@@ -420,21 +356,5 @@ private Realm myRealm;
                 myRealm.close();
             }
         });
-        /*if (vehicle != null) {
-            VehicleRepository repository = new VehicleRepository();
-            repository.addVehicle(vehicle, new IVehicleRepository.OnWritesCallback() {
-                @Override
-                public void onSuccess(String message) {
-                    showMessage(message);
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    showMessage("Something went wrong...");
-                    e.printStackTrace();
-                }
-            });
-        }
-        realm.close();*/
     }
 }
