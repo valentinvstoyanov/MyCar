@@ -6,4 +6,12 @@ public interface RealmTable {
     String ODOMETER = "odometer";
     String TYPE = "type";
     String DATE = "date";
+    String MANUFACTURE_DATE = "manufactureDate";
+    String HORSE_POWER = "horsePower";
+    String CUBIC_CENTIMETERS = "cubicCentimeter";
+    String COLOR = "color";
+    String BRAND = "brand";
+    String MODEL = "model";
+    String REGISTRATION_PLATE = "registrationPlate";
+    String VIN_PLATE = "vinPlate";
 }

@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import java.text.ParseException;
@@ -205,7 +206,18 @@ public class ViewVehicleActivity extends BaseActivity {
         });
         recyclerView.setAdapter(adapter);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         setComponentListeners();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -217,6 +229,7 @@ public class ViewVehicleActivity extends BaseActivity {
     @Override
     protected void initComponents() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
     }
 
     @Override

@@ -27,7 +27,7 @@ public class Vehicle extends RealmObject {
     private RealmList<Expense> expenses;
     private RealmList<Reminder> reminders;
     private Note note;
-
+    
     public String getId() {
         return id;
     }

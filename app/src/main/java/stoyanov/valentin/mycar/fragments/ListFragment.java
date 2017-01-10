@@ -1,6 +1,8 @@
 package stoyanov.valentin.mycar.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,15 +47,16 @@ public class ListFragment extends Fragment {
         Vehicle vehicle;
         myRealm = Realm.getDefaultInstance();
         View view = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
-        RealmRecyclerView recyclerView = (RealmRecyclerView) view.findViewById(R.id.realm_recycler_view);
+        final RealmRecyclerView recyclerView = (RealmRecyclerView) view.findViewById(R.id.realm_recycler_view);
         switch (id) {
             case R.id.nav_my_cars:
-                RealmResults<Vehicle> vehicles = myRealm
+                final RealmResults<Vehicle> vehicles = myRealm
                         .where(Vehicle.class)
                         .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
-                VehicleRecyclerViewAdapter recyclerViewAdapter =
+                final VehicleRecyclerViewAdapter recyclerViewAdapter =
                         new VehicleRecyclerViewAdapter(getContext(),
                                 vehicles, true, true);
+                recyclerViewAdapter.setViewForSnackbar(recyclerView);
                 recyclerView.setAdapter(recyclerViewAdapter);
                 break;
             case R.id.nav_services:

@@ -3,14 +3,14 @@ package stoyanov.valentin.mycar.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
@@ -21,8 +21,9 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 
 public class VehicleRecyclerViewAdapter extends
-        RealmBasedRecyclerViewAdapter<Vehicle, VehicleRecyclerViewAdapter.ViewHolder>{
+        RealmBasedRecyclerViewAdapter<Vehicle, VehicleRecyclerViewAdapter.ViewHolder> {
 
+    private View viewForSnackbar;
 
     public VehicleRecyclerViewAdapter(Context context,
                                       RealmResults<Vehicle> realmResults,
@@ -65,13 +66,7 @@ public class VehicleRecyclerViewAdapter extends
         String text = String.format("%s %s", vehicle.getBrand().getName(), vehicle.getModel().getName());
         viewHolder.tvVehicleBrandAndModel.setText(text);
         viewHolder.tvVehicleManufactureDate.setText(DateUtils.manufactureDateToString(vehicle.getManufactureDate()));
-        viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               onItemSwipedDismiss(position);
-            }
-        });
-        viewHolder.btnOpen.setOnClickListener(new View.OnClickListener() {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewVehicleActivity.class);
@@ -81,14 +76,40 @@ public class VehicleRecyclerViewAdapter extends
         });
     }
 
+    @Override
+    public void onItemSwipedDismiss(final int position) {
+        Vehicle vehicle = realmResults.get(position);
+        String text = vehicle.getType().getName() + " " + vehicle.getName() + " deleted";
+        Snackbar snackbar = Snackbar.make(viewForSnackbar, text, Snackbar.LENGTH_LONG);
+        snackbar.setAction("Undo", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notifyItemChanged(position);
+            }
+        });
+        BaseTransientBottomBar.BaseCallback<Snackbar> callback = new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
+                    VehicleRecyclerViewAdapter.super.onItemSwipedDismiss(position);
+                }
+                super.onDismissed(transientBottomBar, event);
+            }
+        };
+        snackbar.addCallback(callback);
+        snackbar.show();
+    }
+
+    public void setViewForSnackbar(View viewForSnackbar) {
+        this.viewForSnackbar = viewForSnackbar;
+    }
+
     public class ViewHolder extends RealmViewHolder {
         public RelativeLayout relativeLayout;
         public ImageView imageView;
         public TextView tvVehicleName;
         public TextView tvVehicleBrandAndModel;
         public TextView tvVehicleManufactureDate;
-        public Button btnDelete;
-        public Button btnOpen;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -97,8 +118,6 @@ public class VehicleRecyclerViewAdapter extends
             this.tvVehicleName = (TextView) itemView.findViewById(R.id.tv_recyclerview_name);
             this.tvVehicleBrandAndModel = (TextView) itemView.findViewById(R.id.tv_recyclerview_brand_model);
             this.tvVehicleManufactureDate = (TextView) itemView.findViewById(R.id.tv_recyclerview_manufacture_date);
-            this.btnDelete = (Button) itemView.findViewById(R.id.btn_recyclerview_delete);
-            this.btnOpen = (Button) itemView.findViewById(R.id.btn_recyclerview_open);
         }
     }
 }
