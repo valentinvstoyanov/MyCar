@@ -4,7 +4,10 @@ import android.app.DatePickerDialog;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
+
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -50,7 +53,10 @@ public class NewVehicleActivity extends BaseActivity{
     private Button btnAddFuelTank, btnColor;
     private LinearLayout llFuelTanks;
     private ArrayList<FuelTank> fuelTanks;
+    private ArrayList<FuelTank> existingFuelTanks;
     private Realm myRealm;
+    private String vehicleId;
+    private Vehicle vehicle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +91,27 @@ public class NewVehicleActivity extends BaseActivity{
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnVehicleType.setAdapter(spinnerAdapter);
         setComponentListeners();
+        if (vehicleId != null) {
+            vehicle = myRealm.where(Vehicle.class).equalTo(RealmTable.ID, vehicleId).findFirst();
+            getSupportActionBar().setTitle("Edit vehicle");
+            spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType().getName()));
+            tilName.getEditText().setText(vehicle.getName());
+            tilBrand.getEditText().setText(vehicle.getBrand().getName());
+            tilModel.getEditText().setText(vehicle.getModel().getName());
+            tilOdometer.getEditText().setText(String.valueOf(vehicle.getOdometer()));
+            tilHorsePower.getEditText().setText(String.valueOf(vehicle.getHorsePower()));
+            tilCubicCentimeters.getEditText().setText(String.valueOf(vehicle.getCubicCentimeter()));
+            tilRegistrationPlate.getEditText().setText(vehicle.getRegistrationPlate());
+            tilVinPlate.getEditText().setText(vehicle.getVinPlate());
+            tilNotes.getEditText().setText(vehicle.getNote().getContent());
+            tilManufactureDate.getEditText().setText(DateUtils.manufactureDateToString(vehicle.getManufactureDate()));
+            btnColor.setBackgroundColor(vehicle.getColor());
+            existingFuelTanks = new ArrayList<>(vehicle.getFuelTanks().size());
+            for (FuelTank fuelTank : vehicle.getFuelTanks()) {
+                existingFuelTanks.add(fuelTank);
+                displayNewFuelTank(fuelTank);
+            }
+        }
     }
 
     @Override
@@ -135,6 +162,9 @@ public class NewVehicleActivity extends BaseActivity{
         btnAddFuelTank = (Button) findViewById(R.id.btn_new_vehicle_add_ft);
         btnColor = (Button) findViewById(R.id.btn_new_vehicle_color);
         fuelTanks = new ArrayList<>();
+        Intent intent = getIntent();
+        vehicleId = intent.getStringExtra(RealmTable.ID);
+        myRealm = Realm.getDefaultInstance();
      }
 
     @Override
@@ -198,7 +228,18 @@ public class NewVehicleActivity extends BaseActivity{
         imgBtnRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fuelTanks.remove(fuelTank);
+                if (fuelTank.getId() != null) {
+                    myRealm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            vehicle.getFuelTanks()
+                                    .deleteFromRealm(existingFuelTanks.indexOf(fuelTank));
+                            existingFuelTanks.remove(fuelTank);
+                        }
+                    });
+                }else {
+                    fuelTanks.remove(fuelTank);
+                }
                 ((ViewGroup)view.getParent().getParent()).removeView((ViewGroup)view.getParent());
             }
         });
@@ -260,7 +301,7 @@ public class NewVehicleActivity extends BaseActivity{
             tilHorsePower.setError("No cubic centimeters value");
             valid = false;
         }
-        if (fuelTanks.size() < 1) {
+        if (fuelTanks.size() < 1 && existingFuelTanks.size() < 1) {
             valid = false;
             Snackbar snackbar = Snackbar
                     .make(llFuelTanks, "No fuel tank added", Snackbar.LENGTH_INDEFINITE);
@@ -276,12 +317,18 @@ public class NewVehicleActivity extends BaseActivity{
     }
 
     private void saveToRealm() {
-        myRealm = Realm.getDefaultInstance();
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Vehicle realmVehicle = realm.createObject(Vehicle.class,
-                        UUID.randomUUID().toString());
+                Vehicle realmVehicle;
+                if (vehicleId != null) {
+                    realmVehicle = realm.where(Vehicle.class)
+                            .equalTo(RealmTable.ID, vehicleId)
+                            .findFirst();
+                }else {
+                    realmVehicle = realm.createObject(Vehicle.class,
+                            UUID.randomUUID().toString());
+                }
                 String vehicleTypeName = spnVehicleType.getSelectedItem().toString();
                 VehicleType vehicleType = realm.where(VehicleType.class)
                         .equalTo(RealmTable.NAME, vehicleTypeName)
@@ -346,7 +393,11 @@ public class NewVehicleActivity extends BaseActivity{
             @Override
             public void onSuccess() {
                 myRealm.close();
-                showMessage("New vehicle added!");
+                if (vehicleId == null) {
+                    showMessage("New vehicle added!");
+                }else {
+                    showMessage("Vehicle updated!");
+                }
             }
         }, new Realm.Transaction.OnError() {
             @Override
