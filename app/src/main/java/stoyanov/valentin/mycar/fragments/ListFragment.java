@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import io.realm.Realm;
+import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
@@ -28,12 +30,12 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class ListFragment extends Fragment {
     private Realm myRealm;
-
     public ListFragment() {}
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        myRealm.removeAllChangeListeners();
         myRealm.close();
     }
 
@@ -47,17 +49,23 @@ public class ListFragment extends Fragment {
         Vehicle vehicle;
         myRealm = Realm.getDefaultInstance();
         View view = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
-        final RealmRecyclerView recyclerView = (RealmRecyclerView) view.findViewById(R.id.realm_recycler_view);
+        RealmRecyclerView recyclerView = (RealmRecyclerView) view.findViewById(R.id.realm_recycler_view);
         switch (id) {
             case R.id.nav_my_cars:
                 final RealmResults<Vehicle> vehicles = myRealm
                         .where(Vehicle.class)
                         .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
-                final VehicleRecyclerViewAdapter recyclerViewAdapter =
+                 final VehicleRecyclerViewAdapter recyclerViewAdapter =
                         new VehicleRecyclerViewAdapter(getContext(),
-                                vehicles, true, true);
-                recyclerViewAdapter.setViewForSnackbar(recyclerView);
+                                vehicles, false, true);
+                vehicles.addChangeListener(new RealmChangeListener<RealmResults<Vehicle>>() {
+                    @Override
+                    public void onChange(RealmResults<Vehicle> element) {
+                        recyclerViewAdapter.notifyDataSetChanged();
+                    }
+                });
                 recyclerView.setAdapter(recyclerViewAdapter);
+                recyclerViewAdapter.setViewForSnackbar(recyclerView);
                 break;
             case R.id.nav_services:
                 vehicleId = bundle.getString(RealmTable.ID);

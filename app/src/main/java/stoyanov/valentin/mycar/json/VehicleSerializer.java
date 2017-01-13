@@ -18,7 +18,7 @@ public class VehicleSerializer implements JsonSerializer<Vehicle>{
         jsonObject.addProperty(RealmTable.NAME, src.getName());
         jsonObject.addProperty(RealmTable.HORSE_POWER, src.getHorsePower());
         jsonObject.addProperty(RealmTable.CUBIC_CENTIMETERS, src.getCubicCentimeter());
-        jsonObject.addProperty(RealmTable.COLOR, src.getColor());
+        //jsonObject.addProperty(RealmTable.COLOR, src.getColor());
         jsonObject.addProperty(RealmTable.ODOMETER, src.getOdometer());
         jsonObject.addProperty(RealmTable.MANUFACTURE_DATE,
                 DateUtils.manufactureDateToString(src.getManufactureDate()));

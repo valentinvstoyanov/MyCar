@@ -14,4 +14,8 @@ public interface RealmTable {
     String MODEL = "model";
     String REGISTRATION_PLATE = "registrationPlate";
     String VIN_PLATE = "vinPlate";
+    String EXPENSES = "expenses";
+    String INSURANCES = "insurances";
+    String SERVICES = "services";
+    String REFUELINGS = "refuelings";
 }

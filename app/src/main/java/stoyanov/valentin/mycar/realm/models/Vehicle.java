@@ -11,7 +11,7 @@ public class Vehicle extends RealmObject {
     private String id;
     private String name;
     private Date manufactureDate;
-    private int color;
+    private Color color;
     private int horsePower;
     private int cubicCentimeter;
     private long odometer;
@@ -52,11 +52,11 @@ public class Vehicle extends RealmObject {
         this.manufactureDate = manufactureDate;
     }
 
-    public int getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 

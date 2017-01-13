@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputLayout
+        <!--<android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_insurance_date"
             android:layout_width="0dp"
             android:layout_weight="2"
@@ -30,7 +30,12 @@
                 android:hint="@string/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-        </android.support.design.widget.TextInputLayout>
+        </android.support.design.widget.TextInputLayout>-->
+
+        <include layout="@layout/til_date"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"/>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_insurance_time"
@@ -78,7 +83,7 @@
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 
-    <android.support.design.widget.TextInputLayout
+<!--    <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_insurance_odometer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -90,10 +95,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/odometer"/>
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
+
+    <include layout="@layout/til_odometer"/>
 
     <TextView
-        android:id="@+id/tv_new_insurance_last_odometer"
+        android:id="@+id/tv_new_insurance_current_odometer"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -112,7 +119,8 @@
             android:hint="@string/price"/>
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <include layout="@layout/til_note"/>
+<!--    <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_insurance_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -124,5 +132,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/notes"/>
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 </LinearLayout>

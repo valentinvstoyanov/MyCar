@@ -66,8 +66,9 @@
             android:hint="@string/car_model" />
     </android.support.design.widget.TextInputLayout>
 
+    <include layout="@layout/til_odometer" />
 
-    <android.support.design.widget.TextInputLayout
+ <!--   <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_vehicle_odometer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -79,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/odometer"/>
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_vehicle_horse_power"
@@ -110,7 +111,8 @@
             android:hint="@string/cubic_centimeters" />
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <include layout="@layout/til_date" />
+<!--    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/til_new_vehicle_manufacture_date">
@@ -120,7 +122,7 @@
             android:hint="@string/manifacture_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 
     <LinearLayout
         android:gravity="center_horizontal"
@@ -194,7 +196,8 @@
             android:hint="@string/vin_plate"/>
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <include layout="@layout/til_note" />
+<!--    <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_vehicle_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -206,5 +209,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/notes"/>
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 </LinearLayout>

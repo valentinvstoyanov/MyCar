@@ -20,22 +20,23 @@
     <color name="orange">#FF9800</color>
     <color name="brown">#795548</color>
     <color name="grey">#9E9E9E</color>
-    <color name="black">#000000</color>
+    <color name="black">#424242</color>
     <array name="vehicles_primary_colors">
-        <item>@color/colorTextIcons</item>
         <item>@color/red</item>
         <item>@color/pink</item>
         <item>@color/purple</item>
         <item>@color/blue</item>
+        <item>@color/black</item>
+        <item>@color/brown</item>
         <item>@color/green</item>
         <item>@color/yellow</item>
         <item>@color/orange</item>
-        <item>@color/brown</item>
         <item>@color/grey</item>
-        <item>@color/black</item>
+        <item>@color/colorTextIcons</item>
     </array>
 
     <!--ColorPicker colors dark-->
+    <color name="white_dark">#BDBDBD</color>
     <color name="red_dark">#B71C1C</color>
     <color name="pink_dark">#880E4F</color>
     <color name="purple_dark">#4A148C</color>
@@ -46,17 +47,17 @@
     <color name="brown_dark">#3E2723</color>
     <color name="black_dark">#000000</color>
     <array name="vehicles_dark_colors">
-        <item>@color/colorTextIcons</item>
         <item>@color/red_dark</item>
         <item>@color/pink_dark</item>
         <item>@color/purple_dark</item>
         <item>@color/blue_dark</item>
+        <item>@color/black_dark</item>
+        <item>@color/brown_dark</item>
         <item>@color/green_dark</item>
         <item>@color/yellow_dark</item>
         <item>@color/orange_dark</item>
-        <item>@color/brown_dark</item>
         <item>@color/colorPrimaryText</item>
-        <item>@color/black_dark</item>
+        <item>@color/white_dark</item>
     </array>
 
     <!--Welcome screens background colors-->

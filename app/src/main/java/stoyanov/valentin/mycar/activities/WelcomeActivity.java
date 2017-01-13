@@ -2,7 +2,9 @@ package stoyanov.valentin.mycar.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
@@ -19,16 +21,36 @@ import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.StringTokenizer;
+import java.util.UUID;
 
+import io.realm.Realm;
 import stoyanov.valentin.mycar.preferences.PreferenceManager;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.Color;
+import stoyanov.valentin.mycar.realm.models.ExpenseType;
+import stoyanov.valentin.mycar.realm.models.FuelType;
+import stoyanov.valentin.mycar.realm.models.Model;
+import stoyanov.valentin.mycar.realm.models.Note;
+import stoyanov.valentin.mycar.realm.models.ServiceType;
+import stoyanov.valentin.mycar.realm.models.Vehicle;
+import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
 import stoyanov.valentin.mycar.realm.repositories.IFuelTypeRepository;
 import stoyanov.valentin.mycar.realm.repositories.IVehicleTypeRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.FuelTypesRepository;
 import stoyanov.valentin.mycar.realm.repositories.impl.VehicleTypeRepository;
+import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.CsvUtils;
+import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.ImageViewUtils;
 
 public class WelcomeActivity extends BaseActivity
                         implements ViewPager.OnPageChangeListener{
@@ -46,79 +68,147 @@ public class WelcomeActivity extends BaseActivity
         if (!preferenceManager.isFirstLaunch()) {
             launchMainActivity();
             finish();
-        }
-        //new BrandRepository().deleteAllBrands();
-        setContentView(R.layout.activity_welcome);
-        setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.colorWelcome1, null));
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.pb_realm_seeding);
-        progressBar.setMax(100);
-        progressBar.getIndeterminateDrawable().setColorFilter(
-                ResourcesCompat.getColor(getResources(),
-                R.color.colorAccent, null), PorterDuff.Mode.MULTIPLY);
-        progressBar.setProgress(50);
-        Log.d("kur", "va");
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("kur", "va1");
-                final BrandRepository brandRepository = new BrandRepository();
-                InputStream inputStream = getResources().openRawResource(R.raw.brands);
-                String[] brandNames = CsvUtils.getParsedCsv(inputStream);
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        }else {
+            //new BrandRepository().deleteAllBrands();
+            setContentView(R.layout.activity_welcome);
+            setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.colorWelcome1, null));
+            final ProgressBar progressBar = (ProgressBar) findViewById(R.id.pb_realm_seeding);
+            progressBar.setMax(100);
+            progressBar.getIndeterminateDrawable().setColorFilter(
+                    ResourcesCompat.getColor(getResources(),
+                            R.color.colorAccent, null), PorterDuff.Mode.MULTIPLY);
+            progressBar.setProgress(50);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    InputStream inputStream = getResources().openRawResource(R.raw.brands);
+                    final String[] brandNames = CsvUtils.getParsedCsv(inputStream);
+                    inputStream = getResources().openRawResource(R.raw.service_types);
+                    final String[] serviceTypeNames = CsvUtils.getParsedCsv(inputStream);
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    progressBar.setProgress(20);
+                    final String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
+                    final String[] fuelTypes = getResources().getStringArray(R.array.fuel_types);
+                    final String[] fuelUnit = getResources().getStringArray(R.array.fuel_units);
+                    final TypedArray primaryColors = getResources().obtainTypedArray(R.array.vehicles_primary_colors);
+                    final TypedArray darkColors = getResources().obtainTypedArray(R.array.vehicles_dark_colors);
+                    final String[] expenseTypes = getResources().getStringArray(R.array.expense_types);
+                    Realm myRealm = Realm.getDefaultInstance();
+                    myRealm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            for (String brandName : brandNames) {
+                                Brand brand = realm.createObject(Brand.class,
+                                        UUID.randomUUID().toString());
+                                brand.setName(brandName);
+                            }
+                            progressBar.incrementProgressBy(10);
+                            for (String typeName : serviceTypeNames) {
+                                ServiceType serviceType = realm.createObject(ServiceType.class,
+                                        UUID.randomUUID().toString());
+                                serviceType.setName(typeName);
+                            }
+                            progressBar.incrementProgressBy(10);
+                            for (String typeName : vehicleTypes) {
+                                VehicleType vehicleType = realm.createObject(VehicleType.class,
+                                        UUID.randomUUID().toString());
+                                vehicleType.setName(typeName);
+                                vehicleType.setDrawableName(ImageViewUtils
+                                        .getDrawableNameByVehicleType(typeName));
+                            }
+                            progressBar.incrementProgressBy(20);
+                            for (String fuelName : fuelTypes) {
+                                FuelType fuelType = realm.createObject(FuelType.class,
+                                        UUID.randomUUID().toString());
+                                fuelType.setName(fuelName);
+                                String unit;
+                                if (fuelName.equals("Diesel") || fuelName.equals("Petrol")) {
+                                    unit = fuelUnit[0];
+                                }else {
+                                    if (fuelName.equals("Electric")) {
+                                        unit = fuelUnit[1];
+                                    }else {
+                                        unit = fuelUnit[2];
+                                    }
+                                }
+                                fuelType.setUnit(unit);
+                            }
+                            progressBar.incrementProgressBy(20);
+                            for (int i = 0; i < primaryColors.length(); i++) {
+                                Color color = realm.createObject(Color.class, UUID.randomUUID().toString());
+                                color.setColor(primaryColors.getColor(i, 0));
+                                color.setRelevantDarkColor(darkColors.getColor(i, 0));
+                                color.setTextIconsColor(ColorUtils
+                                        .pickColorByBackground(getApplicationContext(),
+                                                color.getColor()));
+                            }
+                            progressBar.incrementProgressBy(10);
+                            for (String expenseTypeName : expenseTypes) {
+                                ExpenseType expenseType = realm.createObject(ExpenseType.class,
+                                        UUID.randomUUID().toString());
+                                expenseType.setName(expenseTypeName);
+                            }
+                            progressBar.incrementProgressBy(10);
+                        }
+                    });
+                    primaryColors.recycle();
+                    darkColors.recycle();
+                    myRealm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            for (int i = 0; i < 90; i++) {
+                                Vehicle vehicle = realm.createObject(Vehicle.class, UUID.randomUUID().toString());
+                                Color color = realm.where(Color.class).findAll().get(2);
+                                vehicle.setColor(color);
+                                VehicleType vehicleType = realm.where(VehicleType.class)
+                                        .equalTo(RealmTable.NAME, "Car")
+                                        .findFirst();
+                                vehicle.setType(vehicleType);
+                                vehicle.setName(String.valueOf(Math.abs(new Random().nextInt())));
+                                vehicle.setManufactureDate(DateUtils.manufactureStringToDate("Jan 2016"));
+                                vehicle.setRegistrationPlate("asdasdsa");
+                                vehicle.setVinPlate("asdasdsa");
+                                vehicle.setOdometer(455);
+                                vehicle.setHorsePower(44);
+                                vehicle.setCubicCentimeter(1400);
+
+                                String brandName = "Abarth";
+                                Brand brand = realm.where(Brand.class).equalTo(RealmTable.NAME, brandName).findFirst();
+                                if (brand == null) {
+                                    brand = realm.createObject(Brand.class, UUID.randomUUID().toString());
+                                    brand.setName(brandName);
+                                }
+                                vehicle.setBrand(brand);
+
+                                String modelName = "A10";
+                                Model model = realm.where(Model.class).equalTo(RealmTable.NAME, modelName).findFirst();
+                                if (model == null) {
+                                    model = realm.createObject(Model.class, UUID.randomUUID().toString());
+                                    model.setName(modelName);
+                                }
+                                vehicle.setModel(model);
+                                String notes = "asdasdasdsadasdasdadjfhiweo;lkhqwit;qiowrelnfashdfiosdlcHIDOLhISOclZHDIasdihaosdlasdhinxzhOIxalsnaodlasdadalndkasdasdaldashidolnadhoialdashidoasdlnadhioasldahiodasldahsiodlahdiolnad";
+                                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
+                                note.setContent(notes);
+                                vehicle.setNote(note);
+                            }
+                        }
+                    });
+                    myRealm.close();
                 }
-                progressBar.setProgress(20);
-                brandRepository.addManyBrands(brandNames, new IBrandRepository.OnAddBrandListCallback() {
-                    @Override
-                    public void onSuccess() {
-                        progressBar.incrementProgressBy(40);
-                    }
-
-                    @Override
-                    public void onError() {
-                        progressBar.setProgress(1);
-                        Log.d("Error======","Brand !!");
-                    }
-                });
-                String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
-                VehicleTypeRepository vehicleTypeRepository = new VehicleTypeRepository();
-                vehicleTypeRepository.addManyVehicleTypes(vehicleTypes, new IVehicleTypeRepository.OnVehicleTypesAdded() {
-                    @Override
-                    public void onSuccess() {
-                        progressBar.incrementProgressBy(20);
-                    }
-
-                    @Override
-                    public void onError() {
-                        progressBar.setProgress(2);
-                        Log.d("Error======","VehicleType !!");
-                    }
-                });
-                String[] fuelTypes = getResources().getStringArray(R.array.fuel_types);
-                FuelTypesRepository fuelTypesRepository = new FuelTypesRepository();
-                fuelTypesRepository.addManyFuelTypes(fuelTypes, new IFuelTypeRepository.OnAddManyFuelTypesCallback() {
-                    @Override
-                    public void onSuccess() {
-                        progressBar.incrementProgressBy(20);
-                    }
-
-                    @Override
-                    public void onError() {
-                        progressBar.setProgress(3);
-                        Log.d("Error======","FuelType !!");
-                    }
-                });
-            }
-        });
-        thread.run();
-        initComponents();
-        setComponentListeners();
-        WelcomeViewPagerAdapter viewPagerAdapter = new WelcomeViewPagerAdapter();
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.addOnPageChangeListener(this);
-        addTabColors(0);
+            });
+            thread.run();
+            initComponents();
+            setComponentListeners();
+            WelcomeViewPagerAdapter viewPagerAdapter = new WelcomeViewPagerAdapter();
+            viewPager.setAdapter(viewPagerAdapter);
+            viewPager.addOnPageChangeListener(this);
+            addTabColors(0);
+        }
     }
 
     @Override

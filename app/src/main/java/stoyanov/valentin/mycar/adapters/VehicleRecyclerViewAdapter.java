@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,13 +16,16 @@ import android.widget.TextView;
 
 import io.realm.Realm;
 import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewVehicleActivity;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.ImageViewUtils;
 
 public class VehicleRecyclerViewAdapter extends
         RealmBasedRecyclerViewAdapter<Vehicle, VehicleRecyclerViewAdapter.ViewHolder> {
@@ -43,27 +48,9 @@ public class VehicleRecyclerViewAdapter extends
     @Override
     public void onBindRealmViewHolder(final ViewHolder viewHolder, final int position) {
         final Vehicle vehicle = realmResults.get(position);
-        viewHolder.relativeLayout.setBackgroundColor(vehicle.getColor());
-        Drawable drawable;
-        switch (vehicle.getType().getName()) {
-            case "Bus":
-                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
-                        R.drawable.ic_bus_black, null);
-                break;
-            case "Motorcycle":
-                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
-                        R.drawable.ic_motorcycle_black, null);
-                break;
-            case "Truck":
-                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
-                        R.drawable.ic_truck_black_24dp, null);
-                break;
-            default:
-                drawable = ResourcesCompat.getDrawable(getContext().getResources(),
-                        R.drawable.ic_car_black, null);
-                break;
-        }
-        viewHolder.imageView.setBackground(drawable);
+        viewHolder.relativeLayout.setBackgroundColor(vehicle.getColor().getColor());
+        viewHolder.imageView.setBackground(ImageViewUtils.getDrawableByVehicleType(vehicle
+                .getType().getName(), getContext(), vehicle.getColor().getTextIconsColor()));
         viewHolder.tvVehicleName.setText(vehicle.getName());
         String text = String.format("%s %s", vehicle.getBrand().getName(), vehicle.getModel().getName());
         viewHolder.tvVehicleBrandAndModel.setText(text);
@@ -80,27 +67,40 @@ public class VehicleRecyclerViewAdapter extends
 
     @Override
     public void onItemSwipedDismiss(final int position) {
-        final Vehicle vehicle = realmResults.get(position);
+        final Realm myRealm = Realm.getDefaultInstance();
+        final Vehicle vehicle = myRealm.copyFromRealm(realmResults.get(position));
+        super.onItemSwipedDismiss(position);
         String text = vehicle.getType().getName() + " " + vehicle.getName() + " deleted";
         Snackbar snackbar = Snackbar.make(viewForSnackbar, text, Snackbar.LENGTH_LONG);
         snackbar.setAction("Undo", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyItemChanged(position);
+                myRealm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.copyToRealmOrUpdate(vehicle);
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        myRealm.close();
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        myRealm.close();
+                        error.printStackTrace();
+                    }
+                });
             }
         });
         BaseTransientBottomBar.BaseCallback<Snackbar> callback = new BaseTransientBottomBar.BaseCallback<Snackbar>() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
-                    Realm myRealm = Realm.getDefaultInstance();
-                    myRealm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            vehicle.deleteFromRealm();
-                        }
-                    });
-                    myRealm.close();
+                    if (!myRealm.isClosed()) {
+                        myRealm.close();
+                    }
                 }
                 super.onDismissed(transientBottomBar, event);
             }

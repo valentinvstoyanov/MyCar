@@ -6,19 +6,22 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import java.util.Calendar;
+
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.receivers.NotificationReceiver;
 
 public abstract class BaseActivity extends AppCompatActivity {
     abstract protected void initComponents();
     abstract protected void setComponentListeners();
-
-    /*protected boolean isInputValid() {
-        return true;
-    }*/
 
     protected Notification newNotification(String title, String content, int smallIcon) {
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
@@ -49,7 +52,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
                 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pendingIntent);
+        Calendar calendar = Calendar.getInstance();
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis - calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    protected void setToolbarTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
     }
 
     public void showMessage(String message) {

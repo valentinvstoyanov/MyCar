@@ -24,12 +24,10 @@
 
             <ImageView
                 android:layout_gravity="center_horizontal|top"
-                app:srcCompat="@drawable/ic_car_black"
-                android:tint="@color/colorTextIcons"
                 android:id="@+id/imgv_view_vehicle_type"
                 android:scaleType="fitXY"
-                android:layout_width="@dimen/img_size"
-                android:layout_height="@dimen/img_size" />
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_view_vehicle"

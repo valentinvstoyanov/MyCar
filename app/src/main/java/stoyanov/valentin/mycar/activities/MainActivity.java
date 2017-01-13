@@ -131,14 +131,16 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_about) {
 
         }*/
-        Bundle bundle = new Bundle();
-        bundle.putInt(FRAGMENT_TYPE, id);
-        bundle.putString(RealmTable.ID,
-                results.get(spnChooseVehicle.getSelectedItemPosition()).getId());
-        Fragment fragment = new ListFragment();
-        fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_content_main, fragment).commit();
+        if (!results.isEmpty()) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(FRAGMENT_TYPE, id);
+            bundle.putString(RealmTable.ID,
+                    results.get(spnChooseVehicle.getSelectedItemPosition()).getId());
+            Fragment fragment = new ListFragment();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_content_main, fragment).commit();
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputLayout
+<!--        <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_expense_date"
             android:layout_width="0dp"
             android:layout_weight="2"
@@ -30,7 +30,12 @@
                 android:hint="@string/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-        </android.support.design.widget.TextInputLayout>
+        </android.support.design.widget.TextInputLayout>-->
+
+        <include layout="@layout/til_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_expense_time"
@@ -46,7 +51,9 @@
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <include layout="@layout/til_odometer" />
+
+<!--    <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_expense_odometer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -58,15 +65,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/odometer"/>
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 
     <TextView
-        android:id="@+id/tv_new_expense_last_odometer"
+        android:id="@+id/tv_new_expense_current_odometer"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <android.support.design.widget.TextInputLayout
+    <Spinner
+        android:id="@+id/spn_new_expense_type"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:popupBackground="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+  <!--  <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_expense_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -76,7 +90,7 @@
             android:hint="@string/expense_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_expense_price"
@@ -92,7 +106,9 @@
             android:hint="@string/price"/>
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <include layout="@layout/til_note" />
+
+<!--    <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_expense_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -104,6 +120,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/notes"/>
-    </android.support.design.widget.TextInputLayout>
+    </android.support.design.widget.TextInputLayout>-->
 </LinearLayout>
 

@@ -17,6 +17,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <View
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:background="@color/blue"/>
+
             <TextView
                 android:id="@+id/tv_row_refueling_fuel_type"
                 android:layout_alignParentTop="true"

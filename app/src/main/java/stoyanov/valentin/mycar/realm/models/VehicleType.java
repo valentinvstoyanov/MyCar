@@ -7,6 +7,7 @@ public class VehicleType extends RealmObject{
     @PrimaryKey
     private String id;
     private String name;
+    private String drawableName;
 
     public String getId() {
         return id;
@@ -22,5 +23,13 @@ public class VehicleType extends RealmObject{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDrawableName() {
+        return drawableName;
+    }
+
+    public void setDrawableName(String drawableName) {
+        this.drawableName = drawableName;
     }
 }
