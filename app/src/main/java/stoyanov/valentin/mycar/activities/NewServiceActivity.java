@@ -2,6 +2,7 @@ package stoyanov.valentin.mycar.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -74,10 +75,14 @@ public class NewServiceActivity extends NewBaseActivity {
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_service_price);
         tilType = (TextInputLayout) findViewById(R.id.til_new_service_type);
         toggleButton = (ToggleButton) findViewById(R.id.toggle_btn_new_service);
+        toggleButton.setChecked(true);
         llDateTimeNotification = (LinearLayout) findViewById(R.id.ll_date_time_notification);
         tilOdometerNotification = (TextInputLayout) findViewById(R.id.til_odometer_notification);
+        tilOdometerNotification.setVisibility(View.GONE);
         tilNotificationDate = (TextInputLayout) findViewById(R.id.til_new_service_notification_date);
         tilNotificationTime = (TextInputLayout) findViewById(R.id.til_new_service_notification_time);
+        setTextToTil(tilNotificationDate, DateUtils.dateToString(calendar.getTime()));
+        setTextToTil(tilNotificationTime, DateUtils.timeToString(calendar.getTime()));
         TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_service_current_odometer);
         setCurrentOdometer(tvCurrentOdometer);
         serviceId = getIntent().getStringExtra(RealmTable.SERVICES + RealmTable.ID);
@@ -102,14 +107,19 @@ public class NewServiceActivity extends NewBaseActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    setTextToTil(tilOdometerNotification, "");
+                    tilOdometerNotification.animate()
+                            .translationX(tilOdometerNotification.getWidth()).setDuration(200);
                     tilOdometerNotification.setVisibility(View.GONE);
+                    llDateTimeNotification.animate().translationX(0).setDuration(200);
                     llDateTimeNotification.setVisibility(View.VISIBLE);
                     Calendar calendar = Calendar.getInstance();
                     setTextToTil(tilNotificationDate, DateUtils.dateToString(calendar.getTime()));
                     setTextToTil(tilNotificationTime, DateUtils.timeToString(calendar.getTime()));
                 }else {
+                    llDateTimeNotification.animate()
+                            .translationX(llDateTimeNotification.getWidth()).setDuration(200);
                     llDateTimeNotification.setVisibility(View.GONE);
+                    tilOdometerNotification.animate().translationX(0).setDuration(200);
                     tilOdometerNotification.setVisibility(View.VISIBLE);
                 }
             }
@@ -142,10 +152,10 @@ public class NewServiceActivity extends NewBaseActivity {
             valid = false;
             tilPrice.setError("Price should be number");
         }
-        if (ValidationUtils.isInputValid(getTextFromTil(tilType))) {
+        /*if (ValidationUtils.isInputValid(getTextFromAutoComplete(tilType))) {
             valid = false;
             tilType.setError("Incorrect input");
-        }
+        }*/
         return result && valid;
     }
 
@@ -164,7 +174,7 @@ public class NewServiceActivity extends NewBaseActivity {
                     service = realm.createObject(Service.class, UUID.randomUUID().toString());
                 }
 
-                String serviceTypeValue = getTextFromTil(tilType);
+                String serviceTypeValue = getTextFromAutoComplete(tilType);
                 ServiceType type = realm.where(ServiceType.class)
                         .equalTo(RealmTable.NAME, serviceTypeValue).findFirst();
                 if (type == null) {

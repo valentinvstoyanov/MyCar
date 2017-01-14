@@ -78,8 +78,9 @@ public class NewRefuelingActivity extends NewBaseActivity{
         results = myRealm.where(Vehicle.class)
                 .equalTo(RealmTable.ID, getVehicleId())
                 .findFirst().getFuelTanks().where().findAll();
+        ArrayList<String> fuelTypeNames = getFuelTypeNamesFromResults();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                R.layout.textview_spinner, getFuelTypeNamesFromResults());
+                R.layout.textview_spinner, fuelTypeNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnFuelTanks.setAdapter(adapter);
         if (isUpdate()) {

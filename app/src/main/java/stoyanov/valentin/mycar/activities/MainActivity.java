@@ -2,20 +2,20 @@ package stoyanov.valentin.mycar.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
 import java.util.ArrayList;
-
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 import io.realm.Realm;
@@ -36,6 +36,8 @@ public class MainActivity extends BaseActivity
     private RealmResults<Vehicle> results;
     private ArrayAdapter<String> spinnerAdapter;
     private ArrayList<String> spinnerDataSet;
+    private DrawerLayout drawer;
+    private int menuId;
     private RealmChangeListener<RealmResults<Vehicle>> callback =
             new RealmChangeListener<RealmResults<Vehicle>>() {
                 @Override
@@ -57,17 +59,35 @@ public class MainActivity extends BaseActivity
         setComponentListeners();
     }
 
-    private ArrayList<String> getVehicleNamesFromResults() {
-        ArrayList<String> names = new ArrayList<>(results.size());
-        for (Vehicle vehicle : results) {
-            names.add(vehicle.getName());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        setToolbarTitle(item.getTitle().toString());
+        int id = item.getItemId();
+        menuId = id;
+        if (id == R.id.nav_my_cars) {
+            spnChooseVehicle.setVisibility(View.INVISIBLE);
+        }else{
+            spnChooseVehicle.setVisibility(View.VISIBLE);
         }
-        return names;
+        openFragment(id);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -83,81 +103,17 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_settings, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        getSupportActionBar().setTitle(item.getTitle());
-        int id = item.getItemId();
-        /*if (id == R.id.nav_my_cars) {
-
-        } else if (id == R.id.nav_services) {
-
-        } else if (id == R.id.nav_expenses) {
-
-        } else if (id == R.id.nav_refuelings) {
-
-        } else if (id == R.id.nav_insurances) {
-
-        } else if (id == R.id.nav_reminders) {
-
-        } else if (id == R.id.nav_statistics) {
-
-        } else if (id == R.id.nav_upcoming_events) {
-
-        } else if (id == R.id.nav_history) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_about) {
-
-        }*/
-        if (!results.isEmpty()) {
-            Bundle bundle = new Bundle();
-            bundle.putInt(FRAGMENT_TYPE, id);
-            bundle.putString(RealmTable.ID,
-                    results.get(spnChooseVehicle.getSelectedItemPosition()).getId());
-            Fragment fragment = new ListFragment();
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fl_content_main, fragment).commit();
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
     protected void initComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        spnChooseVehicle = (Spinner) findViewById(R.id.spn_main_choose_vehicle);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        spnChooseVehicle = (Spinner) findViewById(R.id.spn_main_choose_vehicle);
         myRealm = Realm.getDefaultInstance();
         results = myRealm.where(Vehicle.class)
                 .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
@@ -165,6 +121,8 @@ public class MainActivity extends BaseActivity
         spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_dropdown_item_1line, spinnerDataSet);
         results.addChangeListener(callback);
+        spnChooseVehicle.setSelection(0);
+        navigationView.getMenu().performIdentifierAction(R.id.nav_services, 0);
     }
 
     @Override
@@ -214,5 +172,39 @@ public class MainActivity extends BaseActivity
                 return false;
             }
         });
+        spnChooseVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                openFragment(menuId);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void openFragment(int id) {
+        String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
+        if (results != null && !results.isEmpty()) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(FRAGMENT_TYPE, id);
+            bundle.putString(RealmTable.ID, vehicleId);
+            Fragment fragment = new ListFragment();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_content_main, fragment)
+                    .commit();
+        }
+    }
+
+    private ArrayList<String> getVehicleNamesFromResults() {
+        ArrayList<String> names = new ArrayList<>(results.size());
+        for (Vehicle vehicle : results) {
+            names.add(vehicle.getName());
+        }
+        return names;
     }
 }

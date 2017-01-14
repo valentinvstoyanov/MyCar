@@ -85,7 +85,7 @@ public class ViewVehicleActivity extends BaseActivity {
         tvBrand.setText(vehicle.getBrand().getName());
         tvModel.setText(vehicle.getModel().getName());
         tvOdometer.setText(String.valueOf(vehicle.getOdometer()));
-        tvManufactureDate.setText(DateUtils.manufactureDateToString(vehicle.getManufactureDate()));
+        tvManufactureDate.setText(DateUtils.dateToString(vehicle.getManufactureDate()));
         tvHorsePower.setText(String.valueOf(vehicle.getHorsePower()));
         tvCubicCentimeters.setText(String.valueOf(vehicle.getCubicCentimeter()));
         tvRegistrationPlate.setText(vehicle.getRegistrationPlate());

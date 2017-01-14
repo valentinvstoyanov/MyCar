@@ -88,6 +88,7 @@ public class NewVehicleActivity extends NewBaseActivity{
         btnColor = (Button) findViewById(R.id.btn_new_vehicle_color);
         spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(),
                 R.array.vehicle_types, R.layout.textview_spinner);
+        spnVehicleType.setAdapter(spinnerAdapter);
         fuelTanks = new ArrayList<>();
         if (getVehicleId() != null) {
             setUpdate(true);
@@ -122,8 +123,8 @@ public class NewVehicleActivity extends NewBaseActivity{
     protected void setContent() {
         spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType().getName()));
         setTextToTil(tilName, vehicle.getName());
-        setTextToTil(tilBrand, vehicle.getBrand().getName());
-        setTextToTil(tilModel, vehicle.getModel().getName());
+        setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
+        setTextToAutoComplete(tilModel, vehicle.getModel().getName());
         setTextToTil(tilOdometer, String.valueOf(vehicle.getOdometer()));
         setTextToTil(tilHorsePower, String.valueOf(vehicle.getHorsePower()));
         setTextToTil(tilCubicCentimeters, String.valueOf(vehicle.getCubicCentimeter()));
@@ -147,11 +148,11 @@ public class NewVehicleActivity extends NewBaseActivity{
             tilName.setError("Incorrect vehicle name");
             valid = false;
         }
-        if (!ValidationUtils.isInputValid(getTextFromTil(tilBrand))) {
+        if (!ValidationUtils.isInputValid(getTextFromAutoComplete(tilBrand))) {
             tilBrand.setError("Incorrect vehicle brand");
             valid = false;
         }
-        if (!ValidationUtils.isInputValid(getTextFromTil(tilModel))) {
+        if (!ValidationUtils.isInputValid(getTextFromAutoComplete(tilModel))) {
             tilModel.setError("Incorrect vehicle model");
             valid = false;
         }
@@ -228,7 +229,7 @@ public class NewVehicleActivity extends NewBaseActivity{
                 realmVehicle.setType(vehicleType);
 
                 realmVehicle.setName(getTextFromTil(tilName));
-                realmVehicle.setManufactureDate(DateUtils.manufactureStringToDate(getTextFromTil(tilDate)));
+                realmVehicle.setManufactureDate(DateUtils.stringToDate(getTextFromTil(tilDate)));
 
                 ColorDrawable colorDrawable = (ColorDrawable) btnColor.getBackground();
                 Color color = realm.where(Color.class)
@@ -242,7 +243,7 @@ public class NewVehicleActivity extends NewBaseActivity{
                 realmVehicle.setHorsePower(Integer.parseInt(getTextFromTil(tilHorsePower)));
                 realmVehicle.setCubicCentimeter(Integer.parseInt(getTextFromTil(tilCubicCentimeters)));
 
-                String brandName = getTextFromTil(tilBrand);
+                String brandName = getTextFromAutoComplete(tilBrand);
                 Brand brand = realm.where(Brand.class)
                         .equalTo(RealmTable.NAME, brandName)
                         .findFirst();
@@ -252,7 +253,7 @@ public class NewVehicleActivity extends NewBaseActivity{
                 }
                 realmVehicle.setBrand(brand);
 
-                String modelName = getTextFromTil(tilModel);
+                String modelName = getTextFromAutoComplete(tilModel);
                 Model model = realm.where(Model.class)
                         .equalTo(RealmTable.NAME, modelName)
                         .findFirst();
@@ -296,7 +297,7 @@ public class NewVehicleActivity extends NewBaseActivity{
             @Override
             public void onError(Throwable error) {
                 showMessage("Something went wrong...");
-                new Exception(error).printStackTrace();
+                error.printStackTrace();
                 finish();
             }
         });

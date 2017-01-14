@@ -11,7 +11,7 @@ public class DateUtils {
 
     private static final String manufacturePattern = "MMM yyyy";
     private static final String pattern = "dd.MM.yyyy";
-    private static final String timePattern = "hh:mm";
+    private static final String timePattern = "HH:mm";
     private static final String datePattern = pattern + " " + timePattern;
 
     public static String manufactureDateToString(Date date) {

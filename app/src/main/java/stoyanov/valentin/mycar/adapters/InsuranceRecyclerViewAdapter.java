@@ -19,9 +19,15 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<Insurance,
         InsuranceRecyclerViewAdapter.ViewHolder> {
 
+    private int color;
+
     public InsuranceRecyclerViewAdapter(Context context, RealmResults<Insurance> realmResults,
                                         boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override
@@ -44,6 +50,8 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
 
         public ViewHolder(View itemView) {
             super(itemView);
+            View viewColor = itemView.findViewById(R.id.view_row_insurance_vehicle_color);
+            viewColor.setBackgroundColor(color);
             tvDate = (TextView) itemView.findViewById(R.id.tv_row_insurance_date);
             tvExpirationDate = (TextView) itemView.findViewById(R.id.tv_row_insurance_expiration_date);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_row_insurance_price);

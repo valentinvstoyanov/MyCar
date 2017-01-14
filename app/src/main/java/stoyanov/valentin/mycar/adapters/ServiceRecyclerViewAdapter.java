@@ -16,10 +16,15 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 public class ServiceRecyclerViewAdapter
                 extends RealmBasedRecyclerViewAdapter<Service, ServiceRecyclerViewAdapter.ViewHolder> {
 
+    private int color;
 
     public ServiceRecyclerViewAdapter(Context context, RealmResults<Service> realmResults,
                                       boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override
@@ -46,6 +51,8 @@ public class ServiceRecyclerViewAdapter
 
         public ViewHolder(View itemView) {
             super(itemView);
+            View viewColor = itemView.findViewById(R.id.view_row_service_vehicle_color);
+            viewColor.setBackgroundColor(color);
             tvType = (TextView) itemView.findViewById(R.id.tv_row_service_type);
             tvDatetime = (TextView) itemView.findViewById(R.id.tv_row_service_datetime);
             tvNotifDatetime = (TextView) itemView.findViewById(

@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -38,7 +39,7 @@ public abstract class NewBaseActivity extends BaseActivity {
 
     @Override
     protected void initComponents() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_save);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -84,6 +85,18 @@ public abstract class NewBaseActivity extends BaseActivity {
         if (tiEt != null) {
             tiEt.setText(text);
         }
+    }
+
+    protected void setTextToAutoComplete(TextInputLayout til, String text) {
+        AutoCompleteTextView acTv = (AutoCompleteTextView) til.getEditText();
+        if (acTv != null) {
+            acTv.setText(text);
+        }
+    }
+
+    protected String getTextFromAutoComplete(TextInputLayout til) {
+        AutoCompleteTextView acTv = (AutoCompleteTextView) til.getEditText();
+        return acTv != null ? acTv.getText().toString() : "";
     }
 
     protected String getTextFromTil(TextInputLayout til) {

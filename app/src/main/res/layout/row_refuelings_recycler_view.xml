@@ -8,7 +8,7 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="8dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardBackgroundColor="@color/cardview_light_background"
         card_view:cardElevation="2dp">
@@ -17,35 +17,49 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:background="@color/blue"/>
-
             <TextView
+                android:paddingTop="16dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:id="@+id/tv_row_refueling_fuel_type"
                 android:layout_alignParentTop="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/tv_row_refueling_quantity"
                 android:layout_below="@id/tv_row_refueling_fuel_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/tv_row_refueling_price"
                 android:layout_below="@id/tv_row_refueling_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/tv_row_refueling_fuel_price"
                 android:layout_below="@id/tv_row_refueling_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <View
+                android:id="@+id/view_row_refueling_vehicle_color"
+                android:layout_below="@+id/tv_row_refueling_fuel_price"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

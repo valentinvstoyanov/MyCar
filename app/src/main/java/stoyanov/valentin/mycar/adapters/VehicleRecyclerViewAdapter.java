@@ -54,7 +54,7 @@ public class VehicleRecyclerViewAdapter extends
         viewHolder.tvVehicleName.setText(vehicle.getName());
         String text = String.format("%s %s", vehicle.getBrand().getName(), vehicle.getModel().getName());
         viewHolder.tvVehicleBrandAndModel.setText(text);
-        viewHolder.tvVehicleManufactureDate.setText(DateUtils.manufactureDateToString(vehicle.getManufactureDate()));
+        viewHolder.tvVehicleManufactureDate.setText(DateUtils.dateToString(vehicle.getManufactureDate()));
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

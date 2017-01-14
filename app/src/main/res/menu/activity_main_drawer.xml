@@ -3,10 +3,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_my_cars"
-            android:icon="@drawable/ic_menu_car"
-            android:title="My cars" />
-        <item
             android:id="@+id/nav_services"
             android:icon="@drawable/ic_menu_service"
             android:title="Services" />
@@ -34,6 +30,10 @@
             android:id="@+id/nav_upcoming_events"
             android:icon="@drawable/ic_menu_upcoming_event"
             android:title="Upcoming events"/>
+        <item
+            android:id="@+id/nav_my_cars"
+            android:icon="@drawable/ic_menu_car"
+            android:title="My cars" />
     </group>
 
     <item android:title="Other">

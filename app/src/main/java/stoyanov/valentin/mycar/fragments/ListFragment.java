@@ -52,6 +52,7 @@ public class ListFragment extends Fragment {
         RealmRecyclerView recyclerView = (RealmRecyclerView) view.findViewById(R.id.realm_recycler_view);
         switch (id) {
             case R.id.nav_my_cars:
+
                 final RealmResults<Vehicle> vehicles = myRealm
                         .where(Vehicle.class)
                         .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
@@ -79,6 +80,7 @@ public class ListFragment extends Fragment {
                     ServiceRecyclerViewAdapter adapter =
                             new ServiceRecyclerViewAdapter(getContext()
                                     , services, true, true);
+                    adapter.setColor(vehicle.getColor().getColor());
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -94,6 +96,7 @@ public class ListFragment extends Fragment {
                     ExpenseRecyclerViewAdapter adapter =
                             new ExpenseRecyclerViewAdapter(getContext()
                                     , expenses, true, true);
+                    adapter.setColor(vehicle.getColor().getColor());
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -107,6 +110,7 @@ public class ListFragment extends Fragment {
                     RefuelingRecyclerViewAdapter adapter =
                             new RefuelingRecyclerViewAdapter(getContext(),
                                     refuelings, true, true);
+                    adapter.setColor(vehicle.getColor().getColor());
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -122,6 +126,7 @@ public class ListFragment extends Fragment {
                     InsuranceRecyclerViewAdapter adapter =
                             new InsuranceRecyclerViewAdapter(getContext(),
                                     insurances, true, true);
+                    adapter.setColor(vehicle.getColor().getColor());
                     recyclerView.setAdapter(adapter);
                 }
                 break;

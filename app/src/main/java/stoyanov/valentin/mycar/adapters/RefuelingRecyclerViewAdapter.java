@@ -20,8 +20,14 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<Refueling,
         RefuelingRecyclerViewAdapter.ViewHolder> {
 
+    private int color;
+
     public RefuelingRecyclerViewAdapter(Context context, RealmResults<Refueling> realmResults, boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override
@@ -49,6 +55,8 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
 
         public ViewHolder(View itemView) {
             super(itemView);
+            View viewColor = itemView.findViewById(R.id.view_row_refueling_vehicle_color);
+            viewColor.setBackgroundColor(color);
             tvFuelType = (TextView) itemView.findViewById(R.id.tv_row_refueling_fuel_type);
             tvFuelPrice = (TextView) itemView.findViewById(R.id.tv_row_refueling_fuel_price);
             tvQuantity = (TextView) itemView.findViewById(R.id.tv_row_refueling_quantity);
