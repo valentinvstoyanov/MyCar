@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.BaseActivity;
@@ -25,7 +28,9 @@ public class NewFuelTankDialog extends DialogFragment {
     private TextInputLayout tilFTConsumption;
     private Button btnAdd;
     private OnAddFuelTankListener listener;
+    private ArrayList<String> possibleFuelTypes;
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -55,9 +60,8 @@ public class NewFuelTankDialog extends DialogFragment {
 
     private void initComponents(View view) {
         spnFTfuelType = (Spinner) view.findViewById(R.id.spn_new_ft_fuel_type);
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter
-                .createFromResource(getContext(),
-                        R.array.fuel_types, R.layout.textview_spinner);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(),
+                R.layout.textview_spinner, possibleFuelTypes);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnFTfuelType.setAdapter(spinnerAdapter);
         tilFTCapacity = (TextInputLayout) view.findViewById(R.id.til_new_ft_capacity);
@@ -76,6 +80,10 @@ public class NewFuelTankDialog extends DialogFragment {
             tilFTConsumption.setError("Incorrect consumption");
         }
         return valid;
+    }
+
+    public void setPossibleFuelTypes(ArrayList<String> possibleFuelTypes) {
+        this.possibleFuelTypes = possibleFuelTypes;
     }
 
     public void setListener(OnAddFuelTankListener listener) {

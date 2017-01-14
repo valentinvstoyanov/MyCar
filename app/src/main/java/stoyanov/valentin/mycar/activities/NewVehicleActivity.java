@@ -1,6 +1,7 @@
 package stoyanov.valentin.mycar.activities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -342,17 +343,39 @@ public class NewVehicleActivity extends NewBaseActivity{
         return modelNames;
     }
 
-    private void addFuelTank() {
-        final NewFuelTankDialog fuelTankDialog = new NewFuelTankDialog();
-        fuelTankDialog.setListener(new NewFuelTankDialog.OnAddFuelTankListener() {
-            @Override
-            public void onAddFuelTank(FuelTank fuelTank) {
-                fuelTankDialog.dismiss();
-                fuelTanks.add(fuelTank);
-                displayNewFuelTank(fuelTank);
+    private ArrayList<String> getFuelTankFuelTypes() {
+        ArrayList<String> fuelTypes = new ArrayList<>();
+        for (FuelTank fuelTank : fuelTanks) {
+            fuelTypes.add(fuelTank.getFuelType().getName());
+        }
+        if (existingFuelTanks != null) {
+            for (FuelTank fuelTank : existingFuelTanks) {
+                fuelTypes.add(fuelTank.getFuelType().getName());
             }
-        });
-        fuelTankDialog.show(getSupportFragmentManager(), getString(R.string.new_fuel_tank));
+        }
+        return fuelTypes;
+    }
+
+    private void addFuelTank() {
+        ArrayList<String> fuelTypes = getFuelTankFuelTypes();
+        ArrayList<String> fuelTypesRes = new ArrayList<>(Arrays
+                .asList(getResources().getStringArray(R.array.fuel_types)));
+        if (fuelTypes.size() == fuelTypesRes.size()) {
+            showMessage("You have all possible fuel tank types");
+        }else {
+            fuelTypesRes.removeAll(fuelTypes);
+            final NewFuelTankDialog fuelTankDialog = new NewFuelTankDialog();
+            fuelTankDialog.setPossibleFuelTypes(fuelTypesRes);
+            fuelTankDialog.setListener(new NewFuelTankDialog.OnAddFuelTankListener() {
+                @Override
+                public void onAddFuelTank(FuelTank fuelTank) {
+                    fuelTankDialog.dismiss();
+                    fuelTanks.add(fuelTank);
+                    displayNewFuelTank(fuelTank);
+                }
+            });
+            fuelTankDialog.show(getSupportFragmentManager(), getString(R.string.new_fuel_tank));
+        }
     }
 
     private void displayNewFuelTank(final FuelTank fuelTank) {
