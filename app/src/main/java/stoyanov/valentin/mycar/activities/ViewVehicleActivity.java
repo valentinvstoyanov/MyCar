@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
-import stoyanov.valentin.mycar.utils.ColorUtils;
+
+import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
+
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -51,7 +52,7 @@ public class ViewVehicleActivity extends BaseActivity {
         }
     }
 
-    private void setContent() {
+    public void setContent() {
         Realm myRealm = Realm.getDefaultInstance();
         final Vehicle vehicle = myRealm.where(Vehicle.class)
                 .equalTo(RealmTable.ID, vehicleId)
@@ -124,7 +125,7 @@ public class ViewVehicleActivity extends BaseActivity {
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         imageView = (ImageView) findViewById(R.id.imgv_view_vehicle_type);
         tvBrand = (TextView) findViewById(R.id.tv_view_vehicle_brand);
         tvModel = (TextView) findViewById(R.id.tv_view_vehicle_model);
@@ -141,7 +142,7 @@ public class ViewVehicleActivity extends BaseActivity {
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_view_vehicle);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

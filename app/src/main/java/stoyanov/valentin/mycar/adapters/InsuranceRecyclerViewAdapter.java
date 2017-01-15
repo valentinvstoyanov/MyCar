@@ -1,6 +1,7 @@
 package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -39,19 +40,27 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
     @Override
     public void onBindRealmViewHolder(InsuranceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
         Insurance insurance = realmResults.get(position);
-        viewHolder.tvDate.setText(DateUtils.datetimeToString(insurance.getAction().getDate()));
-        viewHolder.tvExpirationDate.setText(DateUtils.datetimeToString(insurance.getExpirationDate()));
-        viewHolder.tvPrice.setText(MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));
+        String text = String.format(getContext().getString(R.string.date_placeholder),
+                DateUtils.datetimeToString(insurance.getAction().getDate()));
+        viewHolder.tvCompany.setText(insurance.getCompany().getName());
+        viewHolder.tvDate.setText(text);
+        text = String.format(getContext().getString(R.string.expiration_date_placeholder),
+                DateUtils.datetimeToString(insurance.getExpirationDate()));
+        viewHolder.tvExpirationDate.setText(text);
+        text = String.format(getContext().getString(R.string.price_placeholder),
+                MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));
+        viewHolder.tvPrice.setText(text);
     }
 
     public class ViewHolder extends RealmViewHolder{
 
-        public TextView tvDate, tvExpirationDate, tvPrice;
+        public TextView tvCompany, tvDate, tvExpirationDate, tvPrice;
 
         public ViewHolder(View itemView) {
             super(itemView);
             View viewColor = itemView.findViewById(R.id.view_row_insurance_vehicle_color);
             viewColor.setBackgroundColor(color);
+            tvCompany = (TextView) itemView.findViewById(R.id.tv_row_insurance_company);
             tvDate = (TextView) itemView.findViewById(R.id.tv_row_insurance_date);
             tvExpirationDate = (TextView) itemView.findViewById(R.id.tv_row_insurance_expiration_date);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_row_insurance_price);

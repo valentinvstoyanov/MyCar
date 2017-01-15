@@ -39,14 +39,21 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
     @Override
     public void onBindRealmViewHolder(RefuelingRecyclerViewAdapter.ViewHolder viewHolder, int position) {
         Refueling refueling = realmResults.get(position);
+        String text;
         Realm myRealm = Realm.getDefaultInstance();
-        viewHolder.tvFuelType.setText(myRealm.where(FuelTank.class).equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst().getFuelType().getName());
+        FuelTank fuelTank = myRealm.where(FuelTank.class)
+                .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();
+        viewHolder.tvFuelType.setText(fuelTank.getFuelType().getName());
+        text = fuelTank.getFuelType().getUnit();
         myRealm.close();
-        viewHolder.tvFuelPrice.setText(MoneyUtils
-                .longToString(new BigDecimal(refueling.getFuelPrice())));
-        viewHolder.tvQuantity.setText(String.valueOf(refueling.getQuantity()));
-        viewHolder.tvPrice.setText(MoneyUtils
-                .longToString(new BigDecimal(refueling.getAction().getPrice())));
+        text = String.format("%d %s", refueling.getQuantity(), text);
+        viewHolder.tvQuantity.setText(text);
+        text = String.format(getContext().getString(R.string.fuel_price_placeholder),
+                MoneyUtils.longToString(new BigDecimal(refueling.getFuelPrice())));
+        viewHolder.tvFuelPrice.setText(text);
+        text = String.format(getContext().getString(R.string.price_placeholder),
+                MoneyUtils.longToString(new BigDecimal(refueling.getAction().getPrice())));
+        viewHolder.tvPrice.setText(text);
     }
 
     public class ViewHolder extends RealmViewHolder{

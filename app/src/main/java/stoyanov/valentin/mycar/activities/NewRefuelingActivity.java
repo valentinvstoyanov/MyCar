@@ -18,6 +18,7 @@ import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Note;
@@ -27,7 +28,7 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
-public class NewRefuelingActivity extends NewBaseActivity{
+public class NewRefuelingActivity extends NewBaseActivity {
 
     private TextInputLayout tilTime, tilQuantity, tilPrice;
     private Spinner spnFuelTanks;
@@ -59,7 +60,7 @@ public class NewRefuelingActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         super.initComponents();
         tilDate.setHint("Date");
         tilTime = (TextInputLayout) findViewById(R.id.til_new_refueling_time);
@@ -89,7 +90,7 @@ public class NewRefuelingActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         super.setComponentListeners();
         addTimePickerListener(tilTime);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -109,7 +110,7 @@ public class NewRefuelingActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void setContent() {
+    public void setContent() {
         Refueling refueling = myRealm.where(Refueling.class)
                 .equalTo(RealmTable.ID, refuelingId)
                 .findFirst();
@@ -130,7 +131,7 @@ public class NewRefuelingActivity extends NewBaseActivity{
     }
 
     @Override
-    protected boolean isInputValid() {
+    public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
         if (!NumberUtils.isCreatable(getTextFromTil(tilPrice))) {
@@ -156,7 +157,7 @@ public class NewRefuelingActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void saveToRealm() {
+    public void saveToRealm() {
         final String fuelTankId = results.get(spnFuelTanks.getSelectedItemPosition()).getId();
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override

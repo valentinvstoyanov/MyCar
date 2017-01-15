@@ -1,4 +1,4 @@
-package stoyanov.valentin.mycar.activities;
+package stoyanov.valentin.mycar.activities.abstracts;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -7,38 +7,37 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Calendar;
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
-import stoyanov.valentin.mycar.utils.ValidationUtils;
 
-public abstract class NewBaseActivity extends BaseActivity {
+public abstract class NewBaseActivity extends BaseActivity
+                    implements INewBaseActivity{
 
     private boolean update = false;
     private String vehicleId;
     private long vehicleOdometer;
     protected Realm myRealm;
     protected TextInputLayout tilDate, tilOdometer, tilNote;
-
-    abstract protected void setContent();
-    abstract protected void saveToRealm();
+/*
+    abstract protected void saveToRealm();*/
+    /*abstract protected void setContent();
+    abstract protected void saveToRealm();*/
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_save);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -58,7 +57,7 @@ public abstract class NewBaseActivity extends BaseActivity {
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         addDatePickerListener(tilDate);
     }
 
@@ -156,7 +155,7 @@ public abstract class NewBaseActivity extends BaseActivity {
         }
     }
 
-    protected boolean isInputValid() {
+    public boolean isInputValid() {
         boolean valid = true;
         if (!NumberUtils.isCreatable(getTextFromTil(tilOdometer))) {
             valid = false;

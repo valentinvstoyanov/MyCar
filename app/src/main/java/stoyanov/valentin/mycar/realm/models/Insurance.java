@@ -12,6 +12,7 @@ public class Insurance extends RealmObject {
 //    private Location location;
     private Note note;
     private Date expirationDate;
+    private Company company;
 
     public String getId() {
         return id;
@@ -35,6 +36,14 @@ public class Insurance extends RealmObject {
 
     public void setNote(Note note) {
         this.note = note;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public Date getExpirationDate() {

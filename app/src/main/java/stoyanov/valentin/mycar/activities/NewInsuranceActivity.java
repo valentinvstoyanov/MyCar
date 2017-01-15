@@ -4,15 +4,25 @@ import android.app.Notification;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import org.apache.commons.lang3.math.NumberUtils;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
+import stoyanov.valentin.mycar.dialogs.NewCompanyDialog;
 import stoyanov.valentin.mycar.realm.models.Action;
+import stoyanov.valentin.mycar.realm.models.Company;
 import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
@@ -22,9 +32,13 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class NewInsuranceActivity extends NewBaseActivity {
 
+    private ImageButton imgBtnAddCompany;
+    private Spinner spnCompanies;
     private TextInputLayout tilTime, tilExpirationDate;
     private TextInputLayout tilExpirationTime, tilPrice;
     private String insuranceId;
+    private RealmResults<Company> results;
+    private ArrayAdapter<String> companiesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +64,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         super.initComponents();
         tilDate.setHint("Date");
         tilTime = (TextInputLayout) findViewById(R.id.til_new_insurance_time);
@@ -61,8 +75,15 @@ public class NewInsuranceActivity extends NewBaseActivity {
         calendar.add(Calendar.MINUTE, 5);
         setTextToTil(tilExpirationDate, DateUtils.dateToString(calendar.getTime()));
         setTextToTil(tilExpirationTime, DateUtils.timeToString(calendar.getTime()));
+        spnCompanies = (Spinner) findViewById(R.id.spn_new_insurance_company_name);
+        imgBtnAddCompany = (ImageButton) findViewById(R.id.img_btn_add_company);
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_insurance_price);
         insuranceId = getIntent().getStringExtra(RealmTable.INSURANCES + RealmTable.ID);
+        results = myRealm.where(Company.class).findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+        companiesAdapter = new ArrayAdapter<>(getApplicationContext(),
+                R.layout.textview_spinner, getCompanyNames());
+        companiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnCompanies.setAdapter(companiesAdapter);
         if (insuranceId != null) {
             setUpdate(true);
             setContent();
@@ -72,15 +93,35 @@ public class NewInsuranceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         super.setComponentListeners();
         addDatePickerListener(tilExpirationDate);
         addTimePickerListener(tilTime);
         addTimePickerListener(tilExpirationTime);
+        imgBtnAddCompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final NewCompanyDialog dialog = new NewCompanyDialog();
+                dialog.setListener(new NewCompanyDialog.OnAddNewCompanyListener() {
+                    @Override
+                    public void onAddCompany(String companyName) {
+                        dialog.dismiss();
+                        results = myRealm.where(Company.class).findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+                        ArrayList<String> spinnerDataSet = getCompanyNames();
+                        int index = spinnerDataSet.indexOf(companyName);
+                        companiesAdapter.clear();
+                        companiesAdapter.addAll(spinnerDataSet);
+                        companiesAdapter.notifyDataSetChanged();
+                        spnCompanies.setSelection(index);
+                    }
+                });
+                dialog.show(getSupportFragmentManager(), "NewCompany");
+            }
+        });
     }
 
     @Override
-    protected void setContent() {
+    public void setContent() {
         Insurance insurance = myRealm.where(Insurance.class)
                 .equalTo(RealmTable.ID, insuranceId).findFirst();
         setTextToTil(tilDate, DateUtils.dateToString(insurance.getAction().getDate()));
@@ -92,10 +133,11 @@ public class NewInsuranceActivity extends NewBaseActivity {
         setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(insurance.getAction()
                 .getPrice())));
         setTextToTil(tilNote, insurance.getNote().getContent());
+        spnCompanies.setSelection(results.indexOf(insurance.getCompany()));
     }
 
     @Override
-    protected boolean isInputValid() {
+    public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
         if (DateUtils.isDateInFuture(getTextFromTil(tilDate), getTextFromTil(tilTime))) {
@@ -115,7 +157,8 @@ public class NewInsuranceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void saveToRealm() {
+    public void saveToRealm() {
+        final String companyId = results.get(spnCompanies.getSelectedItemPosition()).getId();
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -126,6 +169,9 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 }else {
                     insurance = realm.createObject(Insurance.class, UUID.randomUUID().toString());
                 }
+
+                Company company = realm.where(Company.class).equalTo(RealmTable.ID, companyId).findFirst();
+                insurance.setCompany(company);
 
                 Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
                 note.setContent(getTextFromTil(tilNote));
@@ -182,5 +228,13 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 finish();
             }
         });
+    }
+
+    private ArrayList<String> getCompanyNames() {
+        ArrayList<String> names = new ArrayList<>(results.size());
+        for (Company company : results) {
+            names.add(company.getName());
+        }
+        return names;
     }
 }

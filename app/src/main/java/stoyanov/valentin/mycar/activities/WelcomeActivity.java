@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,18 +19,16 @@ import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 import io.realm.Realm;
+import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.preferences.PreferenceManager;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.Color;
+import stoyanov.valentin.mycar.realm.models.Company;
 import stoyanov.valentin.mycar.realm.models.ExpenseType;
 import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.realm.models.Model;
@@ -40,12 +36,6 @@ import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.models.VehicleType;
-import stoyanov.valentin.mycar.realm.repositories.IBrandRepository;
-import stoyanov.valentin.mycar.realm.repositories.IFuelTypeRepository;
-import stoyanov.valentin.mycar.realm.repositories.IVehicleTypeRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.BrandRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.FuelTypesRepository;
-import stoyanov.valentin.mycar.realm.repositories.impl.VehicleTypeRepository;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.CsvUtils;
@@ -85,6 +75,8 @@ public class WelcomeActivity extends BaseActivity
                     final String[] brandNames = CsvUtils.getParsedCsv(inputStream);
                     inputStream = getResources().openRawResource(R.raw.service_types);
                     final String[] serviceTypeNames = CsvUtils.getParsedCsv(inputStream);
+                    inputStream = getResources().openRawResource(R.raw.companies);
+                    final String[] companies = CsvUtils.getParsedCsv(inputStream);
                     try {
                         inputStream.close();
                     } catch (IOException e) {
@@ -120,7 +112,13 @@ public class WelcomeActivity extends BaseActivity
                                 vehicleType.setDrawableName(ImageViewUtils
                                         .getDrawableNameByVehicleType(typeName));
                             }
-                            progressBar.incrementProgressBy(20);
+                            progressBar.incrementProgressBy(10);
+                            for (String companyName : companies) {
+                                Company company = realm.createObject(Company.class,
+                                        UUID.randomUUID().toString());
+                                company.setName(companyName);
+                            }
+                            progressBar.incrementProgressBy(10);
                             for (String fuelName : fuelTypes) {
                                 FuelType fuelType = realm.createObject(FuelType.class,
                                         UUID.randomUUID().toString());

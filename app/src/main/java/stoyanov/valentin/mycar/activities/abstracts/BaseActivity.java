@@ -1,4 +1,4 @@
-package stoyanov.valentin.mycar.activities;
+package stoyanov.valentin.mycar.activities.abstracts;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
@@ -14,16 +15,23 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.Calendar;
 
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.MainActivity;
+import stoyanov.valentin.mycar.activities.interfaces.IBaseActivity;
 import stoyanov.valentin.mycar.receivers.NotificationReceiver;
 
-public abstract class BaseActivity extends AppCompatActivity {
-    abstract protected void initComponents();
+public abstract class BaseActivity extends AppCompatActivity
+                    implements IBaseActivity{
+
+/*    abstract protected void initComponents();
     abstract protected void setComponentListeners();
+    abstract protected void setContent();*/
 
     protected Notification newNotification(String title, String content, int smallIcon) {
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
@@ -77,6 +85,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(title);
+        }
+    }
+
+    private void setStatusBarColor(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(color);
         }
     }
 

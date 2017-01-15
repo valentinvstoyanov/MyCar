@@ -24,6 +24,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.dialogs.NewFuelTankDialog;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.Color;
@@ -37,7 +38,7 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
 
-public class NewVehicleActivity extends NewBaseActivity{
+public class NewVehicleActivity extends NewBaseActivity {
 
     private Spinner spnVehicleType;
     private ArrayAdapter<CharSequence> spinnerAdapter;
@@ -73,7 +74,7 @@ public class NewVehicleActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         super.initComponents();
         spnVehicleType = (Spinner) findViewById(R.id.spn_new_vehicle_type);
         tilName = (TextInputLayout) findViewById(R.id.til_new_vehicle_name);
@@ -110,7 +111,7 @@ public class NewVehicleActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         super.setComponentListeners();
         btnAddFuelTank.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +122,7 @@ public class NewVehicleActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void setContent() {
+    public void setContent() {
         spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType().getName()));
         setTextToTil(tilName, vehicle.getName());
         setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
@@ -142,7 +143,7 @@ public class NewVehicleActivity extends NewBaseActivity{
     }
 
     @Override
-    protected boolean isInputValid() {
+    public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
         if (!ValidationUtils.isInputValid(getTextFromTil(tilName))) {
@@ -208,7 +209,7 @@ public class NewVehicleActivity extends NewBaseActivity{
     }
 
     @Override
-    protected void saveToRealm() {
+    public void saveToRealm() {
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

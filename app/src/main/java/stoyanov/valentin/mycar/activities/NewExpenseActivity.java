@@ -18,9 +18,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.ExpenseType;
@@ -61,7 +60,7 @@ public class NewExpenseActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         super.initComponents();
         tilDate.setHint("Date");
         tilTime = (TextInputLayout) findViewById(R.id.til_new_expense_time);
@@ -86,13 +85,13 @@ public class NewExpenseActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         super.setComponentListeners();
         addTimePickerListener(tilTime);
     }
 
     @Override
-    protected void setContent() {
+    public void setContent() {
         Expense expense = myRealm.where(Expense.class)
                 .equalTo(RealmTable.ID, expenseId)
                 .findFirst();
@@ -107,7 +106,7 @@ public class NewExpenseActivity extends NewBaseActivity {
     }
 
     @Override
-    protected boolean isInputValid() {
+    public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
         if (DateUtils.isDateInFuture(getTextFromTil(tilDate), getTextFromTil(tilTime))) {
@@ -122,7 +121,7 @@ public class NewExpenseActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void saveToRealm() {
+    public void saveToRealm() {
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

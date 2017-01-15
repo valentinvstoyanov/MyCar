@@ -23,7 +23,9 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.fragments.ListFragment;
+import stoyanov.valentin.mycar.fragments.StatisticsFragment;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
@@ -31,6 +33,8 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String FRAGMENT_TYPE = "fragment_type";
+    public static final String STATISTIC_TYPE = "statistic_type";
+
     private Spinner spnChooseVehicle;
     private Realm myRealm;
     private RealmResults<Vehicle> results;
@@ -76,12 +80,30 @@ public class MainActivity extends BaseActivity
         setToolbarTitle(item.getTitle().toString());
         int id = item.getItemId();
         menuId = id;
-        if (id == R.id.nav_my_cars) {
-            spnChooseVehicle.setVisibility(View.INVISIBLE);
-        }else{
-            spnChooseVehicle.setVisibility(View.VISIBLE);
+        if(results != null && !results.isEmpty()) {
+            if (id == R.id.nav_my_cars) {
+                spnChooseVehicle.setVisibility(View.INVISIBLE);
+                openFragment(id);
+            }else {
+                if (id == R.id.nav_statistics) {
+                    String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
+                    if (results != null && !results.isEmpty()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(RealmTable.ID, vehicleId);
+                        bundle.putInt(STATISTIC_TYPE, Actions.SERVICE.ordinal());
+                        StatisticsFragment fragment = new StatisticsFragment();
+                        fragment.setArguments(bundle);
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_content_main, fragment)
+                                .commit();
+                    }
+                } else {
+                    spnChooseVehicle.setVisibility(View.VISIBLE);
+                    openFragment(id);
+                }
+            }
         }
-        openFragment(id);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -206,5 +228,9 @@ public class MainActivity extends BaseActivity
             names.add(vehicle.getName());
         }
         return names;
+    }
+
+    public enum Actions {
+        SERVICE, INSURANCE, EXPENSE, REFUELING
     }
 }

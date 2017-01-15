@@ -22,7 +22,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:id="@+id/tv_row_insurance_date"
+                android:id="@+id/tv_row_insurance_company"
                 android:layout_alignParentTop="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -30,7 +30,15 @@
             <TextView
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:id="@+id/tv_row_insurance_date"
+                android:layout_below="@id/tv_row_insurance_company"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/tv_row_insurance_expiration_date"
                 android:layout_below="@id/tv_row_insurance_date"

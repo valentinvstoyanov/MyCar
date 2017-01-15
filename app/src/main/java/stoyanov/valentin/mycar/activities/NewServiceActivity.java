@@ -2,7 +2,6 @@ package stoyanov.valentin.mycar.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,6 +20,7 @@ import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
 import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Service;
@@ -29,7 +29,6 @@ import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
-import stoyanov.valentin.mycar.utils.ValidationUtils;
 
 public class NewServiceActivity extends NewBaseActivity {
 
@@ -66,7 +65,7 @@ public class NewServiceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         super.initComponents();
         tilDate.setHint("Date");
         tilTime = (TextInputLayout) findViewById(R.id.til_new_service_time);
@@ -98,7 +97,7 @@ public class NewServiceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         super.setComponentListeners();
         addTimePickerListener(tilTime);
         addDatePickerListener(tilNotificationDate);
@@ -127,7 +126,7 @@ public class NewServiceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void setContent() {
+    public void setContent() {
         Service service = myRealm.where(Service.class)
                 .equalTo(RealmTable.ID, serviceId)
                 .findFirst();
@@ -141,7 +140,7 @@ public class NewServiceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected boolean isInputValid() {
+    public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
         if (DateUtils.isDateInFuture(getTextFromTil(tilDate), getTextFromTil(tilTime))) {
@@ -160,7 +159,7 @@ public class NewServiceActivity extends NewBaseActivity {
     }
 
     @Override
-    protected void saveToRealm() {
+    public void saveToRealm() {
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
