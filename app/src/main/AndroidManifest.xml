@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="stoyanov.valentin.mycar">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
     <application
         android:name=".app.MyApplication"
         android:allowBackup="true"
@@ -53,7 +56,17 @@
         <receiver
             android:name=".receivers.NotificationReceiver"
             android:enabled="true"
-            android:exported="false"></receiver>
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.ViewActivity"
+            android:label="@string/title_activity_view"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="stoyanov.valentin.mycar.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

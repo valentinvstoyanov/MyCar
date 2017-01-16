@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
@@ -131,6 +132,7 @@ public class NewExpenseActivity extends NewBaseActivity {
                             .findFirst();
                     expense.getNote().deleteFromRealm();
                     expense.getAction().deleteFromRealm();
+                    Log.d("update", "execute: ");
                 }else {
                     expense = realm.createObject(Expense.class, UUID.randomUUID().toString());
                 }
@@ -157,19 +159,27 @@ public class NewExpenseActivity extends NewBaseActivity {
                 action.setPrice(price);
                 expense.setAction(action);
 
-                Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
-                        .findFirst();
-                vehicle.getExpenses().add(expense);
                 if (!isUpdate()) {
+                    Vehicle vehicle = realm.where(Vehicle.class)
+                            .equalTo(RealmTable.ID, getVehicleId())
+                            .findFirst();
                     vehicle.setOdometer(odometer);
+                    vehicle.getExpenses().add(expense);
                 }
-                Log.d("asd " + expense.getType().getName(), "execute: ");
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                showMessage("New expense saved!");
+                if (isUpdate()) {
+                    showMessage("Expense updated!");
+                    Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
+                    intent.putExtra(RealmTable.ID, getVehicleId());
+                    intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expenseId);
+                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
+                    startActivity(intent);
+                }else {
+                    showMessage("New expense saved!");
+                }
                 finish();
             }
         }, new Realm.Transaction.OnError() {

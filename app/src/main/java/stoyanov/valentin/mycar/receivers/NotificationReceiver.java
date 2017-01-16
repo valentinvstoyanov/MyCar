@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
@@ -17,6 +18,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = intent.getParcelableExtra(NOTIFICATION);
         int id = (int) intent.getLongExtra(NOTIFICATION_ID, 0);
+        Log.d("RECEIVER : ", "WE RECEIVED  !");
         notificationManager.notify(id, notification);
     }
 }

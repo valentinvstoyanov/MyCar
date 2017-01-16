@@ -34,7 +34,7 @@
     <string name="vin_plate">VIN plate</string>
     <string name="date">Date</string>
     <string name="price">Price</string>
-    <string name="company_name">Company name</string>
+    <string name="company_name">Company</string>
     <string name="expiration_date">Expiration date</string>
     <string name="notification_date">Target date</string>
     <string name="gas_station_name">Gas station name</string>
@@ -111,4 +111,5 @@
     <string name="target_odometer">Target odometer</string>
     <string name="notification_time">Target time</string>
     <string name="new_company">New company</string>
+    <string name="title_activity_view">ViewActivity</string>
 </resources>

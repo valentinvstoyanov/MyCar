@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
@@ -76,6 +77,7 @@ public class NewRefuelingActivity extends NewBaseActivity {
         if (refuelingId != null) {
             setUpdate(true);
         }
+        Log.d(getVehicleId(), "initComponents: ");
         results = myRealm.where(Vehicle.class)
                 .equalTo(RealmTable.ID, getVehicleId())
                 .findFirst().getFuelTanks().where().findAll();
@@ -124,7 +126,6 @@ public class NewRefuelingActivity extends NewBaseActivity {
             toggleButton.setChecked(true);
         }else{
             toggleButton.setChecked(false);
-            setTextToTil(tilQuantity, String.valueOf(tilQuantity));
         }
         setTextToTil(tilQuantity, String.valueOf(tilQuantity));
         setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(refueling.getAction().getPrice())));
@@ -197,11 +198,11 @@ public class NewRefuelingActivity extends NewBaseActivity {
                 refueling.setQuantity(Integer.parseInt(quantity));
                 refueling.setFuelTankId(fuelTankId);
 
-                Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
-                        .findFirst();
-                vehicle.getRefuelings().add(refueling);
                 if (!isUpdate()) {
+                    Vehicle vehicle = realm.where(Vehicle.class)
+                            .equalTo(RealmTable.ID, getVehicleId())
+                            .findFirst();
+                    vehicle.getRefuelings().add(refueling);
                     vehicle.setOdometer(odometer);
                 }
             }
@@ -210,7 +211,12 @@ public class NewRefuelingActivity extends NewBaseActivity {
             public void onSuccess() {
                 if (isUpdate()) {
                     showMessage("Refueling updated!");
-                } else {
+                    Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
+                    intent.putExtra(RealmTable.ID, getVehicleId());
+                    intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refuelingId);
+                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
+                    startActivity(intent);
+                }else {
                     showMessage("New refueling saved!");
                 }
                 finish();

@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
@@ -205,6 +205,11 @@ public class MainActivity extends BaseActivity
 
             }
         });
+    }
+
+    @Override
+    public void setContent() {
+
     }
 
     private void openFragment(int id) {

@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context="stoyanov.valentin.mycar.activities.NewServiceActivity">
 
-    <include layout="@layout/toolbar_save" />
+    <include layout="@layout/toolbar" />
 <!--    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

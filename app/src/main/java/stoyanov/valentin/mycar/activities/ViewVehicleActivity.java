@@ -1,5 +1,7 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Set;
+
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
@@ -27,6 +33,7 @@ import stoyanov.valentin.mycar.utils.ImageViewUtils;
 
 public class ViewVehicleActivity extends BaseActivity {
 
+    private static final int REQUEST_ENABLE_BT = 1;
     private ImageView imageView;
     private TextView tvBrand, tvModel, tvOdometer, tvManufactureDate;
     private TextView tvHorsePower, tvCubicCentimeters, tvRegistrationPlate;
@@ -120,8 +127,51 @@ public class ViewVehicleActivity extends BaseActivity {
         if(item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
+        }else {
+            //add icon
+            if (false) {
+                BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (bluetoothAdapter == null) {
+                    // Device does not support Bluetooth
+                    showMessage("Device does not support Bluetooth");
+                }else {
+                    if (!bluetoothAdapter.isEnabled()) {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    }
+
+                    Intent discoverableIntent = new Intent(
+                            BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    discoverableIntent.putExtra(
+                            BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 180);
+                    startActivity(discoverableIntent);
+
+                    Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+                    ArrayList<String> bluetoothDeviceNames = new ArrayList<>(pairedDevices.size());
+                    if (pairedDevices.size() > 0) {
+                        // There are paired devices. Get the name and address of each paired device.
+                        for (BluetoothDevice device : pairedDevices) {
+                            String deviceName = device.getName();
+                            bluetoothDeviceNames.add(deviceName);
+                            //String deviceHardwareAddress = device.getAddress(); // MAC address
+                        }
+                    }
+                }
+            }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_ENABLE_BT) {
+                showMessage("Bluetooth enabled");
+            }else if (requestCode == 180) {
+                showMessage("Device discoverable for 180 seconds");
+            }
+        }
     }
 
     @Override

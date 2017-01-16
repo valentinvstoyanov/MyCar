@@ -210,7 +210,7 @@ public class WelcomeActivity extends BaseActivity
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         viewPager = (ViewPager) findViewById(R.id.vp_welcome);
         buttonNext = (Button) findViewById(R.id.btn_welcome_next);
         tab1 = findViewById(R.id.view_welcome1);
@@ -224,7 +224,7 @@ public class WelcomeActivity extends BaseActivity
     }
 
     @Override
-    protected void setComponentListeners() {
+    public void setComponentListeners() {
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,6 +237,11 @@ public class WelcomeActivity extends BaseActivity
                 }
             }
         });
+    }
+
+    @Override
+    public void setContent() {
+
     }
 
     private void setStatusBarColor(int color) {

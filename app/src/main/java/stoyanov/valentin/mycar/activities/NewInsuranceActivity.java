@@ -1,6 +1,7 @@
 package stoyanov.valentin.mycar.activities;
 
 import android.app.Notification;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.view.MenuItem;
@@ -194,12 +195,12 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 insurance.setExpirationDate(DateUtils.stringToDatetime(getTextFromTil(tilExpirationDate),
                         getTextFromTil(tilExpirationTime)));
 
-                Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
-                        .findFirst();
-                vehicle.getInsurances().add(insurance);
                 if (!isUpdate()) {
+                    Vehicle vehicle = realm.where(Vehicle.class)
+                            .equalTo(RealmTable.ID, getVehicleId())
+                            .findFirst();
                     vehicle.setOdometer(odometer);
+                    vehicle.getInsurances().add(insurance);
                 }
             }
         }, new Realm.Transaction.OnSuccess() {
@@ -215,6 +216,11 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 addNotification(notification, calendar.getTimeInMillis());
                 if (isUpdate()) {
                     showMessage("Insurance updated!");
+                    Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
+                    intent.putExtra(RealmTable.ID, getVehicleId());
+                    intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insuranceId);
+                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
+                    startActivity(intent);
                 }else {
                     showMessage("New insurance saved!");
                 }

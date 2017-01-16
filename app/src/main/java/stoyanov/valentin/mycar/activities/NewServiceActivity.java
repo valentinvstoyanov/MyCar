@@ -1,7 +1,9 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -87,6 +89,7 @@ public class NewServiceActivity extends NewBaseActivity {
         serviceId = getIntent().getStringExtra(RealmTable.SERVICES + RealmTable.ID);
         if(serviceId != null) {
             setUpdate(true);
+            setContent();
         }
         results = myRealm.where(ServiceType.class).findAll();
         AutoCompleteTextView actvType = (AutoCompleteTextView) findViewById(R.id.actv_new_service_type);
@@ -130,7 +133,7 @@ public class NewServiceActivity extends NewBaseActivity {
         Service service = myRealm.where(Service.class)
                 .equalTo(RealmTable.ID, serviceId)
                 .findFirst();
-        setTextToTil(tilType, service.getType().getName());
+        setTextToAutoComplete(tilType, service.getType().getName());
         setTextToTil(tilDate, DateUtils.dateToString(service.getAction().getDate()));
         setTextToTil(tilTime, DateUtils.timeToString(service.getAction().getDate()));
         setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(service.getAction().getPrice())));
@@ -202,11 +205,11 @@ public class NewServiceActivity extends NewBaseActivity {
                 action.setPrice(price);
                 service.setAction(action);
 
-                Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
-                        .findFirst();
-                vehicle.getServices().add(service);
                 if (!isUpdate()) {
+                    Vehicle vehicle = realm.where(Vehicle.class)
+                            .equalTo(RealmTable.ID, getVehicleId())
+                            .findFirst();
+                    vehicle.getServices().add(service);
                     vehicle.setOdometer(odometer);
                 }
             }
@@ -215,6 +218,11 @@ public class NewServiceActivity extends NewBaseActivity {
             public void onSuccess() {
                 if (isUpdate()) {
                     showMessage("Service updated!");
+                    Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
+                    intent.putExtra(RealmTable.ID, getVehicleId());
+                    intent.putExtra(RealmTable.SERVICES + RealmTable.ID, serviceId);
+                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                    startActivity(intent);
                 }else {
                     showMessage("New service saved!");
                 }

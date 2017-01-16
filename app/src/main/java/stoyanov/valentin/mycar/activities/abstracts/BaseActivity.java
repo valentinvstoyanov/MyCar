@@ -61,7 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity
         notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, System.currentTimeMillis());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
                 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);*/
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        /*AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         NotificationReceiver receiver = new NotificationReceiver();
         IntentFilter filter = new IntentFilter("ALARM_ACTION");
         registerReceiver(receiver, filter);
@@ -72,13 +72,23 @@ public abstract class BaseActivity extends AppCompatActivity
         PendingIntent operation = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + triggerAtMillis,
                 operation);
-        Log.d("asd", "addNotification: " + System.currentTimeMillis() + ", " + triggerAtMillis);
+        Log.d("asd", "addNotification: " + System.currentTimeMillis() + ", " + triggerAtMillis);*/
         // I choose 3s after the launch of my application
        /* alarms.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+3000, operation) ;
         Calendar calendar = Calendar.getInstance();
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis - calendar.getTimeInMillis(), pendingIntent);
         */
+
+        Intent notificationIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
+        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION, notification);
+        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, System.currentTimeMillis());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
+                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
     }
 
     protected void setToolbarTitle(String title) {

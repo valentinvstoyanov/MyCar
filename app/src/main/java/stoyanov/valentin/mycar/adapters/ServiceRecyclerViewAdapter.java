@@ -1,6 +1,7 @@
 package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -9,7 +10,9 @@ import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.Service;
+import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
@@ -17,6 +20,7 @@ public class ServiceRecyclerViewAdapter
                 extends RealmBasedRecyclerViewAdapter<Service, ServiceRecyclerViewAdapter.ViewHolder> {
 
     private int color;
+    private String vehicleId;
 
     public ServiceRecyclerViewAdapter(Context context, RealmResults<Service> realmResults,
                                       boolean automaticUpdate, boolean animateResults) {
@@ -27,6 +31,10 @@ public class ServiceRecyclerViewAdapter
         this.color = color;
     }
 
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
     @Override
     public ServiceRecyclerViewAdapter.ViewHolder onCreateRealmViewHolder(ViewGroup viewGroup, int i) {
         View view = inflater.inflate(R.layout.row_properties_recycler_view, viewGroup, false);
@@ -35,14 +43,23 @@ public class ServiceRecyclerViewAdapter
 
     @Override
     public void onBindRealmViewHolder(ServiceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
-        Service service = realmResults.get(position);
+        final Service service = realmResults.get(position);
         viewHolder.tvType.setText(service.getType().getName());
         viewHolder.tvDatetime.setText(DateUtils
                 .datetimeToString(service.getAction().getDate()));
         viewHolder.tvNotifDatetime.setText("PROVIDE ME NOTIFDATE");
         viewHolder.tvPrice.setText(MoneyUtils
                 .longToString(new BigDecimal(service.getAction().getPrice())));
-        //click listener => dialog
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ViewActivity.class);
+                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
+                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                getContext().startActivity(intent);
+            }
+        });
     }
 
     public class ViewHolder extends RealmViewHolder{

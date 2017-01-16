@@ -1,6 +1,7 @@
 package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,10 @@ import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.Insurance;
+import stoyanov.valentin.mycar.realm.models.Service;
+import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
@@ -21,6 +25,7 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         InsuranceRecyclerViewAdapter.ViewHolder> {
 
     private int color;
+    private String vehicleId;
 
     public InsuranceRecyclerViewAdapter(Context context, RealmResults<Insurance> realmResults,
                                         boolean automaticUpdate, boolean animateResults) {
@@ -31,6 +36,10 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         this.color = color;
     }
 
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
     @Override
     public InsuranceRecyclerViewAdapter.ViewHolder onCreateRealmViewHolder(ViewGroup viewGroup, int i) {
         View view = inflater.inflate(R.layout.row_insurances_recycler_view, viewGroup, false);
@@ -39,7 +48,7 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
 
     @Override
     public void onBindRealmViewHolder(InsuranceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
-        Insurance insurance = realmResults.get(position);
+        final Insurance insurance = realmResults.get(position);
         String text = String.format(getContext().getString(R.string.date_placeholder),
                 DateUtils.datetimeToString(insurance.getAction().getDate()));
         viewHolder.tvCompany.setText(insurance.getCompany().getName());
@@ -50,6 +59,16 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         text = String.format(getContext().getString(R.string.price_placeholder),
                 MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));
         viewHolder.tvPrice.setText(text);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ViewActivity.class);
+                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
+                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
+                getContext().startActivity(intent);
+            }
+        });
     }
 
     public class ViewHolder extends RealmViewHolder{

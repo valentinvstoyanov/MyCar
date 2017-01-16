@@ -77,10 +77,17 @@ public class ListFragment extends Fragment {
                     RealmResults<Service> services = vehicle.getServices()
                             .where()
                             .findAllAsync();
-                    ServiceRecyclerViewAdapter adapter =
+                    final ServiceRecyclerViewAdapter adapter =
                             new ServiceRecyclerViewAdapter(getContext()
-                                    , services, true, true);
+                                    , services, false, true);
+                    services.addChangeListener(new RealmChangeListener<RealmResults<Service>>() {
+                        @Override
+                        public void onChange(RealmResults<Service> element) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                     adapter.setColor(vehicle.getColor().getColor());
+                    adapter.setVehicleId(vehicleId);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -93,10 +100,17 @@ public class ListFragment extends Fragment {
                     RealmResults<Expense> expenses = vehicle.getExpenses()
                             .where()
                             .findAllAsync();
-                    ExpenseRecyclerViewAdapter adapter =
+                    final ExpenseRecyclerViewAdapter adapter =
                             new ExpenseRecyclerViewAdapter(getContext()
-                                    , expenses, true, true);
+                                    , expenses, false, true);
+                    expenses.addChangeListener(new RealmChangeListener<RealmResults<Expense>>() {
+                        @Override
+                        public void onChange(RealmResults<Expense> element) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                     adapter.setColor(vehicle.getColor().getColor());
+                    adapter.setVehicleId(vehicleId);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -107,10 +121,17 @@ public class ListFragment extends Fragment {
                         .findFirst();
                 if (vehicle != null) {
                     RealmResults<Refueling> refuelings = vehicle.getRefuelings().where().findAllAsync();
-                    RefuelingRecyclerViewAdapter adapter =
+                    final RefuelingRecyclerViewAdapter adapter =
                             new RefuelingRecyclerViewAdapter(getContext(),
-                                    refuelings, true, true);
+                                    refuelings, false, true);
+                    refuelings.addChangeListener(new RealmChangeListener<RealmResults<Refueling>>() {
+                        @Override
+                        public void onChange(RealmResults<Refueling> element) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                     adapter.setColor(vehicle.getColor().getColor());
+                    adapter.setVehicleId(vehicleId);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -123,10 +144,17 @@ public class ListFragment extends Fragment {
                     RealmResults<Insurance> insurances = vehicle.getInsurances()
                             .where()
                             .findAllAsync();
-                    InsuranceRecyclerViewAdapter adapter =
+                    final InsuranceRecyclerViewAdapter adapter =
                             new InsuranceRecyclerViewAdapter(getContext(),
-                                    insurances, true, true);
+                                    insurances, false, true);
+                    insurances.addChangeListener(new RealmChangeListener<RealmResults<Insurance>>() {
+                        @Override
+                        public void onChange(RealmResults<Insurance> element) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                     adapter.setColor(vehicle.getColor().getColor());
+                    adapter.setVehicleId(vehicleId);
                     recyclerView.setAdapter(adapter);
                 }
                 break;

@@ -1,6 +1,7 @@
 package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,8 +13,10 @@ import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Refueling;
+import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
@@ -21,6 +24,7 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         RefuelingRecyclerViewAdapter.ViewHolder> {
 
     private int color;
+    private String vehicleId;
 
     public RefuelingRecyclerViewAdapter(Context context, RealmResults<Refueling> realmResults, boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
@@ -28,6 +32,10 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
     }
 
     @Override
@@ -38,7 +46,7 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
 
     @Override
     public void onBindRealmViewHolder(RefuelingRecyclerViewAdapter.ViewHolder viewHolder, int position) {
-        Refueling refueling = realmResults.get(position);
+        final Refueling refueling = realmResults.get(position);
         String text;
         Realm myRealm = Realm.getDefaultInstance();
         FuelTank fuelTank = myRealm.where(FuelTank.class)
@@ -54,6 +62,16 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         text = String.format(getContext().getString(R.string.price_placeholder),
                 MoneyUtils.longToString(new BigDecimal(refueling.getAction().getPrice())));
         viewHolder.tvPrice.setText(text);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ViewActivity.class);
+                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
+                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
+                getContext().startActivity(intent);
+            }
+        });
     }
 
     public class ViewHolder extends RealmViewHolder{

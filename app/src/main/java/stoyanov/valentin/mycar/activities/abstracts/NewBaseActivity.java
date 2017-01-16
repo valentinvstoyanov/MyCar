@@ -38,7 +38,7 @@ public abstract class NewBaseActivity extends BaseActivity
 
     @Override
     public void initComponents() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_save);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
