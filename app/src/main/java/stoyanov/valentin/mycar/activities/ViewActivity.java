@@ -3,10 +3,7 @@ package stoyanov.valentin.mycar.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -95,7 +92,7 @@ public class ViewActivity extends BaseActivity {
                 displayView(getString(R.string.date),
                         DateUtils.datetimeToString(insurance.getAction().getDate()));
                 displayView(getString(R.string.expiration_date),
-                        DateUtils.datetimeToString(insurance.getExpirationDate()));
+                        DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()));
                 displayView(getString(R.string.company_name), insurance.getCompany().getName());
                 displayView(getString(R.string.odometer),
                         String.valueOf(insurance.getAction().getOdometer()));

@@ -54,7 +54,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
-            android:name=".receivers.NotificationReceiver"
+            android:name=".broadcasts.NotificationReceiver"
             android:enabled="true"
             android:exported="false" />
 

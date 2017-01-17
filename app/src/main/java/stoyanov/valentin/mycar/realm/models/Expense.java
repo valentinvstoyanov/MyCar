@@ -1,7 +1,5 @@
 package stoyanov.valentin.mycar.realm.models;
 
-import java.util.Date;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 

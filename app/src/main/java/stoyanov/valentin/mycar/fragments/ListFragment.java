@@ -1,15 +1,13 @@
 package stoyanov.valentin.mycar.fragments;
 
 import android.os.Bundle;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import io.realm.Realm;
-import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -21,7 +19,6 @@ import stoyanov.valentin.mycar.adapters.RefuelingRecyclerViewAdapter;
 import stoyanov.valentin.mycar.adapters.ServiceRecyclerViewAdapter;
 import stoyanov.valentin.mycar.adapters.VehicleRecyclerViewAdapter;
 import stoyanov.valentin.mycar.realm.models.Expense;
-import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;

@@ -18,4 +18,5 @@ public interface RealmTable {
     String INSURANCES = "insurances";
     String SERVICES = "services";
     String REFUELINGS = "refuelings";
+    String NOTIFICATION_ID = "notificationId";
 }

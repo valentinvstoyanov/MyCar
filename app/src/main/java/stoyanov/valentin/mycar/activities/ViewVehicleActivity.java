@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
-
-import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
-
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +22,7 @@ import java.util.Set;
 
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;

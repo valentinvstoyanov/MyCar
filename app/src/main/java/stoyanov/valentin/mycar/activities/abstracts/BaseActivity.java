@@ -5,16 +5,11 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -24,7 +19,7 @@ import java.util.Calendar;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.MainActivity;
 import stoyanov.valentin.mycar.activities.interfaces.IBaseActivity;
-import stoyanov.valentin.mycar.receivers.NotificationReceiver;
+import stoyanov.valentin.mycar.broadcasts.NotificationReceiver;
 
 public abstract class BaseActivity extends AppCompatActivity
                     implements IBaseActivity{

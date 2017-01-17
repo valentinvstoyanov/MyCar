@@ -1,8 +1,5 @@
 package stoyanov.valentin.mycar.activities;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -19,8 +16,15 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.thebluealliance.spectrum.SpectrumDialog;
+
 import org.apache.commons.lang3.math.NumberUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;

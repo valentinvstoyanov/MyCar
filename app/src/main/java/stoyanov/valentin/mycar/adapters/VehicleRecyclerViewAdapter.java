@@ -2,12 +2,8 @@ package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,14 +12,12 @@ import android.widget.TextView;
 
 import io.realm.Realm;
 import io.realm.RealmBasedRecyclerViewAdapter;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewVehicleActivity;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
-import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
 

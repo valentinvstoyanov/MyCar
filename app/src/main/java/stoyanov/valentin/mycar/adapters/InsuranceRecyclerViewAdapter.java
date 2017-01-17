@@ -2,13 +2,11 @@ package stoyanov.valentin.mycar.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
@@ -16,7 +14,6 @@ import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.Insurance;
-import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
@@ -54,7 +51,7 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         viewHolder.tvCompany.setText(insurance.getCompany().getName());
         viewHolder.tvDate.setText(text);
         text = String.format(getContext().getString(R.string.expiration_date_placeholder),
-                DateUtils.datetimeToString(insurance.getExpirationDate()));
+                DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()));
         viewHolder.tvExpirationDate.setText(text);
         text = String.format(getContext().getString(R.string.price_placeholder),
                 MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));

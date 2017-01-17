@@ -5,8 +5,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
 
-import stoyanov.valentin.mycar.R;
-
 public class ImageViewUtils {
 
     public static String getDrawableNameByVehicleType(String type) {

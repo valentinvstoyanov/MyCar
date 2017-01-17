@@ -3,6 +3,7 @@ package stoyanov.valentin.mycar.utils;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.content.res.ResourcesCompat;
+
 import stoyanov.valentin.mycar.R;
 
 public class ColorUtils {

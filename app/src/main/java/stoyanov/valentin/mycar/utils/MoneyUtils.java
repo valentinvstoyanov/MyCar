@@ -12,6 +12,10 @@ public class MoneyUtils {
         return bigDecimal.divide(LOWEST_UNIT, 2, BigDecimal.ROUND_HALF_UP).toPlainString();
     }
 
+    public static float longToFloat(BigDecimal bigDecimal) {
+        return bigDecimal.divide(LOWEST_UNIT, 2, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
     public static long stringToLong(String string) {
         return new BigDecimal(string).multiply(LOWEST_UNIT).longValue();
     }

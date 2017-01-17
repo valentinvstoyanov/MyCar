@@ -10,12 +10,15 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 import org.apache.commons.lang3.math.NumberUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;

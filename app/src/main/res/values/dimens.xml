@@ -8,11 +8,9 @@
     <dimen name="fab_margin">16dp</dimen>
     <!--Intro slider dimes-->
     <dimen name="views_height">30dp</dimen>
-    <dimen name="views_margin_bottom">20dp</dimen>
     <dimen name="slide_title">30sp</dimen>
     <dimen name="slide_text">16sp</dimen>
     <dimen name="text_padding">40dp</dimen>
     <dimen name="img_size">120dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
 </resources>
