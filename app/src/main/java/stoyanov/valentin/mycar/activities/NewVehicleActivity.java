@@ -39,6 +39,7 @@ import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
 
@@ -241,6 +242,16 @@ public class NewVehicleActivity extends NewBaseActivity {
                 Color color = realm.where(Color.class)
                         .equalTo(RealmTable.COLOR, colorDrawable.getColor())
                         .findFirst();
+                if (color == null) {
+                    color = realm.createObject(Color.class, UUID.randomUUID().toString());
+                    int c = colorDrawable.getColor();
+                    color.setColor(c);
+                    color.setRelevantDarkColor(ColorUtils.getDarkColor(getApplicationContext(),
+                            c));
+                    color.setTextIconsColor(ColorUtils
+                            .pickColorByBackground(getApplicationContext(), c));
+
+                }
                 realmVehicle.setColor(color);
 
                 realmVehicle.setRegistrationPlate(getTextFromTil(tilRegistrationPlate));

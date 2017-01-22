@@ -17,6 +17,7 @@ public class VehicleSerializer implements JsonSerializer<Vehicle>{
     public JsonElement serialize(Vehicle src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         //should be 18
+        jsonObject.addProperty(RealmTable.ID, src.getId());
         jsonObject.addProperty(RealmTable.NAME, src.getName());
         jsonObject.addProperty(RealmTable.HORSE_POWER, src.getHorsePower());
         jsonObject.addProperty(RealmTable.CUBIC_CENTIMETERS, src.getCubicCentimeter());

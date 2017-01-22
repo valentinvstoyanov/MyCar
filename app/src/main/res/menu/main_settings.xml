@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="2"
         android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <item
+        android:title="@string/import_vehicle"
+        android:id="@+id/action_import"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_import_24dp"
         app:showAsAction="never" />
 </menu>

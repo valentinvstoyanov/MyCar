@@ -4,8 +4,9 @@
     android:layout_height="match_parent"
     tools:context="stoyanov.valentin.mycar.fragments.StatisticsFragment">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/lineChart"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_statistics"
+        android:layout_marginTop="80dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </FrameLayout>

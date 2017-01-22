@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorWelcome1">
 
     <LinearLayout
@@ -15,7 +16,7 @@
             android:scaleType="fitXY"
             android:layout_width="@dimen/img_size"
             android:layout_height="@dimen/img_size"
-            android:src="@drawable/ic_menu_car"
+            app:srcCompat="@drawable/ic_car_black"
             android:tint="@color/colorTextIcons"/>
 
         <TextView

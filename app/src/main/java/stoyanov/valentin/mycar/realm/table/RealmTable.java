@@ -19,4 +19,7 @@ public interface RealmTable {
     String SERVICES = "services";
     String REFUELINGS = "refuelings";
     String NOTIFICATION_ID = "notificationId";
+    String IS_TRIGGERED = "isTriggered";
+    String NOTIFICATION = "notification";
+    String TARGET_ODOMETER = "targetOdometer";
 }

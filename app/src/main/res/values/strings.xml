@@ -96,4 +96,9 @@
     <string name="notification_time">Target time</string>
     <string name="new_company">New company</string>
     <string name="title_activity_view">ViewActivity</string>
+    <string name="upload">Upload</string>
+    <string name="export">Export</string>
+    <string name="delete">Delete</string>
+    <string name="action_delete">Delete</string>
+    <string name="import_vehicle">Import vehicle</string>
 </resources>

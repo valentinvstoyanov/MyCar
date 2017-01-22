@@ -8,12 +8,9 @@ public class Service extends RealmObject {
     private String id;
     private ServiceType type;
     private Note note;
-    //private Location location;
     private Action action;
-    //maybe new realmobject that is like mid-table between many-to-many
-    //relationship which consists of RealmList<Action> and maybe the two ids
-    //ServiceId and ServiceTypeId
-
+    private RealmNotification notification;
+    private long targetOdometer;
 
     public String getId() {
         return id;
@@ -45,5 +42,21 @@ public class Service extends RealmObject {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public RealmNotification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(RealmNotification notification) {
+        this.notification = notification;
+    }
+
+    public long getTargetOdometer() {
+        return targetOdometer;
+    }
+
+    public void setTargetOdometer(long targetOdometer) {
+        this.targetOdometer = targetOdometer;
     }
 }

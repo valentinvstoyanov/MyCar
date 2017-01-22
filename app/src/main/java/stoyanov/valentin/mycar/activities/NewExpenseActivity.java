@@ -159,13 +159,16 @@ public class NewExpenseActivity extends NewBaseActivity {
                 action.setPrice(price);
                 expense.setAction(action);
 
-                if (!isUpdate()) {
+               // if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
                             .findFirst();
+                if (odometer > getVehicleOdometer()) {
+                    setVehicleOdometer(odometer);
                     vehicle.setOdometer(odometer);
-                    vehicle.getExpenses().add(expense);
                 }
+                    vehicle.getExpenses().add(expense);
+                //}
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -180,6 +183,7 @@ public class NewExpenseActivity extends NewBaseActivity {
                 }else {
                     showMessage("New expense saved!");
                 }
+                listener.onChange(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {

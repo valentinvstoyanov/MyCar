@@ -1,7 +1,10 @@
 package stoyanov.valentin.mycar.activities.abstracts;
 
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -19,10 +22,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.util.Calendar;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
+import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.NotificationUtils;
 
 public abstract class NewBaseActivity extends BaseActivity
                     implements INewBaseActivity{
@@ -30,8 +37,10 @@ public abstract class NewBaseActivity extends BaseActivity
     private boolean update = false;
     private String vehicleId;
     private long vehicleOdometer;
+    protected OnOdometerChangeListener listener;
     protected Realm myRealm;
     protected TextInputLayout tilDate, tilOdometer, tilNote;
+
 /*
     abstract protected void saveToRealm();*/
     /*abstract protected void setContent();
@@ -55,6 +64,26 @@ public abstract class NewBaseActivity extends BaseActivity
         vehicleId = intent.getStringExtra(RealmTable.ID);
         vehicleOdometer = intent.getLongExtra(RealmTable.ODOMETER, 0);
         myRealm = Realm.getDefaultInstance();
+        listener = new OnOdometerChangeListener() {
+            @Override
+            public void onChange(long odometer) {
+                RealmResults<Service> services = myRealm.where(Service.class)
+                        .lessThanOrEqualTo(RealmTable.TARGET_ODOMETER, 800)
+                        .findAll();
+                for (Service service : services) {
+                    //if (odometer + 200 > service.getTargetOdometer()) {
+                        Notification notification = NotificationUtils.createNotification(getApplicationContext(),
+                                vehicleId, RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                                ViewActivity.ViewType.SERVICE, ViewActivity.class, "Service",
+                                service.getType().getName() + " should be revised at " + service.getTargetOdometer(),
+                                R.drawable.ic_services_black);
+                    NotificationManager manager = (NotificationManager)
+                            getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    manager.notify(0, notification);
+                   // }
+                }
+            }
+        };
     }
 
     @Override
@@ -156,6 +185,14 @@ public abstract class NewBaseActivity extends BaseActivity
         }
     }
 
+    public long getVehicleOdometer() {
+        return vehicleOdometer;
+    }
+
+    public void setVehicleOdometer(long vehicleOdometer) {
+        this.vehicleOdometer = vehicleOdometer;
+    }
+
     public boolean isInputValid() {
         boolean valid = true;
         if (!NumberUtils.isCreatable(getTextFromTil(tilOdometer))) {
@@ -184,5 +221,9 @@ public abstract class NewBaseActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         myRealm.close();
+    }
+
+    protected interface OnOdometerChangeListener{
+        void onChange(long odometer);
     }
 }

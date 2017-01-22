@@ -166,19 +166,36 @@ public class NewInsuranceActivity extends NewBaseActivity {
 
     @Override
     public void saveToRealm() {
-        final String savedInsuranceId = UUID.randomUUID().toString();
         final String companyId = results.get(spnCompanies.getSelectedItemPosition()).getId();
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 Insurance insurance;
+                RealmNotification notification;
                 if (isUpdate()) {
                     insurance = realm.where(Insurance.class).equalTo(RealmTable.ID, insuranceId)
                             .findFirst();
-                    savedInsuranceId.replace(savedInsuranceId, insuranceId);
+                    notification = insurance.getNotification();
+
                 }else {
-                    insurance = realm.createObject(Insurance.class, savedInsuranceId);
+                    insuranceId = UUID.randomUUID().toString();
+                    insurance = realm.createObject(Insurance.class, insuranceId);
+                    notification = realm.createObject(RealmNotification.class,
+                            UUID.randomUUID().toString());
+                    int id;
+                    Number number = realm.where(RealmNotification.class)
+                            .max(RealmTable.NOTIFICATION_ID);
+                    if (number == null) {
+                        id = 0;
+                    }else {
+                        id = number.intValue() + 1;
+                    }
+                    notification.setNotificationId(id);
                 }
+                notification.setNotificationDate(DateUtils.stringToDatetime(getTextFromTil(tilExpirationDate),
+                        getTextFromTil(tilExpirationTime)));
+                notification.setTriggered(false);
+                insurance.setNotification(notification);
 
                 Company company = realm.where(Company.class).equalTo(RealmTable.ID, companyId).findFirst();
                 insurance.setCompany(company);
@@ -204,20 +221,6 @@ public class NewInsuranceActivity extends NewBaseActivity {
                // insurance.setExpirationDate(DateUtils.stringToDatetime(getTextFromTil(tilExpirationDate),
                  //       getTextFromTil(tilExpirationTime)));
 
-                RealmNotification notification = realm.createObject(RealmNotification.class,
-                        UUID.randomUUID().toString());
-                notification.setNotificationDate(DateUtils.stringToDatetime(getTextFromTil(tilExpirationDate),
-                        getTextFromTil(tilExpirationTime)));
-                Number number = realm.where(RealmNotification.class)
-                        .max(RealmTable.NOTIFICATION_ID);
-                int id;
-                if (number == null) {
-                    id = 0;
-                }else {
-                    id = number.intValue() + 1;
-                }
-                notification.setNotificationId(id);
-                insurance.setNotification(notification);
 
                 if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
@@ -240,14 +243,25 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 addNotification(notification, calendar.getTimeInMillis());*/
 
                 Insurance insurance = myRealm.where(Insurance.class)
-                        .equalTo(RealmTable.ID, savedInsuranceId).findFirst();
+                        .equalTo(RealmTable.ID, insuranceId).findFirst();
 
 
-                Date notificationDate = DateUtils.stringToDatetime(
+                Date notificationDate = insurance.getNotification().getNotificationDate();
+                /*DateUtils.stringToDatetime(
                         getTextFromTil(tilExpirationDate),
-                        getTextFromTil(tilExpirationTime));
+                        getTextFromTil(tilExpirationTime));*/
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(notificationDate);
+
+                Notification notification = NotificationUtils.createNotification(getApplicationContext(),
+                        getVehicleId(), RealmTable.INSURANCES + RealmTable.ID, insurance.getId(),
+                        ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Expiring insurance",
+                        insurance.getCompany().getName() + " insurance is expiring on " +
+                                DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()),
+                        R.drawable.ic_insurance_black);
+
+                NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
+                        insurance.getNotification().getNotificationId(), calendar.getTimeInMillis());
 
                 if (isUpdate()) {
                     showMessage("Insurance updated!");
@@ -257,15 +271,6 @@ public class NewInsuranceActivity extends NewBaseActivity {
                     intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
                     startActivity(intent);
                 }else {
-                    Notification notification = NotificationUtils.createNotification(getApplicationContext(),
-                            getVehicleId(), RealmTable.INSURANCES + RealmTable.ID, insurance.getId(),
-                            ViewActivity.ViewType.INSURANCE, NewInsuranceActivity.class, "Expiring insurance",
-                            insurance.getCompany().getName() + " insurance is expiring on " +
-                                    DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()),
-                            R.drawable.ic_insurance_black);
-
-                    NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
-                            insurance.getNotification().getNotificationId(), calendar.getTimeInMillis());
                     showMessage("New insurance saved!");
                 }
                 finish();

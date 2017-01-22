@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +19,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+import io.palaima.smoothbluetooth.Device;
+import io.palaima.smoothbluetooth.SmoothBluetooth;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -36,6 +41,7 @@ public class MainActivity extends BaseActivity
 
     public static final String FRAGMENT_TYPE = "fragment_type";
     public static final String STATISTIC_TYPE = "statistic_type";
+    private static final int ENABLE_BLUETOOTH_REQUEST = 2;
 
     private Spinner spnChooseVehicle;
     private Realm myRealm;
@@ -52,6 +58,7 @@ public class MainActivity extends BaseActivity
                     spinnerAdapter.clear();
                     spinnerAdapter.addAll(spinnerDataSet);
                     spinnerAdapter.notifyDataSetChanged();
+
                 }
             };
 
@@ -71,10 +78,78 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
+    private SmoothBluetooth smoothBluetooth;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+        if (id == R.id.action_settings) {
+        }else if (id == R.id.action_import) {
+            SmoothBluetooth.Listener listener = new SmoothBluetooth.Listener() {
+                @Override
+                public void onBluetoothNotSupported() {
+                    showMessage("Bluetooth not supported");
+                }
+
+                @Override
+                public void onBluetoothNotEnabled() {
+                    showMessage("Bluetooth is not enabled");
+                    Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH_REQUEST);
+                }
+
+                @Override
+                public void onConnecting(Device device) {
+                    showMessage("Connecting to " + device.getName());
+                }
+
+                @Override
+                public void onConnected(Device device) {
+                    showMessage("Connected to " + device.getName());
+                }
+
+                @Override
+                public void onDisconnected() {
+                    showMessage("Device disconnected");
+                }
+
+                @Override
+                public void onConnectionFailed(Device device) {
+                    showMessage("Failed to connect to " + device.getName());
+                    if (device.isPaired()) {
+                        smoothBluetooth.doDiscovery();
+                    }
+                }
+
+                @Override
+                public void onDiscoveryStarted() {
+                    showMessage("Searching...");
+                }
+
+                @Override
+                public void onDiscoveryFinished() {
+                    showMessage("Searching has finished");
+                }
+
+                @Override
+                public void onNoDevicesFound() {
+                    showMessage("No devices found");
+                }
+
+                @Override
+                public void onDevicesFound(List<Device> deviceList, SmoothBluetooth.ConnectionCallback connectionCallback) {
+
+                }
+
+                @Override
+                public void onDataReceived(int data) {
+                    Log.d("Data: ", "d: " + data);
+                }
+            };
+            smoothBluetooth = new SmoothBluetooth(getApplicationContext(),
+                    SmoothBluetooth.ConnectionTo.ANDROID_DEVICE, SmoothBluetooth.Connection.SECURE,
+                    listener);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

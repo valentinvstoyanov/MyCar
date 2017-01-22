@@ -26,4 +26,22 @@ public class ColorUtils {
         primaryColors.recycle();
         return textIconColor;
     }
+
+    public static int getDarkColor(Context context, int color) {
+        TypedArray primaryColors = context.getResources()
+                .obtainTypedArray(R.array.vehicles_primary_colors);
+        TypedArray darkColors = context.getResources()
+                .obtainTypedArray(R.array.vehicles_dark_colors);
+        int darkColor = -1;
+        for (int i = 0; i < primaryColors.length(); i++) {
+            int currentColor = primaryColors.getColor(i, -1);
+            if (currentColor == color) {
+                darkColor = darkColors.getColor(i, -1);
+                break;
+            }
+        }
+        primaryColors.recycle();
+        darkColors.recycle();
+        return darkColor;
+    }
 }

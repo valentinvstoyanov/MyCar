@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.provider.Settings;
 
+import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.broadcasts.NotificationReceiver;
+import stoyanov.valentin.mycar.realm.models.RealmNotification;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class NotificationUtils {
@@ -48,11 +50,24 @@ public class NotificationUtils {
         return builder.build();
     }
 
-    public static void triggerNotification(Context context, int notificationId,
-                                          Notification notification) {
-        NotificationManager manager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(notificationId, notification);
+    public static void triggerNotification(Context context, final int notificationId,
+                                           Notification notification) {
+        final Realm myRealm = Realm.getDefaultInstance();
+        final RealmNotification realmNotification = myRealm.where(RealmNotification.class)
+                .equalTo(RealmTable.NOTIFICATION_ID, notificationId)
+                .findFirst();
+        if (!realmNotification.isTriggered()) {
+            NotificationManager manager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(notificationId, notification);
+            myRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realmNotification.setTriggered(true);
+                }
+            });
+        }
+        myRealm.close();
     }
 
     public static void updateNotification(Context context, Notification notification,

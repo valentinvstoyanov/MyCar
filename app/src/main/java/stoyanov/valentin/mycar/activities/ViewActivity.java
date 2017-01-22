@@ -1,9 +1,12 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -42,11 +45,68 @@ public class ViewActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_delete, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
         if(id == android.R.id.home) {
             onBackPressed();
+            return true;
+        }else if (id == R.id.action_delete) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ViewActivity.this);
+            builder.setTitle(getSupportActionBar().getTitle());
+            builder.setMessage("Are you sure you want to delete it?");
+            builder.setCancelable(true)
+                    .setNegativeButton("No", null)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Realm myRealm = Realm.getDefaultInstance();
+                            myRealm.executeTransactionAsync(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    switch (type) {
+                                        case INSURANCE:
+                                            realm.where(Insurance.class).equalTo(RealmTable.ID, id)
+                                                    .findFirst().deleteFromRealm();
+                                            break;
+                                        case EXPENSE:
+                                            realm.where(Expense.class).equalTo(RealmTable.ID, id)
+                                                    .findFirst().deleteFromRealm();
+                                            break;
+                                        case SERVICE:
+                                            realm.where(Service.class).equalTo(RealmTable.ID, id)
+                                                    .findFirst().deleteFromRealm();
+                                            break;
+                                        case REFUELING:
+                                            realm.where(Refueling.class).equalTo(RealmTable.ID, id)
+                                                    .findFirst().deleteFromRealm();
+                                            break;
+                                    }
+                                }
+                            }, new Realm.Transaction.OnSuccess() {
+                                @Override
+                                public void onSuccess() {
+                                    showMessage(aClass.getName() + " deleted!");
+                                    finish();
+                                }
+                            }, new Realm.Transaction.OnError() {
+                                @Override
+                                public void onError(Throwable error) {
+                                    error.printStackTrace();
+                                    showMessage("Something went wrong...");
+                                    finish();
+                                }
+                            });
+
+                        }
+                    });
+            builder.create().show();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -11,6 +11,7 @@ public class RealmNotification extends RealmObject {
     private String id;
     private Date notificationDate;
     private int notificationId;
+    private boolean isTriggered;
 
     public String getId() {
         return id;
@@ -34,5 +35,13 @@ public class RealmNotification extends RealmObject {
 
     public void setNotificationId(int notificationId) {
         this.notificationId = notificationId;
+    }
+
+    public boolean isTriggered() {
+        return isTriggered;
+    }
+
+    public void setTriggered(boolean triggered) {
+        isTriggered = triggered;
     }
 }

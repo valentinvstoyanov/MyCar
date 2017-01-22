@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -26,12 +27,14 @@ import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
 import stoyanov.valentin.mycar.realm.models.Note;
+import stoyanov.valentin.mycar.realm.models.RealmNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
+import stoyanov.valentin.mycar.utils.NotificationUtils;
 
 public class NewServiceActivity extends NewBaseActivity {
 
@@ -164,6 +167,7 @@ public class NewServiceActivity extends NewBaseActivity {
 
     @Override
     public void saveToRealm() {
+        final boolean isChecked = toggleButton.isChecked();
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -174,7 +178,8 @@ public class NewServiceActivity extends NewBaseActivity {
                     service.getNote().deleteFromRealm();
                     service.getAction().deleteFromRealm();
                 }else {
-                    service = realm.createObject(Service.class, UUID.randomUUID().toString());
+                    serviceId = UUID.randomUUID().toString();
+                    service = realm.createObject(Service.class, serviceId);
                 }
 
                 String serviceTypeValue = getTextFromAutoComplete(tilType);
@@ -205,6 +210,46 @@ public class NewServiceActivity extends NewBaseActivity {
                 action.setPrice(price);
                 service.setAction(action);
 
+                RealmNotification realmNotification = service.getNotification();
+                if (isChecked) {
+                    if (realmNotification == null) {
+                        realmNotification = myRealm.createObject(RealmNotification.class,
+                                UUID.randomUUID().toString());
+                        int id;
+                        Number number = realm.where(RealmNotification.class)
+                                .max(RealmTable.NOTIFICATION_ID);
+                        if (number == null) {
+                            id = 0;
+                        }else {
+                            id = number.intValue() + 1;
+                        }
+                        realmNotification.setNotificationId(id);
+                    }
+                    realmNotification.setTriggered(false);
+                    Date notificationDate = DateUtils.stringToDatetime(getTextFromTil(tilNotificationDate),
+                            getTextFromTil(tilNotificationTime));
+                    realmNotification.setNotificationDate(notificationDate);
+                    service.setNotification(realmNotification);
+                }else {
+                    service.setTargetOdometer(
+                            Long.parseLong(tilOdometerNotification.getEditText().getText().toString()));
+                    if (realmNotification != null) {
+                        Date notificationDate = realmNotification.getNotificationDate();
+                        calendar.setTime(notificationDate);
+
+                        Notification notification = NotificationUtils.createNotification(getApplicationContext(),
+                                getVehicleId(), RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                                ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Service",
+                                service.getType().getName() + " should be revised on " +
+                                        DateUtils.datetimeToString(service.getNotification().getNotificationDate()),
+                                R.drawable.ic_services_black);
+
+                        NotificationUtils.cancelNotification(getApplicationContext(), realmNotification.getNotificationId(),
+                                notification);
+                        realmNotification.deleteFromRealm();
+                    }
+                }
+
                 if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
@@ -216,6 +261,25 @@ public class NewServiceActivity extends NewBaseActivity {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
+
+                if (isChecked) {
+                    Service service = myRealm.where(Service.class)
+                            .equalTo(RealmTable.ID, serviceId).findFirst();
+                    Date notificationDate = service.getNotification().getNotificationDate();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(notificationDate);
+
+                    Notification notification = NotificationUtils.createNotification(getApplicationContext(),
+                            getVehicleId(), RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                            ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Service",
+                            service.getType().getName() + " should be revised on " +
+                                    DateUtils.datetimeToString(service.getNotification().getNotificationDate()),
+                            R.drawable.ic_insurance_black);
+
+                    NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
+                            service.getNotification().getNotificationId(), calendar.getTimeInMillis());
+                }
+
                 if (isUpdate()) {
                     showMessage("Service updated!");
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);

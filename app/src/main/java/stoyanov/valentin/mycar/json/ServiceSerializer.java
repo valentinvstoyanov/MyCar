@@ -7,16 +7,15 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-import stoyanov.valentin.mycar.realm.models.Brand;
+import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
-public class BrandSerializer implements JsonSerializer<Brand> {
+public class ServiceSerializer implements JsonSerializer<Service> {
 
     @Override
-    public JsonElement serialize(Brand src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Service src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(RealmTable.ID, src.getId());
-        jsonObject.addProperty(RealmTable.NAME, src.getName());
-        return jsonObject;
+        return null;
     }
 }

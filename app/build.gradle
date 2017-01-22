@@ -26,16 +26,15 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     compile 'io.github.yavski:fab-speed-dial:1.0.6'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
-    compile 'com.android.support:support-v4:25.1.0'
     compile 'com.github.thorbenprimke:realm-recyclerview:0.9.25'
     compile 'io.realm:android-adapters:1.4.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.thebluealliance:spectrum:0.7.1'
+    compile 'io.palaima:smoothbluetooth:0.1.0'
     testCompile 'junit:junit:4.12'
 }

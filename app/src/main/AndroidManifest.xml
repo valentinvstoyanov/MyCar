@@ -52,12 +52,6 @@
         <activity
             android:name=".activities.ViewVehicleActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <receiver
-            android:name=".broadcasts.NotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
         <activity
             android:name=".activities.ViewActivity"
             android:label="@string/title_activity_view"
@@ -67,6 +61,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="stoyanov.valentin.mycar.activities.MainActivity" />
         </activity>
+
+        <receiver
+            android:name=".broadcasts.NotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name=".broadcasts.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".services.BootIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

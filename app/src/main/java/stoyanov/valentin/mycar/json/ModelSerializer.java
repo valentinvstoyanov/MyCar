@@ -15,6 +15,7 @@ public class ModelSerializer implements JsonSerializer<Model> {
     @Override
     public JsonElement serialize(Model src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(RealmTable.ID, src.getId());
         jsonObject.addProperty(RealmTable.NAME, src.getName());
         return jsonObject;
     }
