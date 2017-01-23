@@ -101,4 +101,9 @@
     <string name="delete">Delete</string>
     <string name="action_delete">Delete</string>
     <string name="import_vehicle">Import vehicle</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-5561372550558397/5266340262</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

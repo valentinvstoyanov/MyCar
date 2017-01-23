@@ -155,14 +155,6 @@ public class ListFragment extends Fragment {
                     recyclerView.setAdapter(adapter);
                 }
                 break;
-            case R.id.nav_reminders:
-                break;
-            case R.id.nav_statistics:
-                break;
-            case R.id.nav_upcoming_events:
-                break;
-            case R.id.nav_history:
-                break;
         }
         return view;
     }

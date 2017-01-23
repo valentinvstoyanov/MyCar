@@ -33,16 +33,16 @@ public class FuelPriceFragment extends Fragment {
         LineChart lineChart = (LineChart) view.findViewById(R.id.lineChart);
         myRealm = Realm.getDefaultInstance();
         RealmResults<Refueling> refuelings = myRealm.where(Refueling.class).findAll();
-        ArrayList<Float> floats = new ArrayList<>(refuelings.size());
-        ArrayList<Entry> entries = new ArrayList<>(refuelings.size());
+        ArrayList<Entry> dEntries = new ArrayList<>();
+        int i = 0;
         for (Refueling refueling : refuelings) {
             float f = MoneyUtils.longToFloat(new BigDecimal(refueling.getFuelPrice()));
-            floats.add(f);
-            entries.add(new Entry(refueling.getAction().getDate().getTime(), f));
+            dEntries.add(new Entry(i, f));
+            i += 10;
         }
-        LineDataSet dataSet = new LineDataSet(entries, "fuel price");
+        LineDataSet dataSet = new LineDataSet(dEntries, "Fuel price");
 
-        int color = ResourcesCompat.getColor(getResources(), R.color.pink, null);
+        int color = ResourcesCompat.getColor(getResources(), R.color.orange, null);
         dataSet.setLineWidth(3f);
         dataSet.setCircleRadius(8f);
         dataSet.setCircleHoleRadius(4f);

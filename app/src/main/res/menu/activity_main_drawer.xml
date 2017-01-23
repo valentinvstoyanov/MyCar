@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/ic_menu_about"
+            android:title="Info" />
+        <item
             android:id="@+id/nav_services"
             android:icon="@drawable/ic_menu_service"
             android:title="Services" />
@@ -19,36 +23,12 @@
             android:icon="@drawable/ic_menu_insurance"
             android:title="Insurances" />
         <item
-            android:id="@+id/nav_reminders"
-            android:icon="@drawable/ic_menu_reminder"
-            android:title="Reminders" />
-        <item
             android:id="@+id/nav_statistics"
             android:icon="@drawable/ic_menu_statistic"
             android:title="Statistics" />
-        <item
-            android:id="@+id/nav_upcoming_events"
-            android:icon="@drawable/ic_menu_upcoming_event"
-            android:title="Upcoming events"/>
         <item
             android:id="@+id/nav_my_cars"
             android:icon="@drawable/ic_menu_car"
             android:title="My cars" />
     </group>
-
-    <item android:title="Other">
-        <menu>
-            <item
-                android:id="@+id/nav_history"
-                android:icon="@drawable/ic_menu_history"
-                android:title="History" />
-            <item
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:icon="@drawable/ic_menu_about"
-                android:title="About" />
-        </menu>
-    </item>
-
 </menu>

@@ -44,7 +44,7 @@ public class ServiceRecyclerViewAdapter
     }
 
     @Override
-    public void onBindRealmViewHolder(ServiceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
+    public void onBindRealmViewHolder(final ServiceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
         final Service service = realmResults.get(position);
         viewHolder.tvType.setText(service.getType().getName());
         viewHolder.tvDatetime.setText(DateUtils

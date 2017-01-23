@@ -22,7 +22,7 @@ public class BluetoothDevicesDialog extends DialogFragment {
                     listener.onPicked(position);
                 }
             });
-        return super.onCreateDialog(savedInstanceState);
+        return builder.create();
     }
 
     public void setDevices(String[] devices) {

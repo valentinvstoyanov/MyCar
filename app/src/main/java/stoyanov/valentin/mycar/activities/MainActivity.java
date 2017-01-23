@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,18 +18,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
-import io.palaima.smoothbluetooth.Device;
-import io.palaima.smoothbluetooth.SmoothBluetooth;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
+import stoyanov.valentin.mycar.fragments.InfoFragment;
 import stoyanov.valentin.mycar.fragments.ListFragment;
 import stoyanov.valentin.mycar.fragments.StatisticsFragment;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
@@ -62,13 +60,13 @@ public class MainActivity extends BaseActivity
                 }
             };
 
+    private BluetoothSPP bluetoothSPP;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnChooseVehicle.setAdapter(spinnerAdapter);
         setComponentListeners();
     }
 
@@ -78,76 +76,33 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    private SmoothBluetooth smoothBluetooth;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if(requestCode == ENABLE_BLUETOOTH_REQUEST) {
+                showMessage("Bluetooth enabled...");
+            }
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
         }else if (id == R.id.action_import) {
-            SmoothBluetooth.Listener listener = new SmoothBluetooth.Listener() {
+            bluetoothSPP = new BluetoothSPP(this);
+            bluetoothSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
                 @Override
-                public void onBluetoothNotSupported() {
-                    showMessage("Bluetooth not supported");
+                public void onDataReceived(byte[] data, String message) {
+                    showMessage(message);
                 }
-
-                @Override
-                public void onBluetoothNotEnabled() {
-                    showMessage("Bluetooth is not enabled");
-                    Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH_REQUEST);
-                }
-
-                @Override
-                public void onConnecting(Device device) {
-                    showMessage("Connecting to " + device.getName());
-                }
-
-                @Override
-                public void onConnected(Device device) {
-                    showMessage("Connected to " + device.getName());
-                }
-
-                @Override
-                public void onDisconnected() {
-                    showMessage("Device disconnected");
-                }
-
-                @Override
-                public void onConnectionFailed(Device device) {
-                    showMessage("Failed to connect to " + device.getName());
-                    if (device.isPaired()) {
-                        smoothBluetooth.doDiscovery();
-                    }
-                }
-
-                @Override
-                public void onDiscoveryStarted() {
-                    showMessage("Searching...");
-                }
-
-                @Override
-                public void onDiscoveryFinished() {
-                    showMessage("Searching has finished");
-                }
-
-                @Override
-                public void onNoDevicesFound() {
-                    showMessage("No devices found");
-                }
-
-                @Override
-                public void onDevicesFound(List<Device> deviceList, SmoothBluetooth.ConnectionCallback connectionCallback) {
-
-                }
-
-                @Override
-                public void onDataReceived(int data) {
-                    Log.d("Data: ", "d: " + data);
-                }
-            };
-            smoothBluetooth = new SmoothBluetooth(getApplicationContext(),
-                    SmoothBluetooth.ConnectionTo.ANDROID_DEVICE, SmoothBluetooth.Connection.SECURE,
-                    listener);
+            });
+            if (!bluetoothSPP.isBluetoothEnabled()) {
+                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH_REQUEST);
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -155,35 +110,12 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         setToolbarTitle(item.getTitle().toString());
-        int id = item.getItemId();
-        menuId = id;
-        if(results != null && !results.isEmpty()) {
-            if (id == R.id.nav_my_cars) {
-                spnChooseVehicle.setVisibility(View.INVISIBLE);
-                openFragment(id);
-            }else {
-                if (id == R.id.nav_statistics) {
-                    String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
-                    if (results != null && !results.isEmpty()) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(RealmTable.ID, vehicleId);
-                        bundle.putInt(STATISTIC_TYPE, Actions.SERVICE.ordinal());
-                        StatisticsFragment fragment = new StatisticsFragment();
-                        fragment.setArguments(bundle);
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.fl_content_main, fragment)
-                                .commit();
-                    }
-                } else {
-                    spnChooseVehicle.setVisibility(View.VISIBLE);
-                    openFragment(id);
-                }
-            }
-        }
+        menuId = item.getItemId();
+        openFragment();
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     @Override
     public void onBackPressed() {
@@ -221,7 +153,10 @@ public class MainActivity extends BaseActivity
                 android.R.layout.simple_dropdown_item_1line, spinnerDataSet);
         results.addChangeListener(callback);
         spnChooseVehicle.setSelection(0);
-        navigationView.getMenu().performIdentifierAction(R.id.nav_services, 0);
+        navigationView.getMenu().performIdentifierAction(R.id.nav_info, 0);
+        navigationView.setCheckedItem(R.id.nav_info);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnChooseVehicle.setAdapter(spinnerAdapter);
     }
 
     @Override
@@ -229,7 +164,7 @@ public class MainActivity extends BaseActivity
         spnChooseVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-
+                openFragment();
             }
 
             @Override
@@ -237,83 +172,71 @@ public class MainActivity extends BaseActivity
 
             }
         });
+
         FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
             public boolean onMenuItemSelected(MenuItem menuItem) {
                 Intent intent;
-                if(menuItem.getItemId() == R.id.action_add_car) {
-                    intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_service) {
-                    intent = new Intent(getApplicationContext(), NewServiceActivity.class);
-                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
-                    intent.putExtra(RealmTable.ID, vehicle.getId());
-                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_expense) {
-                    intent = new Intent(getApplicationContext(), NewExpenseActivity.class);
-                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
-                    intent.putExtra(RealmTable.ID, vehicle.getId());
-                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_reminder) {
-                    intent = new Intent(getApplicationContext(), NewReminderActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_refueling) {
-                    intent = new Intent(getApplicationContext(), NewRefuelingActivity.class);
-                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
-                    intent.putExtra(RealmTable.ID, vehicle.getId());
-                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
-                    startActivity(intent);
-                    return true;
-                } else if(menuItem.getItemId() == R.id.action_add_insurance) {
-                    intent = new Intent(getApplicationContext(), NewInsuranceActivity.class);
-                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
-                    intent.putExtra(RealmTable.ID, vehicle.getId());
-                    intent.putExtra(RealmTable.ODOMETER, vehicle.getOdometer());
-                    startActivity(intent);
-                    return true;
+                Class aClass;
+                Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
+                String vehicleId = vehicle.getId();
+                long vehicleOdometer = vehicle.getOdometer();
+                switch (menuItem.getItemId()) {
+                    case R.id.action_add_car:
+                        aClass = NewVehicleActivity.class;
+                        vehicleId = null;
+                        break;
+                    case R.id.action_add_service:
+                        aClass = NewServiceActivity.class;
+                        break;
+                    case R.id.action_add_expense:
+                        aClass = NewExpenseActivity.class;
+                        break;
+                    case R.id.action_add_refueling:
+                        aClass = NewRefuelingActivity.class;
+                        break;
+                    case R.id.action_add_insurance:
+                        aClass = NewInsuranceActivity.class;
+                        break;
+                    default:
+                        return false;
                 }
-                return false;
-            }
-        });
-        spnChooseVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                openFragment(menuId);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+                intent = new Intent(getApplicationContext(), aClass);
+                if (vehicleId != null) {
+                    intent.putExtra(RealmTable.ID, vehicleId);
+                    intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
+                }
+                startActivity(intent);
+                return true;
             }
         });
     }
 
     @Override
-    public void setContent() {
+    public void setContent() {}
 
-    }
-
-    private void openFragment(int id) {
-        String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
+   private void openFragment() {
         if (results != null && !results.isEmpty()) {
+            String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
+            Fragment fragment;
             Bundle bundle = new Bundle();
-            bundle.putInt(FRAGMENT_TYPE, id);
             bundle.putString(RealmTable.ID, vehicleId);
-            Fragment fragment = new ListFragment();
+            if (menuId == R.id.nav_statistics) {
+                fragment = new StatisticsFragment();
+            }else if (menuId == R.id.nav_info) {
+                fragment = new InfoFragment();
+            }else {
+                fragment = new ListFragment();
+                bundle.putInt(FRAGMENT_TYPE, menuId);
+            }
             fragment.setArguments(bundle);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fl_content_main, fragment)
                     .commit();
         }
-    }
+   }
 
     private ArrayList<String> getVehicleNamesFromResults() {
         ArrayList<String> names = new ArrayList<>(results.size());

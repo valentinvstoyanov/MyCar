@@ -42,6 +42,21 @@ public class ViewActivity extends BaseActivity {
         initComponents();
         setContent();
         setComponentListeners();
+
+       /* ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (isConnected) {
+            Log.d("ads", "onCreate: ");
+            MobileAds.initialize(getApplicationContext(), "ca-app-pub-5561372550558397~2312873861");
+            AdView mAdView = (AdView) findViewById(R.id.adView_view);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+        }*/
     }
 
     @Override

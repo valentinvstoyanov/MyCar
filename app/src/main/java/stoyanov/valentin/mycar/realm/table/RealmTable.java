@@ -22,4 +22,6 @@ public interface RealmTable {
     String IS_TRIGGERED = "isTriggered";
     String NOTIFICATION = "notification";
     String TARGET_ODOMETER = "targetOdometer";
+    String ACTION = "action";
+    String PRICE = "price";
 }

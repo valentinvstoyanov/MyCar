@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,11 +63,12 @@ public class StatisticsFragment extends Fragment {
         appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
         viewPager = (ViewPager) view.findViewById(R.id.vp_statistics);
         tabLayout = new TabLayout(getContext());
+        appBarLayout.addView(tabLayout);
         int color = ResourcesCompat.getColor(getResources(), R.color.colorTextIcons, null);
         tabLayout.setSelectedTabIndicatorHeight(16);
         tabLayout.setTabTextColors(color, color);
         tabLayout.setupWithViewPager(viewPager);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         Bundle bundle = getArguments();
         LineChartFragment fragment = new LineChartFragment();
         fragment.setArguments(bundle);
@@ -79,6 +81,27 @@ public class StatisticsFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("tabs", "onDestroyView: ");
+        appBarLayout.removeView(tabLayout);
+    }
+
+    //    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Log.d("tabs", "onStart: ");
+//        appBarLayout.addView(tabLayout);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Log.d("tabs", "onStop: ");
+//        appBarLayout.removeView(tabLayout);
+//    }
+
+/*    @Override
     public void onResume() {
         super.onResume();
         appBarLayout.addView(tabLayout);
@@ -88,5 +111,5 @@ public class StatisticsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         appBarLayout.removeView(tabLayout);
-    }
+    }*/
 }

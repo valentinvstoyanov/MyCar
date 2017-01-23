@@ -213,7 +213,7 @@ public class NewServiceActivity extends NewBaseActivity {
                 RealmNotification realmNotification = service.getNotification();
                 if (isChecked) {
                     if (realmNotification == null) {
-                        realmNotification = myRealm.createObject(RealmNotification.class,
+                        realmNotification = realm.createObject(RealmNotification.class,
                                 UUID.randomUUID().toString());
                         int id;
                         Number number = realm.where(RealmNotification.class)
@@ -274,7 +274,7 @@ public class NewServiceActivity extends NewBaseActivity {
                             ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Service",
                             service.getType().getName() + " should be revised on " +
                                     DateUtils.datetimeToString(service.getNotification().getNotificationDate()),
-                            R.drawable.ic_insurance_black);
+                            R.drawable.ic_services_black);
 
                     NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
                             service.getNotification().getNotificationId(), calendar.getTimeInMillis());
