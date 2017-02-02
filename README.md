@@ -9,4 +9,4 @@ Set reminder for your insurances and services, so that you don't forget to renew
 Have a look at some interesting statistics about yout vehicles
 
 #Export
-Export your database with Bluetooth
+Export your database with Bluetooth(in progress...)
