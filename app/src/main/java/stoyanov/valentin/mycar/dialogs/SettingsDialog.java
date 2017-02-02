@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
+import stoyanov.valentin.mycar.utils.TextUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
 
 public class SettingsDialog extends DialogFragment implements INewBaseActivity{
@@ -40,6 +42,7 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
         return builder.create();
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public void initComponents() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -67,8 +70,7 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
     public void setContent() {
         Realm myRealm = Realm.getDefaultInstance();
         RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
-        tilDistanceInAdvance.getEditText().setText(String.valueOf(
-                settings.getDistanceInAdvance()));
+        TextUtils.setTextToTil(tilDistanceInAdvance, String.valueOf(settings.getDistanceInAdvance()));
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter
                 .createFromResource(getContext(), R.array.length_unit, R.layout.textview_spinner);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -83,7 +85,7 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
     @Override
     public boolean isInputValid() {
         boolean valid = true;
-        String text = tilDistanceInAdvance.getEditText().getText().toString();
+        String text = TextUtils.getTextFromTil(tilDistanceInAdvance);
         if (!ValidationUtils.isNumeric(text)) {
             tilDistanceInAdvance.setError("Number expected");
             valid = false;
@@ -103,8 +105,8 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
             @Override
             public void execute(Realm realm) {
                 RealmSettings settings = realm.where(RealmSettings.class).findFirst();
-                settings.setDistanceInAdvance(Integer.parseInt(tilDistanceInAdvance
-                        .getEditText().getText().toString()));
+                settings.setDistanceInAdvance(NumberUtils
+                        .createInteger(TextUtils.getTextFromTil(tilDistanceInAdvance)));
                 settings.setLengthUnit(spnLength.getSelectedItem().toString());
             }
         }, new Realm.Transaction.OnSuccess() {

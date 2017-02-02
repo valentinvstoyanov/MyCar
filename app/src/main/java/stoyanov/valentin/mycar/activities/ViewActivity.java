@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,7 +77,7 @@ public class ViewActivity extends BaseActivity {
             return true;
         }else if (id == R.id.action_delete) {
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewActivity.this);
-            builder.setTitle(getSupportActionBar().getTitle());
+            builder.setTitle(getToolbarTitle());
             builder.setMessage("Are you sure you want to delete it?");
             builder.setCancelable(true)
                     .setNegativeButton("No", null)
@@ -133,8 +134,7 @@ public class ViewActivity extends BaseActivity {
     public void initComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setBackNavigation();
         type = ViewType.values()[getIntent().getIntExtra(RealmTable.TYPE, 0)];
         vehicleId = getIntent().getStringExtra(RealmTable.ID);
     }
@@ -231,6 +231,7 @@ public class ViewActivity extends BaseActivity {
         myRealm.close();
     }
 
+    @SuppressLint("InflateParams")
     private void displayView(String title, String value) {
         View view = getLayoutInflater().inflate(R.layout.item_view_activity, null);
         TextView tvTitle = (TextView) view.findViewById(R.id.tv_item_view_title);

@@ -16,6 +16,19 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
+    protected CharSequence getToolbarTitle() {
+        ActionBar actionBar = getSupportActionBar();
+        return actionBar == null ? "" : actionBar.getTitle();
+    }
+
+    protected void setBackNavigation() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+    }
+
     public void showMessage(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }

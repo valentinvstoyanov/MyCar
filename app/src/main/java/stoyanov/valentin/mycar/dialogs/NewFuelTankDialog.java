@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.interfaces.IBaseActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.FuelType;
+import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
 
@@ -41,6 +43,7 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
         return builder.create();
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public void initComponents() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -61,10 +64,8 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
                     FuelType fuelType = new FuelType();
                     fuelType.setName(spnFTfuelType.getSelectedItem().toString());
                     fuelTank.setFuelType(fuelType);
-                    fuelTank.setCapacity(Integer.parseInt(tilFTCapacity.getEditText()
-                            .getText().toString()));
-                    fuelTank.setConsumption(Integer.parseInt(tilFTConsumption.getEditText()
-                            .getText().toString()));
+                    fuelTank.setCapacity(Integer.parseInt(TextUtils.getTextFromTil(tilFTCapacity)));
+                    fuelTank.setConsumption(Integer.parseInt(TextUtils.getTextFromTil(tilFTConsumption)));
                     listener.onAddFuelTank(fuelTank);
                 }
             }
@@ -81,11 +82,11 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
 
     private boolean isInputValid() {
         boolean valid = true;
-        if (tilFTCapacity.getEditText().getText().toString().length() < 1) {
+        if (TextUtils.getTextFromTil(tilFTCapacity).length() < 1) {
             valid = false;
             tilFTCapacity.setError("Incorrect capacity");
         }
-        if (tilFTConsumption.getEditText().getText().toString().length() < 1) {
+        if (TextUtils.getTextFromTil(tilFTConsumption).length() < 1) {
             valid = false;
             tilFTConsumption.setError("Incorrect consumption");
         }

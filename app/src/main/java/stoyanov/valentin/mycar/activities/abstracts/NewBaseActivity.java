@@ -1,25 +1,19 @@
 package stoyanov.valentin.mycar.activities.abstracts;
 
-import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -28,8 +22,10 @@ import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.NotificationUtils;
+import stoyanov.valentin.mycar.utils.TextUtils;
 
 public abstract class NewBaseActivity extends BaseActivity
                     implements INewBaseActivity{
@@ -57,7 +53,7 @@ public abstract class NewBaseActivity extends BaseActivity
         }
         tilDate = (TextInputLayout) findViewById(R.id.til_date);
         Calendar calendar = Calendar.getInstance();
-        setTextToTil(tilDate, DateUtils.dateToString(calendar.getTime()));
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(calendar.getTime()));
         tilOdometer = (TextInputLayout) findViewById(R.id.til_odometer);
         tilNote = (TextInputLayout) findViewById(R.id.til_note);
         Intent intent = getIntent();
@@ -88,7 +84,8 @@ public abstract class NewBaseActivity extends BaseActivity
 
     @Override
     public void setComponentListeners() {
-        addDatePickerListener(tilDate);
+        DateTimePickerUtils.addDatePickerListener(NewBaseActivity.this, tilDate, new Date(),
+                DateTimePickerUtils.PickerLimits.MAX);
     }
 
     public boolean isUpdate() {
@@ -109,82 +106,6 @@ public abstract class NewBaseActivity extends BaseActivity
         textView.setText(String.valueOf(text));
     }
 
-    protected void setTextToTil(TextInputLayout til, String text) {
-        TextInputEditText tiEt = (TextInputEditText) til.getEditText();
-        if (tiEt != null) {
-            tiEt.setText(text);
-        }
-    }
-
-    protected void setTextToAutoComplete(TextInputLayout til, String text) {
-        AutoCompleteTextView acTv = (AutoCompleteTextView) til.getEditText();
-        if (acTv != null) {
-            acTv.setText(text);
-        }
-    }
-
-    protected String getTextFromAutoComplete(TextInputLayout til) {
-        AutoCompleteTextView acTv = (AutoCompleteTextView) til.getEditText();
-        return acTv != null ? acTv.getText().toString() : "";
-    }
-
-    protected String getTextFromTil(TextInputLayout til) {
-        TextInputEditText tiEt = (TextInputEditText) til.getEditText();
-        return tiEt != null ? tiEt.getText().toString() : "";
-    }
-
-    protected void addDatePickerListener(final TextInputLayout til) {
-        TextInputEditText tiet = (TextInputEditText) til.getEditText();
-        if (tiet != null) {
-            tiet.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Calendar calendar = Calendar.getInstance();
-                    DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                            calendar.set(year, month, day);
-
-                        }
-                    };
-                    DatePickerDialog datePickerDialog = new DatePickerDialog
-                            (NewBaseActivity.this, dateListener,
-                                    calendar.get(Calendar.YEAR),
-                                    calendar.get(Calendar.MONTH),
-                                    calendar.get(Calendar.DAY_OF_MONTH)
-                            );
-                    DatePicker datePicker = datePickerDialog.getDatePicker();
-                    datePicker.setMaxDate(calendar.getTime().getTime());
-                    datePickerDialog.show();
-                }
-            });
-        }
-    }
-
-    protected void addTimePickerListener(final TextInputLayout til) {
-        TextInputEditText tiet = (TextInputEditText) til.getEditText();
-        if (tiet != null) {
-            tiet.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Calendar calendar = Calendar.getInstance();
-                    TimePickerDialog.OnTimeSetListener timeListener = new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                            calendar.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar.set(Calendar.MINUTE, minute);
-                            til.getEditText().setText(DateUtils.timeToString(calendar.getTime()));
-                        }
-                    };
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(NewBaseActivity.this,
-                            timeListener, calendar.get(Calendar.HOUR_OF_DAY),
-                            calendar.get(Calendar.MINUTE), true);
-                    timePickerDialog.show();
-                }
-            });
-        }
-    }
-
     public long getVehicleOdometer() {
         return vehicleOdometer;
     }
@@ -195,11 +116,11 @@ public abstract class NewBaseActivity extends BaseActivity
 
     public boolean isInputValid() {
         boolean valid = true;
-        if (!NumberUtils.isCreatable(getTextFromTil(tilOdometer))) {
+        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilOdometer))) {
             valid = false;
             tilOdometer.setError("Numeric value expected");
         }
-        if (NumberUtils.createLong(getTextFromTil(tilOdometer)) < NumberUtils.LONG_ZERO) {
+        if (NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometer)) < NumberUtils.LONG_ZERO) {
             valid = false;
             tilOdometer.setError("Odometer can't be negative");
         }

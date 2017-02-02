@@ -26,7 +26,6 @@ public class Vehicle extends RealmObject {
     private RealmList<Service> services;
     private RealmList<Insurance> insurances;
     private RealmList<Expense> expenses;
-    private RealmList<Reminder> reminders;
     private Note note;
     
     public String getId() {
@@ -163,14 +162,6 @@ public class Vehicle extends RealmObject {
 
     public void setExpenses(RealmList<Expense> expenses) {
         this.expenses = expenses;
-    }
-
-    public RealmList<Reminder> getReminders() {
-        return reminders;
-    }
-
-    public void setReminders(RealmList<Reminder> reminders) {
-        this.reminders = reminders;
     }
 
     public Note getNote() {

@@ -32,9 +32,11 @@ import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.RealmNotification;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 import stoyanov.valentin.mycar.utils.NotificationUtils;
+import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewInsuranceActivity extends NewBaseActivity {
 
@@ -75,12 +77,12 @@ public class NewInsuranceActivity extends NewBaseActivity {
         tilDate.setHint("Date");
         tilTime = (TextInputLayout) findViewById(R.id.til_new_insurance_time);
         Calendar calendar = Calendar.getInstance();
-        setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
         tilExpirationDate = (TextInputLayout) findViewById(R.id.til_new_insurance_expiration_date);
         tilExpirationTime = (TextInputLayout) findViewById(R.id.til_new_insurance_expiration_time);
         calendar.add(Calendar.MINUTE, 5);
-        setTextToTil(tilExpirationDate, DateUtils.dateToString(calendar.getTime()));
-        setTextToTil(tilExpirationTime, DateUtils.timeToString(calendar.getTime()));
+        TextUtils.setTextToTil(tilExpirationDate, DateUtils.dateToString(calendar.getTime()));
+        TextUtils.setTextToTil(tilExpirationTime, DateUtils.timeToString(calendar.getTime()));
         spnCompanies = (Spinner) findViewById(R.id.spn_new_insurance_company_name);
         imgBtnAddCompany = (ImageButton) findViewById(R.id.img_btn_add_company);
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_insurance_price);
@@ -101,9 +103,10 @@ public class NewInsuranceActivity extends NewBaseActivity {
     @Override
     public void setComponentListeners() {
         super.setComponentListeners();
-        addDatePickerListener(tilExpirationDate);
-        addTimePickerListener(tilTime);
-        addTimePickerListener(tilExpirationTime);
+        DateTimePickerUtils.addDatePickerListener(NewInsuranceActivity.this, tilExpirationDate,
+                new Date(), DateTimePickerUtils.PickerLimits.MIN);
+        DateTimePickerUtils.addTimePickerListener(NewInsuranceActivity.this, tilTime);
+        DateTimePickerUtils.addTimePickerListener(NewInsuranceActivity.this, tilExpirationTime);
         imgBtnAddCompany.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,17 +133,17 @@ public class NewInsuranceActivity extends NewBaseActivity {
     public void setContent() {
         Insurance insurance = myRealm.where(Insurance.class)
                 .equalTo(RealmTable.ID, insuranceId).findFirst();
-        setTextToTil(tilDate, DateUtils.dateToString(insurance.getAction().getDate()));
-        setTextToTil(tilTime, DateUtils.timeToString(insurance.getAction().getDate()));
-        setTextToTil(tilExpirationDate, DateUtils
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(insurance.getAction().getDate()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(insurance.getAction().getDate()));
+        TextUtils.setTextToTil(tilExpirationDate, DateUtils
                 .dateToString(insurance.getNotification().getNotificationDate()));
-        setTextToTil(tilExpirationTime, DateUtils
+        TextUtils.setTextToTil(tilExpirationTime, DateUtils
                 .dateToString(insurance.getNotification().getNotificationDate()));
-        setTextToTil(tilOdometer, String.valueOf(insurance.getAction().getOdometer()));
+        TextUtils.setTextToTil(tilOdometer, String.valueOf(insurance.getAction().getOdometer()));
         tilOdometer.setEnabled(false);
-        setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(insurance.getAction()
+        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(insurance.getAction()
                 .getPrice())));
-        setTextToTil(tilNote, insurance.getNote().getContent());
+        TextUtils.setTextToTil(tilNote, insurance.getNote().getContent());
         spnCompanies.setSelection(results.indexOf(insurance.getCompany()));
     }
 
@@ -148,7 +151,8 @@ public class NewInsuranceActivity extends NewBaseActivity {
     public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
-        if (DateUtils.isDateInFuture(getTextFromTil(tilDate), getTextFromTil(tilTime))) {
+        if (DateUtils.isDateInFuture(TextUtils.getTextFromTil(tilDate),
+                TextUtils.getTextFromTil(tilTime))) {
             valid = false;
             tilDate.setError("Date&Time should be before the current");
         }
@@ -157,7 +161,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
             valid = false;
             tilExpirationDate.setError("Insurance can't expire in the past");
         }*/
-        if (!NumberUtils.isCreatable(getTextFromTil(tilPrice))) {
+        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilPrice))) {
             valid = false;
             tilPrice.setError("Price should be number");
         }
@@ -192,8 +196,9 @@ public class NewInsuranceActivity extends NewBaseActivity {
                     }
                     notification.setNotificationId(id);
                 }
-                notification.setNotificationDate(DateUtils.stringToDatetime(getTextFromTil(tilExpirationDate),
-                        getTextFromTil(tilExpirationTime)));
+                notification.setNotificationDate(DateUtils.stringToDatetime(TextUtils
+                        .getTextFromTil(tilExpirationDate),
+                                TextUtils.getTextFromTil(tilExpirationTime)));
                 notification.setTriggered(false);
                 insurance.setNotification(notification);
 
@@ -201,20 +206,20 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 insurance.setCompany(company);
 
                 Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(getTextFromTil(tilNote));
+                note.setContent(TextUtils.getTextFromTil(tilNote));
                 insurance.setNote(note);
 
                 Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
                 Calendar calendar = Calendar.getInstance();
-                Date date = DateUtils.stringToDate(getTextFromTil(tilDate));
+                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
                 calendar.setTime(date);
-                Date time = DateUtils.stringToTime(getTextFromTil(tilTime));
+                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
                 calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
                 calendar.set(Calendar.MINUTE, time.getMinutes());
                 action.setDate(calendar.getTime());
-                long odometer = Long.parseLong(getTextFromTil(tilOdometer));
+                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
                 action.setOdometer(odometer);
-                long price = MoneyUtils.stringToLong(getTextFromTil(tilPrice));
+                long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
                 action.setPrice(price);
                 insurance.setAction(action);
 

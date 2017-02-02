@@ -31,7 +31,6 @@ import stoyanov.valentin.mycar.utils.ImageViewUtils;
 
 public class ViewVehicleActivity extends BaseActivity {
 
-    private static final int ENABLE_BLUETOOTH_REQUEST = 1;
     private ImageView imageView;
     private TextView tvBrand, tvModel, tvOdometer, tvManufactureDate;
     private TextView tvHorsePower, tvCubicCentimeters, tvRegistrationPlate;
@@ -69,8 +68,7 @@ public class ViewVehicleActivity extends BaseActivity {
         toolbar.setTitle(vehicle.getName());
         toolbar.setTitleTextColor(textIconsColor);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setBackNavigation();
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -146,7 +144,7 @@ public class ViewVehicleActivity extends BaseActivity {
             return true;
         }else if (id == R.id.action_delete){
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewVehicleActivity.this);
-            builder.setTitle(getSupportActionBar().getTitle());
+            builder.setTitle(getToolbarTitle());
             builder.setMessage("The following vehicle will be deleted. Are you sure?");
             builder.setCancelable(true)
                     .setNegativeButton("No", null)

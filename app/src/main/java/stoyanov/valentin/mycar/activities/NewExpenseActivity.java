@@ -3,7 +3,6 @@ package stoyanov.valentin.mycar.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -27,8 +26,10 @@ import stoyanov.valentin.mycar.realm.models.ExpenseType;
 import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
+import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewExpenseActivity extends NewBaseActivity {
 
@@ -66,7 +67,7 @@ public class NewExpenseActivity extends NewBaseActivity {
         tilDate.setHint("Date");
         tilTime = (TextInputLayout) findViewById(R.id.til_new_expense_time);
         Calendar calendar = Calendar.getInstance();
-        setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_expense_price);
         spnType = (Spinner) findViewById(R.id.spn_new_expense_type);
         expenseId = getIntent().getStringExtra(RealmTable.EXPENSES + RealmTable.ID);
@@ -88,7 +89,7 @@ public class NewExpenseActivity extends NewBaseActivity {
     @Override
     public void setComponentListeners() {
         super.setComponentListeners();
-        addTimePickerListener(tilTime);
+        DateTimePickerUtils.addTimePickerListener(NewExpenseActivity.this, tilTime);
     }
 
     @Override
@@ -97,24 +98,25 @@ public class NewExpenseActivity extends NewBaseActivity {
                 .equalTo(RealmTable.ID, expenseId)
                 .findFirst();
         spnType.setSelection(expenseTypes.indexOf(expense.getType().getName()));
-        setTextToTil(tilDate, DateUtils.dateToString(expense.getAction().getDate()));
-        setTextToTil(tilTime, DateUtils.timeToString(expense.getAction().getDate()));
-        setTextToTil(tilOdometer, String.valueOf(expense.getAction().getOdometer()));
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(expense.getAction().getDate()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(expense.getAction().getDate()));
+        TextUtils.setTextToTil(tilOdometer, String.valueOf(expense.getAction().getOdometer()));
         tilOdometer.setEnabled(false);
-        setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(expense.getAction()
+        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(expense.getAction()
                 .getPrice())));
-        setTextToTil(tilNote, expense.getNote().getContent());
+        TextUtils.setTextToTil(tilNote, expense.getNote().getContent());
     }
 
     @Override
     public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
-        if (DateUtils.isDateInFuture(getTextFromTil(tilDate), getTextFromTil(tilTime))) {
+        if (DateUtils.isDateInFuture(TextUtils.getTextFromTil(tilDate),
+                TextUtils.getTextFromTil(tilTime))) {
             valid = false;
             tilDate.setError("The date is in the future");
         }
-        if (!NumberUtils.isCreatable(getTextFromTil(tilPrice))) {
+        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilPrice))) {
             valid = false;
             tilPrice.setError("Price should be number");
         }
@@ -132,7 +134,6 @@ public class NewExpenseActivity extends NewBaseActivity {
                             .findFirst();
                     expense.getNote().deleteFromRealm();
                     expense.getAction().deleteFromRealm();
-                    Log.d("update", "execute: ");
                 }else {
                     expense = realm.createObject(Expense.class, UUID.randomUUID().toString());
                 }
@@ -142,20 +143,20 @@ public class NewExpenseActivity extends NewBaseActivity {
                 expense.setType(type);
 
                 Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(getTextFromTil(tilNote));
+                note.setContent(TextUtils.getTextFromTil(tilNote));
                 expense.setNote(note);
 
                 Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
                 Calendar calendar = Calendar.getInstance();
-                Date date = DateUtils.stringToDate(getTextFromTil(tilDate));
+                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
                 calendar.setTime(date);
-                Date time = DateUtils.stringToTime(getTextFromTil(tilTime));
+                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
                 calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
                 calendar.set(Calendar.MINUTE, time.getMinutes());
                 action.setDate(calendar.getTime());
-                long odometer = Long.parseLong(getTextFromTil(tilOdometer));
+                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
                 action.setOdometer(odometer);
-                long price = MoneyUtils.stringToLong(getTextFromTil(tilPrice));
+                long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
                 action.setPrice(price);
                 expense.setAction(action);
 

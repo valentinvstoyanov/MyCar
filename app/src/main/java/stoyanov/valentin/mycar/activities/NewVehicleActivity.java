@@ -41,6 +41,7 @@ import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.TextUtils;
 import stoyanov.valentin.mycar.utils.ValidationUtils;
 
 public class NewVehicleActivity extends NewBaseActivity {
@@ -130,16 +131,16 @@ public class NewVehicleActivity extends NewBaseActivity {
     @Override
     public void setContent() {
         spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType().getName()));
-        setTextToTil(tilName, vehicle.getName());
-        setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
-        setTextToAutoComplete(tilModel, vehicle.getModel().getName());
-        setTextToTil(tilOdometer, String.valueOf(vehicle.getOdometer()));
-        setTextToTil(tilHorsePower, String.valueOf(vehicle.getHorsePower()));
-        setTextToTil(tilCubicCentimeters, String.valueOf(vehicle.getCubicCentimeter()));
-        setTextToTil(tilRegistrationPlate, vehicle.getRegistrationPlate());
-        setTextToTil(tilVinPlate, vehicle.getVinPlate());
-        setTextToTil(tilNote, vehicle.getNote().getContent());
-        setTextToTil(tilDate, DateUtils.dateToString(vehicle.getManufactureDate()));
+        TextUtils.setTextToTil(tilName, vehicle.getName());
+        TextUtils.setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
+        TextUtils.setTextToAutoComplete(tilModel, vehicle.getModel().getName());
+        TextUtils.setTextToTil(tilOdometer, String.valueOf(vehicle.getOdometer()));
+        TextUtils.setTextToTil(tilHorsePower, String.valueOf(vehicle.getHorsePower()));
+        TextUtils.setTextToTil(tilCubicCentimeters, String.valueOf(vehicle.getCubicCentimeter()));
+        TextUtils.setTextToTil(tilRegistrationPlate, vehicle.getRegistrationPlate());
+        TextUtils.setTextToTil(tilVinPlate, vehicle.getVinPlate());
+        TextUtils.setTextToTil(tilNote, vehicle.getNote().getContent());
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(vehicle.getManufactureDate()));
         btnColor.setBackgroundColor(vehicle.getColor().getColor());
         existingFuelTanks = new ArrayList<>(vehicle.getFuelTanks().size());
         for (FuelTank fuelTank : vehicle.getFuelTanks()) {
@@ -152,41 +153,41 @@ public class NewVehicleActivity extends NewBaseActivity {
     public boolean isInputValid() {
         boolean result = super.isInputValid();
         boolean valid = true;
-        if (!ValidationUtils.isInputValid(getTextFromTil(tilName))) {
+        if (!ValidationUtils.isInputValid(TextUtils.getTextFromTil(tilName))) {
             tilName.setError("Incorrect vehicle name");
             valid = false;
         }
-        if (!ValidationUtils.isInputValid(getTextFromAutoComplete(tilBrand))) {
+        if (!ValidationUtils.isInputValid(TextUtils.getTextFromAutoComplete(tilBrand))) {
             tilBrand.setError("Incorrect vehicle brand");
             valid = false;
         }
-        if (!ValidationUtils.isInputValid(getTextFromAutoComplete(tilModel))) {
+        if (!ValidationUtils.isInputValid(TextUtils.getTextFromAutoComplete(tilModel))) {
             tilModel.setError("Incorrect vehicle model");
             valid = false;
         }
-        if(!ValidationUtils.isInputValid(getTextFromTil(tilRegistrationPlate))) {
+        if(!ValidationUtils.isInputValid(TextUtils.getTextFromTil(tilRegistrationPlate))) {
             tilRegistrationPlate.setError("Incorrect registration plate");
             valid = false;
         }
-        if (!ValidationUtils.isInputValid(getTextFromTil(tilVinPlate))) {
+        if (!ValidationUtils.isInputValid(TextUtils.getTextFromTil(tilVinPlate))) {
             tilVinPlate.setError("Incorrect VIN number");
             valid = false;
         }
-        if (!NumberUtils.isCreatable(getTextFromTil(tilHorsePower))) {
+        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilHorsePower))) {
             tilHorsePower.setError("No horse power value");
             valid = false;
         }else {
-            if (NumberUtils.createInteger(getTextFromTil(tilHorsePower)) <
+            if (NumberUtils.createInteger(TextUtils.getTextFromTil(tilHorsePower)) <
                     NumberUtils.INTEGER_ZERO) {
                 tilHorsePower.setError("Horse power should not be negative");
                 valid = false;
             }
         }
-        if (!NumberUtils.isCreatable(getTextFromTil(tilCubicCentimeters))) {
+        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilCubicCentimeters))) {
             tilCubicCentimeters.setError("No cubic centimeter value");
             valid = false;
         }else {
-            if (NumberUtils.createInteger(getTextFromTil(tilCubicCentimeters)) <
+            if (NumberUtils.createInteger(TextUtils.getTextFromTil(tilCubicCentimeters)) <
                     NumberUtils.INTEGER_ZERO) {
                 tilCubicCentimeters.setError("Cubic centimeters should not be negative");
                 valid = false;
@@ -205,7 +206,7 @@ public class NewVehicleActivity extends NewBaseActivity {
             snackbar.show();
         }
         if (isUpdate()) {
-            if (Long.parseLong(getTextFromTil(tilOdometer)) <
+            if (Long.parseLong(TextUtils.getTextFromTil(tilOdometer)) <
                     vehicle.getOdometer()) {
                 valid = false;
                 tilOdometer.setError("Odometer can't be decreased, current: " + vehicle.getOdometer());
@@ -236,8 +237,8 @@ public class NewVehicleActivity extends NewBaseActivity {
                         .findFirst();
                 realmVehicle.setType(vehicleType);
 
-                realmVehicle.setName(getTextFromTil(tilName));
-                realmVehicle.setManufactureDate(DateUtils.stringToDate(getTextFromTil(tilDate)));
+                realmVehicle.setName(TextUtils.getTextFromTil(tilName));
+                realmVehicle.setManufactureDate(DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate)));
 
                 ColorDrawable colorDrawable = (ColorDrawable) btnColor.getBackground();
                 Color color = realm.where(Color.class)
@@ -255,13 +256,13 @@ public class NewVehicleActivity extends NewBaseActivity {
                 }
                 realmVehicle.setColor(color);
 
-                realmVehicle.setRegistrationPlate(getTextFromTil(tilRegistrationPlate));
-                realmVehicle.setVinPlate(getTextFromTil(tilVinPlate));
-                realmVehicle.setOdometer(Long.parseLong(getTextFromTil(tilOdometer)));
-                realmVehicle.setHorsePower(Integer.parseInt(getTextFromTil(tilHorsePower)));
-                realmVehicle.setCubicCentimeter(Integer.parseInt(getTextFromTil(tilCubicCentimeters)));
+                realmVehicle.setRegistrationPlate(TextUtils.getTextFromTil(tilRegistrationPlate));
+                realmVehicle.setVinPlate(TextUtils.getTextFromTil(tilVinPlate));
+                realmVehicle.setOdometer(Long.parseLong(TextUtils.getTextFromTil(tilOdometer)));
+                realmVehicle.setHorsePower(Integer.parseInt(TextUtils.getTextFromTil(tilHorsePower)));
+                realmVehicle.setCubicCentimeter(Integer.parseInt(TextUtils.getTextFromTil(tilCubicCentimeters)));
 
-                String brandName = getTextFromAutoComplete(tilBrand);
+                String brandName = TextUtils.getTextFromAutoComplete(tilBrand);
                 Brand brand = realm.where(Brand.class)
                         .equalTo(RealmTable.NAME, brandName)
                         .findFirst();
@@ -271,7 +272,7 @@ public class NewVehicleActivity extends NewBaseActivity {
                 }
                 realmVehicle.setBrand(brand);
 
-                String modelName = getTextFromAutoComplete(tilModel);
+                String modelName = TextUtils.getTextFromAutoComplete(tilModel);
                 Model model = realm.where(Model.class)
                         .equalTo(RealmTable.NAME, modelName)
                         .findFirst();
@@ -295,7 +296,7 @@ public class NewVehicleActivity extends NewBaseActivity {
                 }
 
                 Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(getTextFromTil(tilNote));
+                note.setContent(TextUtils.getTextFromTil(tilNote));
                 realmVehicle.setNote(note);
             }
         }, new Realm.Transaction.OnSuccess() {
