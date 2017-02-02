@@ -73,6 +73,11 @@
         <item>Registration</item>
     </string-array>
 
+    <string-array name="length_unit">
+        <item>km</item>
+        <item>mi</item>
+    </string-array>
+
     <string name="fuel_type_placeholder">Fuel Type: %s</string>
     <string name="capacity_placeholder">Capacity: %d</string>
     <string name="consumption_placeholder">Consumption: %.1f</string>
@@ -104,6 +109,5 @@
 
     <string name="banner_ad_unit_id">ca-app-pub-5561372550558397/5266340262</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="reminder_distance_in_advance">Reminder distance in advance</string>
 </resources>

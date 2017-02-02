@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
@@ -20,6 +21,7 @@ import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Insurance;
+import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
@@ -31,7 +33,7 @@ public class ViewActivity extends BaseActivity {
     private String id;
     private ViewType type;
     private Class aClass;
-    private long odometer;
+    private long vehicleOdometer;
     private String typeStr;
     private String vehicleId;
 
@@ -43,7 +45,7 @@ public class ViewActivity extends BaseActivity {
         setContent();
         setComponentListeners();
 
-       /* ConnectivityManager cm =
+        /*ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -146,7 +148,7 @@ public class ViewActivity extends BaseActivity {
                 Intent intent = new Intent(getApplicationContext(), aClass);
                 intent.putExtra(RealmTable.ID, vehicleId);
                 intent.putExtra(typeStr + RealmTable.ID, id);
-                intent.putExtra(RealmTable.ODOMETER, odometer);
+                intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
                 startActivity(intent);
                 finish();
             }
@@ -157,6 +159,9 @@ public class ViewActivity extends BaseActivity {
     public void setContent() {
         Intent intent = getIntent();
         Realm myRealm = Realm.getDefaultInstance();
+        Date date;
+        long price;
+        String note;
         switch (type) {
             case INSURANCE:
                 typeStr = RealmTable.INSURANCES;
@@ -164,18 +169,14 @@ public class ViewActivity extends BaseActivity {
                 final Insurance insurance = myRealm.where(Insurance.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 setToolbarTitle(insurance.getCompany().getName());
-                displayView(getString(R.string.date),
-                        DateUtils.datetimeToString(insurance.getAction().getDate()));
+                date = insurance.getAction().getDate();
                 displayView(getString(R.string.expiration_date),
                         DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()));
                 displayView(getString(R.string.company_name), insurance.getCompany().getName());
-                displayView(getString(R.string.odometer),
-                        String.valueOf(insurance.getAction().getOdometer()));
-                displayView(getString(R.string.price),
-                        MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));
-                displayView(getString(R.string.notes), insurance.getNote().getContent());
+                vehicleOdometer = insurance.getAction().getOdometer();
+                price = insurance.getAction().getPrice();
+                note = insurance.getNote().getContent();
                 aClass = NewInsuranceActivity.class;
-                odometer = insurance.getAction().getOdometer();
                 break;
             case EXPENSE:
                 typeStr = RealmTable.EXPENSES;
@@ -183,15 +184,11 @@ public class ViewActivity extends BaseActivity {
                 Expense expense = myRealm.where(Expense.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 setToolbarTitle(expense.getType().getName());
-                displayView(getString(R.string.date),
-                        DateUtils.datetimeToString(expense.getAction().getDate()));
-                displayView(getString(R.string.odometer),
-                        String.valueOf(expense.getAction().getOdometer()));
-                displayView(getString(R.string.price),
-                        MoneyUtils.longToString(new BigDecimal(expense.getAction().getPrice())));
-                displayView(getString(R.string.notes), expense.getNote().getContent());
+                date = expense.getAction().getDate();
+                vehicleOdometer = expense.getAction().getOdometer();
+                price = expense.getAction().getPrice();
+                note = expense.getNote().getContent();
                 aClass = NewExpenseActivity.class;
-                odometer = expense.getAction().getOdometer();
                 break;
             case REFUELING:
                 typeStr = RealmTable.REFUELINGS;
@@ -201,19 +198,15 @@ public class ViewActivity extends BaseActivity {
                 FuelTank fuelTank = myRealm.where(FuelTank.class)
                         .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();
                 setToolbarTitle(fuelTank.getFuelType().getName());
-                displayView(getString(R.string.date),
-                        DateUtils.datetimeToString(refueling.getAction().getDate()));
-                displayView(getString(R.string.odometer),
-                        String.valueOf(refueling.getAction().getOdometer()));
-                displayView(getString(R.string.price),
-                        MoneyUtils.longToString(new BigDecimal(refueling.getAction().getPrice())));
+                date = refueling.getAction().getDate();
+                vehicleOdometer = refueling.getAction().getOdometer();
+                price = refueling.getAction().getPrice();
                 displayView(getString(R.string.quantity),
                         String.valueOf(refueling.getQuantity()) + fuelTank.getFuelType().getUnit());
                 displayView(getString(R.string.fuel_price_placeholder),
                         MoneyUtils.longToString(new BigDecimal(refueling.getFuelPrice())));
-                displayView(getString(R.string.notes), refueling.getNote().getContent());
+                note = refueling.getNote().getContent();
                 aClass = NewRefuelingActivity.class;
-                odometer = refueling.getAction().getOdometer();
                 typeStr = RealmTable.REFUELINGS;
                 break;
             default:
@@ -222,17 +215,19 @@ public class ViewActivity extends BaseActivity {
                 Service service = myRealm.where(Service.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 setToolbarTitle(service.getType().getName());
-                displayView(getString(R.string.date),
-                        DateUtils.datetimeToString(service.getAction().getDate()));
-                displayView(getString(R.string.odometer),
-                        String.valueOf(service.getAction().getOdometer()));
-                displayView(getString(R.string.price),
-                        MoneyUtils.longToString(new BigDecimal(service.getAction().getPrice())));
+                date = service.getAction().getDate();
+                vehicleOdometer = service.getAction().getOdometer();
+                price = service.getAction().getPrice();
+                note = service.getNote().getContent();
                 displayView(getString(R.string.notes), service.getNote().getContent());
                 aClass = NewServiceActivity.class;
-                odometer = service.getAction().getOdometer();
                 break;
         }
+        RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
+        displayView(getString(R.string.date), DateUtils.datetimeToString(date));
+        displayView(getString(R.string.odometer), String.valueOf(vehicleOdometer) + settings.getLengthUnit());
+        displayView(getString(R.string.price), MoneyUtils.longToString(new BigDecimal(price)) + settings.getCurrencyUnit());
+        displayView(getString(R.string.notes), note);
         myRealm.close();
     }
 

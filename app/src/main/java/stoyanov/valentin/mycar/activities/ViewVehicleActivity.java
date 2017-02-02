@@ -1,6 +1,5 @@
 package stoyanov.valentin.mycar.activities;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -11,7 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import app.akexorcist.bluetotohspp.library.BluetoothSPP;
-import app.akexorcist.bluetotohspp.library.BluetoothState;
-import app.akexorcist.bluetotohspp.library.DeviceList;
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
@@ -45,123 +40,6 @@ public class ViewVehicleActivity extends BaseActivity {
     private LinearLayout llFuelTanks;
     private ProgressBar progressBar;
 
- /*   private SimpleBluetooth simpleBluetooth;
-    private static final int SCAN_REQUEST = 119;
-    private static final int CHOOSE_SERVER_REQUEST = 120;
-    private String curMacAddress;*/
-
-    private BluetoothSPP bluetoothSPP;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-     /*   if (simpleBluetooth == null) {
-            simpleBluetooth = new SimpleBluetooth(this, this);
-            simpleBluetooth.setSimpleBluetoothListener(new SimpleBluetoothListener() {
-
-                @Override
-                public void onDeviceConnected(BluetoothDevice device) {
-                    showMessage("Connected!");
-                    simpleBluetooth.sendData("ALLAHU AKBAR :D !");
-                }
-            });
-        }*/
-    }
-
-    /* private SmoothBluetooth smoothBluetooth;
-    private SmoothBluetooth.Listener listener = new SmoothBluetooth.Listener() {
-        @Override
-        public void onBluetoothNotSupported() {
-            showMessage("Bluetooth not supported");
-        }
-
-        @Override
-        public void onBluetoothNotEnabled() {
-            showMessage("Bluetooth is not enabled");
-            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH_REQUEST);
-        }
-
-        @Override
-        public void onConnecting(Device device) {
-            showMessage("Connecting to " + device.getName());
-        }
-
-        @Override
-        public void onConnected(Device device) {
-            showMessage("Connected to " + device.getName());
-            Realm myRealm = Realm.getDefaultInstance();
-            Vehicle vehicle = myRealm.copyFromRealm(myRealm.where(Vehicle.class)
-            .equalTo(RealmTable.ID, vehicleId).findFirst());
-            String data = new Gson().toJson(vehicle);
-            smoothBluetooth.send(data);
-        }
-
-        @Override
-        public void onDisconnected() {
-            showMessage("Device disconnected");
-        }
-
-        @Override
-        public void onConnectionFailed(Device device) {
-            showMessage("Failed to connect to " + device.getName());
-           // smoothBluetooth.doDiscovery();
-            if (device.isPaired()) {
-                smoothBluetooth.doDiscovery();
-            }
-        }
-
-        @Override
-        public void onDiscoveryStarted() {
-            showMessage("Searching...");
-            progressBar.setIndeterminate(true);
-        }
-
-        @Override
-        public void onDiscoveryFinished() {
-            showMessage("Searching has finished");
-            progressBar.setIndeterminate(false);
-        }
-
-        @Override
-        public void onNoDevicesFound() {
-            showMessage("No devices found");
-        }
-
-        @Override
-        public void onDevicesFound(final List<Device> deviceList, final SmoothBluetooth.ConnectionCallback connectionCallback) {
-            Log.d("Asda", "onDevicesFound: " + deviceList.size());
-            final BluetoothDevicesDialog dialog = new BluetoothDevicesDialog();
-            dialog.setDevices(getDevicesNames(deviceList));
-            dialog.setListener(new BluetoothDevicesDialog.OnDevicePickedListener() {
-                @Override
-                public void onPicked(int position) {
-                    connectionCallback.connectTo(deviceList.get(position));
-                    Log.d("position: ", "onPicked: " + position);
-                    dialog.dismiss();
-                }
-            });
-            dialog.show(getSupportFragmentManager(), "bluetooth_dialog");
-        }
-
-        @Override
-        public void onDataReceived(int data) {}
-    };*/
-
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK) {
-            if(requestCode == ENABLE_BLUETOOTH_REQUEST) {
-                smoothBluetooth.tryConnection();
-            }
-        }
-    }
-*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -252,78 +130,6 @@ public class ViewVehicleActivity extends BaseActivity {
         return true;
     }
 
-/*    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == SCAN_REQUEST || requestCode == CHOOSE_SERVER_REQUEST) {
-
-            if(resultCode == RESULT_OK) {
-
-                curMacAddress = data.getStringExtra(DeviceDialog.DEVICE_DIALOG_DEVICE_ADDRESS_EXTRA);
-                if(requestCode == SCAN_REQUEST) {
-                    simpleBluetooth.connectToBluetoothDevice(curMacAddress);
-                } else {
-                    simpleBluetooth.connectToBluetoothServer(curMacAddress);
-                }
-
-            }
-        }
-    }*/
-
-
-    /*public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("RESULT", "onActivityResult: ");
-        if(requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
-            Log.d("REQUEST CONNECT DEVICE", "onActivityResult: ");
-            if (resultCode == RESULT_OK) {
-                bluetoothSPP.connect(data);
-                showMessage("connect");
-                Log.d("connect", "onActivityResult: ");
-            }
-        } else if(requestCode == BluetoothState.REQUEST_ENABLE_BT) {
-            Log.d("REQUEST ENABLE BT", "onActivityResult: ");
-            if(resultCode == RESULT_OK) {
-                bluetoothSPP.setupService();
-                bluetoothSPP.startService(BluetoothState.DEVICE_ANDROID);
-                Intent intent = new Intent(getApplicationContext(), DeviceList.class);
-                startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
-                showMessage("start service");
-                Log.d("start service", "onActivityResult: ");
-            } else {
-                showMessage("Didn't choose device");
-                Log.d("didnt choose device", "onActivityResult: ");
-                // Do something if user doesn't choose any device (Pressed back)
-            }
-        }
-    }*/
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("RESULT", "onActivityResult: ");
-        if(requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
-            Log.d("REQUEST CONNECT DEVICE", "onActivityResult: ");
-            if (resultCode == RESULT_OK) {
-                bluetoothSPP.connect(data);
-                showMessage("connect");
-                Log.d("connect", "onActivityResult: ");
-            }
-        } else if(requestCode == BluetoothState.REQUEST_ENABLE_BT) {
-            Log.d("REQUEST ENABLE BT", "onActivityResult: ");
-            if(resultCode == RESULT_OK) {
-                bluetoothSPP.setupService();
-                bluetoothSPP.startService(BluetoothState.DEVICE_ANDROID);
-                Intent intent = new Intent(getApplicationContext(), DeviceList.class);
-                startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
-                showMessage("start service");
-                Log.d("start service", "onActivityResult: ");
-            } else {
-                showMessage("Didn't choose device");
-                Log.d("didnt choose device", "onActivityResult: ");
-                // Do something if user doesn't choose any device (Pressed back)
-            }
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -331,45 +137,12 @@ public class ViewVehicleActivity extends BaseActivity {
             onBackPressed();
             return true;
         }else if (id == R.id.action_export){
-            bluetoothSPP = new BluetoothSPP(this);
-            bluetoothSPP.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
-                @Override
-                public void onDeviceConnected(String name, String address) {
-                    bluetoothSPP.send("ALLAHU AKBAR", false);
-                    showMessage("Sending...");
-                    Log.d("sending", "onActivityResult: ");
-                }
-
-                @Override
-                public void onDeviceDisconnected() {
-                    showMessage("Disconnected...");
-                }
-
-                @Override
-                public void onDeviceConnectionFailed() {
-                    showMessage("Connection failed...");
-                }
-            });
-            if(!bluetoothSPP.isBluetoothEnabled()) {
-                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBluetooth, BluetoothState.REQUEST_ENABLE_BT);
-                Log.d("enable bt", "onActivityResult: ");
-                /*bluetoothSPP.setupService();
-                bluetoothSPP.startService(BluetoothState.DEVICE_ANDROID);
-                Intent intent = new Intent(getApplicationContext(), DeviceList.class);
-                startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);*/
-            }else {
-                //bluetoothSPP.startService(BluetoothState.DEVICE_ANDROID);
-                showMessage("kur");
-                Log.d("kur", "onActivityResult: ");
-            }
-       /*     simpleBluetooth.initializeSimpleBluetooth();
-
-            simpleBluetooth.scan(SCAN_REQUEST);*/
-                /*smoothBluetooth = new SmoothBluetooth(getApplicationContext(),
-                        SmoothBluetooth.ConnectionTo.ANDROID_DEVICE,
-                        SmoothBluetooth.Connection.SECURE, listener);
-                smoothBluetooth.doDiscovery();*/
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "Text text text");
+            shareIntent.setType("text/plain");
+            shareIntent.setPackage("com.android.bluetooth");
+            startActivity(Intent.createChooser(shareIntent, "Send to"));
             return true;
         }else if (id == R.id.action_delete){
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewVehicleActivity.this);
@@ -448,27 +221,4 @@ public class ViewVehicleActivity extends BaseActivity {
             }
         });
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-       // smoothBluetooth.cancelDiscovery();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //smoothBluetooth.stop();
-        //simpleBluetooth.endSimpleBluetooth();
-    }
-
- /*   private String[] getDevicesNames(List<Device> deviceList) {
-        String[] deviceNames = new String[deviceList.size()];
-        int i = 0;
-        for (Device device : deviceList) {
-            deviceNames[i] = device.getName();
-            i++;
-        }
-        return deviceNames;
-    }*/
 }

@@ -1,6 +1,5 @@
 package stoyanov.valentin.mycar.activities;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +19,6 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 
-import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 import io.realm.Realm;
@@ -28,6 +27,7 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
+import stoyanov.valentin.mycar.dialogs.SettingsDialog;
 import stoyanov.valentin.mycar.fragments.InfoFragment;
 import stoyanov.valentin.mycar.fragments.ListFragment;
 import stoyanov.valentin.mycar.fragments.StatisticsFragment;
@@ -39,7 +39,6 @@ public class MainActivity extends BaseActivity
 
     public static final String FRAGMENT_TYPE = "fragment_type";
     public static final String STATISTIC_TYPE = "statistic_type";
-    private static final int ENABLE_BLUETOOTH_REQUEST = 2;
 
     private Spinner spnChooseVehicle;
     private Realm myRealm;
@@ -60,14 +59,23 @@ public class MainActivity extends BaseActivity
                 }
             };
 
-    private BluetoothSPP bluetoothSPP;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            menuId = savedInstanceState.getInt("menu_id");
+        }else {
+            menuId = R.id.nav_info;
+        }
         setContentView(R.layout.activity_main);
         initComponents();
         setComponentListeners();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("menu_id", menuId);
     }
 
     @Override
@@ -77,30 +85,25 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK) {
-            if(requestCode == ENABLE_BLUETOOTH_REQUEST) {
-                showMessage("Bluetooth enabled...");
-            }
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            SettingsDialog settingsDialog = new SettingsDialog();
+            settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
             return true;
         }else if (id == R.id.action_import) {
-            bluetoothSPP = new BluetoothSPP(this);
-            bluetoothSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
-                @Override
-                public void onDataReceived(byte[] data, String message) {
-                    showMessage(message);
+            Intent intent = getIntent();
+            String action = intent.getAction();
+            String type = intent.getType();
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+                if ("text/plain".equals(type)) {
+                    String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                    if (sharedText != null) {
+                        showMessage(sharedText);
+                    }else {
+                        showMessage("NULL");
+                    }
                 }
-            });
-            if (!bluetoothSPP.isBluetoothEnabled()) {
-                Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH_REQUEST);
             }
             return true;
         }
@@ -153,8 +156,9 @@ public class MainActivity extends BaseActivity
                 android.R.layout.simple_dropdown_item_1line, spinnerDataSet);
         results.addChangeListener(callback);
         spnChooseVehicle.setSelection(0);
-        navigationView.getMenu().performIdentifierAction(R.id.nav_info, 0);
-        navigationView.setCheckedItem(R.id.nav_info);
+        navigationView.getMenu().performIdentifierAction(menuId, 0);
+        navigationView.setCheckedItem(menuId);
+        Log.d("menuid", "initComponents: " + menuId);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnChooseVehicle.setAdapter(spinnerAdapter);
     }
@@ -173,15 +177,21 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
+        final FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
             public boolean onMenuItemSelected(MenuItem menuItem) {
                 Intent intent;
                 Class aClass;
-                Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
-                String vehicleId = vehicle.getId();
-                long vehicleOdometer = vehicle.getOdometer();
+                String vehicleId = null;
+                long vehicleOdometer = 0;
+                boolean valid = false;
+                if (results != null && !results.isEmpty()) {
+                    Vehicle vehicle = results.get(spnChooseVehicle.getSelectedItemPosition());
+                    vehicleId = vehicle.getId();
+                    vehicleOdometer = vehicle.getOdometer();
+                    valid = true;
+                }
                 switch (menuItem.getItemId()) {
                     case R.id.action_add_car:
                         aClass = NewVehicleActivity.class;
@@ -202,12 +212,14 @@ public class MainActivity extends BaseActivity
                     default:
                         return false;
                 }
-                intent = new Intent(getApplicationContext(), aClass);
-                if (vehicleId != null) {
-                    intent.putExtra(RealmTable.ID, vehicleId);
-                    intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
+                if (valid) {
+                    intent = new Intent(getApplicationContext(), aClass);
+                    if (vehicleId != null) {
+                        intent.putExtra(RealmTable.ID, vehicleId);
+                        intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
+                    }
+                    startActivity(intent);
                 }
-                startActivity(intent);
                 return true;
             }
         });
@@ -216,7 +228,7 @@ public class MainActivity extends BaseActivity
     @Override
     public void setContent() {}
 
-   private void openFragment() {
+    private void openFragment() {
         if (results != null && !results.isEmpty()) {
             String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
             Fragment fragment;

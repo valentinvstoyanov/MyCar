@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import java.math.BigDecimal;
 
-import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
@@ -19,22 +18,12 @@ import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class ExpenseRecyclerViewAdapter extends
-        RealmBasedRecyclerViewAdapter<Expense, ExpenseRecyclerViewAdapter.ViewHolder> {
-
-    private int color;
-    private String vehicleId;
+        BaseRealmAdapter<Expense, ExpenseRecyclerViewAdapter.ViewHolder>
+    {
 
     public ExpenseRecyclerViewAdapter(Context context, RealmResults<Expense> realmResults,
                                       boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     @Override
@@ -49,14 +38,14 @@ public class ExpenseRecyclerViewAdapter extends
         viewHolder.tvType.setText(expense.getType().getName());
         viewHolder.tvDatetime.setText(DateUtils
                 .datetimeToString(expense.getAction().getDate()));
-        viewHolder.tvNotifDatetime.setText("PROVIDE ME NOTIFDATE");
-        viewHolder.tvPrice.setText(MoneyUtils
-                .longToString(new BigDecimal(expense.getAction().getPrice())));
+        String price = MoneyUtils
+                .longToString(new BigDecimal(expense.getAction().getPrice()));
+        viewHolder.tvPrice.setText(price);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
                 intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
                 getContext().startActivity(intent);
@@ -66,16 +55,14 @@ public class ExpenseRecyclerViewAdapter extends
 
     public class ViewHolder extends RealmViewHolder {
 
-        public TextView tvType, tvDatetime, tvNotifDatetime, tvPrice;
+        public TextView tvType, tvDatetime, tvPrice;
 
         public ViewHolder(View itemView) {
             super(itemView);
             View viewColor = itemView.findViewById(R.id.view_row_service_vehicle_color);
-            viewColor.setBackgroundColor(color);
+            viewColor.setBackgroundColor(getColor());
             tvType = (TextView) itemView.findViewById(R.id.tv_row_service_type);
             tvDatetime = (TextView) itemView.findViewById(R.id.tv_row_service_datetime);
-            tvNotifDatetime = (TextView) itemView.findViewById(
-                    R.id.tv_row_service_notification_datetime);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_row_service_price);
         }
     }

@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import java.math.BigDecimal;
 
-import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
@@ -18,23 +17,11 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
-public class ServiceRecyclerViewAdapter
-                extends RealmBasedRecyclerViewAdapter<Service, ServiceRecyclerViewAdapter.ViewHolder> {
-
-    private int color;
-    private String vehicleId;
+public class ServiceRecyclerViewAdapter extends BaseRealmAdapter<Service, ServiceRecyclerViewAdapter.ViewHolder> {
 
     public ServiceRecyclerViewAdapter(Context context, RealmResults<Service> realmResults,
                                       boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     @Override
@@ -56,7 +43,7 @@ public class ServiceRecyclerViewAdapter
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
                 intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
                 getContext().startActivity(intent);
@@ -71,7 +58,7 @@ public class ServiceRecyclerViewAdapter
         public ViewHolder(View itemView) {
             super(itemView);
             View viewColor = itemView.findViewById(R.id.view_row_service_vehicle_color);
-            viewColor.setBackgroundColor(color);
+            viewColor.setBackgroundColor(getColor());
             tvType = (TextView) itemView.findViewById(R.id.tv_row_service_type);
             tvDatetime = (TextView) itemView.findViewById(R.id.tv_row_service_datetime);
             tvNotifDatetime = (TextView) itemView.findViewById(

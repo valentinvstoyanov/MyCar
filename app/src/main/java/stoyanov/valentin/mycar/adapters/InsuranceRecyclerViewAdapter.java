@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import java.math.BigDecimal;
 
-import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
@@ -18,23 +17,12 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
-public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<Insurance,
+public class InsuranceRecyclerViewAdapter extends BaseRealmAdapter<Insurance,
         InsuranceRecyclerViewAdapter.ViewHolder> {
-
-    private int color;
-    private String vehicleId;
 
     public InsuranceRecyclerViewAdapter(Context context, RealmResults<Insurance> realmResults,
                                         boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     @Override
@@ -60,7 +48,7 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
                 intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
                 getContext().startActivity(intent);
@@ -75,7 +63,7 @@ public class InsuranceRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         public ViewHolder(View itemView) {
             super(itemView);
             View viewColor = itemView.findViewById(R.id.view_row_insurance_vehicle_color);
-            viewColor.setBackgroundColor(color);
+            viewColor.setBackgroundColor(getColor());
             tvCompany = (TextView) itemView.findViewById(R.id.tv_row_insurance_company);
             tvDate = (TextView) itemView.findViewById(R.id.tv_row_insurance_date);
             tvExpirationDate = (TextView) itemView.findViewById(R.id.tv_row_insurance_expiration_date);

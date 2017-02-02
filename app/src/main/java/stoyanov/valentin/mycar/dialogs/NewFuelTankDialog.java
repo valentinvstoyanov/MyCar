@@ -15,11 +15,13 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.interfaces.IBaseActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.FuelType;
 
-public class NewFuelTankDialog extends DialogFragment {
+public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
 
+    private View view;
     private Spinner spnFTfuelType;
     private TextInputLayout tilFTCapacity;
     private TextInputLayout tilFTConsumption;
@@ -31,9 +33,26 @@ public class NewFuelTankDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        initComponents();
+        setComponentListeners();
+        setContent();
+        builder.setCancelable(true);
+        builder.setView(view);
+        return builder.create();
+    }
+
+    @Override
+    public void initComponents() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_new_fuel_tank, null);
-        initComponents(view);
+        view = inflater.inflate(R.layout.dialog_new_fuel_tank, null);
+        spnFTfuelType = (Spinner) view.findViewById(R.id.spn_new_ft_fuel_type);
+        tilFTCapacity = (TextInputLayout) view.findViewById(R.id.til_new_ft_capacity);
+        tilFTConsumption = (TextInputLayout) view.findViewById(R.id.til_new_ft_consumption);
+        btnAdd = (Button) view.findViewById(R.id.btn_dialog_new_ft_add);
+    }
+
+    @Override
+    public void setComponentListeners() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,20 +69,14 @@ public class NewFuelTankDialog extends DialogFragment {
                 }
             }
         });
-        builder.setCancelable(true);
-        builder.setView(view);
-        return builder.create();
     }
 
-    private void initComponents(View view) {
-        spnFTfuelType = (Spinner) view.findViewById(R.id.spn_new_ft_fuel_type);
+    @Override
+    public void setContent() {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.textview_spinner, possibleFuelTypes);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnFTfuelType.setAdapter(spinnerAdapter);
-        tilFTCapacity = (TextInputLayout) view.findViewById(R.id.til_new_ft_capacity);
-        tilFTConsumption = (TextInputLayout) view.findViewById(R.id.til_new_ft_consumption);
-        btnAdd = (Button) view.findViewById(R.id.btn_dialog_new_ft_add);
     }
 
     private boolean isInputValid() {

@@ -9,7 +9,6 @@ import android.widget.TextView;
 import java.math.BigDecimal;
 
 import io.realm.Realm;
-import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
@@ -19,22 +18,11 @@ import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
-public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<Refueling,
+public class RefuelingRecyclerViewAdapter extends BaseRealmAdapter<Refueling,
         RefuelingRecyclerViewAdapter.ViewHolder> {
-
-    private int color;
-    private String vehicleId;
 
     public RefuelingRecyclerViewAdapter(Context context, RealmResults<Refueling> realmResults, boolean automaticUpdate, boolean animateResults) {
         super(context, realmResults, automaticUpdate, animateResults);
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     @Override
@@ -65,7 +53,7 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
                 intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
                 getContext().startActivity(intent);
@@ -80,7 +68,7 @@ public class RefuelingRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
         public ViewHolder(View itemView) {
             super(itemView);
             View viewColor = itemView.findViewById(R.id.view_row_refueling_vehicle_color);
-            viewColor.setBackgroundColor(color);
+            viewColor.setBackgroundColor(getColor());
             tvFuelType = (TextView) itemView.findViewById(R.id.tv_row_refueling_fuel_type);
             tvFuelPrice = (TextView) itemView.findViewById(R.id.tv_row_refueling_fuel_price);
             tvQuantity = (TextView) itemView.findViewById(R.id.tv_row_refueling_quantity);

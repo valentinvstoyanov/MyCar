@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import stoyanov.valentin.mycar.realm.models.ExpenseType;
 import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Note;
+import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.models.VehicleType;
@@ -59,7 +61,6 @@ public class WelcomeActivity extends BaseActivity
             launchMainActivity();
             finish();
         }else {
-            //new BrandRepository().deleteAllBrands();
             setContentView(R.layout.activity_welcome);
             setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.colorWelcome1, null));
             final ProgressBar progressBar = (ProgressBar) findViewById(R.id.pb_realm_seeding);
@@ -89,20 +90,22 @@ public class WelcomeActivity extends BaseActivity
                     final TypedArray primaryColors = getResources().obtainTypedArray(R.array.vehicles_primary_colors);
                     final TypedArray darkColors = getResources().obtainTypedArray(R.array.vehicles_dark_colors);
                     final String[] expenseTypes = getResources().getStringArray(R.array.expense_types);
-                    Realm myRealm = Realm.getDefaultInstance();
-                    myRealm.executeTransaction(new Realm.Transaction() {
+                    final Realm myRealm = Realm.getDefaultInstance();
+                    myRealm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
                             for (String brandName : brandNames) {
                                 Brand brand = realm.createObject(Brand.class,
                                         UUID.randomUUID().toString());
                                 brand.setName(brandName);
+                                Log.d("Brands", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
                             for (String typeName : serviceTypeNames) {
                                 ServiceType serviceType = realm.createObject(ServiceType.class,
                                         UUID.randomUUID().toString());
                                 serviceType.setName(typeName);
+                                Log.d("Service types", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
                             for (String typeName : vehicleTypes) {
@@ -111,12 +114,14 @@ public class WelcomeActivity extends BaseActivity
                                 vehicleType.setName(typeName);
                                 vehicleType.setDrawableName(ImageViewUtils
                                         .getDrawableNameByVehicleType(typeName));
+                                Log.d("vehicle type", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
                             for (String companyName : companies) {
                                 Company company = realm.createObject(Company.class,
                                         UUID.randomUUID().toString());
                                 company.setName(companyName);
+                                Log.d("Company", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
                             for (String fuelName : fuelTypes) {
@@ -126,14 +131,15 @@ public class WelcomeActivity extends BaseActivity
                                 String unit;
                                 if (fuelName.equals("Diesel") || fuelName.equals("Petrol")) {
                                     unit = fuelUnit[0];
-                                }else {
+                                } else {
                                     if (fuelName.equals("Electric")) {
                                         unit = fuelUnit[1];
-                                    }else {
+                                    } else {
                                         unit = fuelUnit[2];
                                     }
                                 }
                                 fuelType.setUnit(unit);
+                                Log.d("fuel type", "execute: ");
                             }
                             progressBar.incrementProgressBy(20);
                             for (int i = 0; i < primaryColors.length(); i++) {
@@ -143,21 +149,24 @@ public class WelcomeActivity extends BaseActivity
                                 color.setTextIconsColor(ColorUtils
                                         .pickColorByBackground(getApplicationContext(),
                                                 color.getColor()));
+                                Log.d("Color", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
                             for (String expenseTypeName : expenseTypes) {
                                 ExpenseType expenseType = realm.createObject(ExpenseType.class,
                                         UUID.randomUUID().toString());
                                 expenseType.setName(expenseTypeName);
+                                Log.d("Expense type", "execute: ");
                             }
-                            progressBar.incrementProgressBy(10);
-                        }
-                    });
-                    primaryColors.recycle();
-                    darkColors.recycle();
-                    myRealm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
+                            progressBar.incrementProgressBy(5);
+                            RealmSettings settings = realm.createObject(RealmSettings.class,
+                                    UUID.randomUUID().toString());
+                            settings.setLengthUnit("km");
+                            settings.setDistanceInAdvance(1000);
+                            settings.setCurrencyUnit("BGN");
+                            Log.d("Settings", "execute: ");
+                            progressBar.incrementProgressBy(5);
+
                             for (int i = 0; i < 90; i++) {
                                 Vehicle vehicle = realm.createObject(Vehicle.class, UUID.randomUUID().toString());
                                 Color color = realm.where(Color.class).findAll().get(2);
@@ -193,10 +202,32 @@ public class WelcomeActivity extends BaseActivity
                                 Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
                                 note.setContent(notes);
                                 vehicle.setNote(note);
+                                Log.d("Vehicles", "execute: ");
                             }
                         }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            myRealm.close();
+                            primaryColors.recycle();
+                            darkColors.recycle();
+                        }
+                    }, new Realm.Transaction.OnError() {
+                        @Override
+                        public void onError(Throwable error) {
+                            error.printStackTrace();
+                            myRealm.close();
+                            primaryColors.recycle();
+                            darkColors.recycle();
+                        }
                     });
-                    myRealm.close();
+                    /*myRealm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+
+                        }
+                    });*/
+                    /*myRealm.close();*/
                 }
             });
             thread.run();
