@@ -95,6 +95,7 @@ public class NewVehicleActivity extends NewBaseActivity {
         btnColor = (Button) findViewById(R.id.btn_new_vehicle_color);
         spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(),
                 R.array.vehicle_types, R.layout.textview_spinner);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnVehicleType.setAdapter(spinnerAdapter);
         fuelTanks = new ArrayList<>();
         if (getVehicleId() != null) {

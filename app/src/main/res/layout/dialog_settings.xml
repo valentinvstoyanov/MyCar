@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/tv_settings"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:textSize="20sp"
@@ -12,20 +14,47 @@
         android:background="@color/colorPrimary"
         android:text="@string/action_settings"/>
 
+    <TextView
+        android:id="@+id/tv_settings_length_unit"
+        android:layout_below="@id/tv_settings"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Length unit: "/>
+
     <Spinner
         android:id="@+id/spn_settings_length"
+        android:layout_below="@id/tv_settings"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_toEndOf="@id/tv_settings_length_unit"
+        android:popupBackground="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_settings_currency_unit"
+        android:layout_below="@id/spn_settings_length"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Currency unit: "/>
+
+    <Spinner
+        android:layout_toEndOf="@id/tv_settings_currency_unit"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:id="@+id/spn_settings_currency"
+        android:layout_below="@id/spn_settings_length"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:popupBackground="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <Spinner
-        android:id="@+id/spn_settings_currency"
-        android:popupBackground="@color/colorAccent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <android.support.design.widget.TextInputLayout
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_below="@id/spn_settings_currency"
         android:id="@+id/til_settings_distance_advance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -38,11 +67,12 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:layout_gravity="end"
+        android:layout_below="@id/til_settings_distance_advance"
+        android:layout_alignParentEnd="true"
         android:id="@+id/btn_settings_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/action_save"
         android:textColor="@color/colorAccent"
         style="@style/Widget.AppCompat.Button.Borderless"/>
-</LinearLayout>
+</RelativeLayout>

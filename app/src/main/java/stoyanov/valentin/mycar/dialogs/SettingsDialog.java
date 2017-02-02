@@ -6,17 +6,20 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Toast;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
+import stoyanov.valentin.mycar.utils.ValidationUtils;
 
 public class SettingsDialog extends DialogFragment implements INewBaseActivity{
 
@@ -62,19 +65,35 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
 
     @Override
     public void setContent() {
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter
-                .createFromResource(getContext(), R.array.length_unit, R.layout.textview_spinner);
-        spnLength.setAdapter(spinnerAdapter);
         Realm myRealm = Realm.getDefaultInstance();
         RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
-        tilDistanceInAdvance.getEditText().setText(settings.getDistanceInAdvance());
+        tilDistanceInAdvance.getEditText().setText(String.valueOf(
+                settings.getDistanceInAdvance()));
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter
+                .createFromResource(getContext(), R.array.length_unit, R.layout.textview_spinner);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnLength.setAdapter(spinnerAdapter);
         spnLength.setSelection(spinnerAdapter.getPosition(settings.getLengthUnit()));
+        spinnerAdapter = new ArrayAdapter<>(getContext(), R.layout.textview_spinner,
+                new CharSequence[]{"BGN"});
+        spnCurrency.setAdapter(spinnerAdapter);
         myRealm.close();
     }
 
     @Override
     public boolean isInputValid() {
-        return true;
+        boolean valid = true;
+        String text = tilDistanceInAdvance.getEditText().getText().toString();
+        if (!ValidationUtils.isNumeric(text)) {
+            tilDistanceInAdvance.setError("Number expected");
+            valid = false;
+        }else {
+            if (NumberUtils.createInteger(text).compareTo(NumberUtils.INTEGER_ZERO) < 0) {
+                tilDistanceInAdvance.setError("Negative number not allowed here");
+                valid = false;
+            }
+        }
+        return valid;
     }
 
     @Override
@@ -83,7 +102,7 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
+                RealmSettings settings = realm.where(RealmSettings.class).findFirst();
                 settings.setDistanceInAdvance(Integer.parseInt(tilDistanceInAdvance
                         .getEditText().getText().toString()));
                 settings.setLengthUnit(spnLength.getSelectedItem().toString());
@@ -92,14 +111,14 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
             @Override
             public void onSuccess() {
                 myRealm.close();
-                Toast.makeText(getContext(), "Saved!", Toast.LENGTH_SHORT).show();
+                Log.i("Settings onSuccess: ", "saved!");
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
                 error.printStackTrace();
                 myRealm.close();
-                Toast.makeText(getContext(), "Something went wrong...", Toast.LENGTH_SHORT).show();
+                Log.i("Settings onError: ", "something went wrong...");
             }
         });
     }
