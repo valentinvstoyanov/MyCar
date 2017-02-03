@@ -20,6 +20,7 @@ import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class VehicleRecyclerViewAdapter extends
         RealmBasedRecyclerViewAdapter<Vehicle, VehicleRecyclerViewAdapter.ViewHolder> {
@@ -62,8 +63,15 @@ public class VehicleRecyclerViewAdapter extends
     @Override
     public void onItemSwipedDismiss(final int position) {
         final Realm myRealm = Realm.getDefaultInstance();
-        final Vehicle vehicle = myRealm.copyFromRealm(realmResults.get(position));
-        super.onItemSwipedDismiss(position);
+        final Vehicle managedVehicle = realmResults.get(position);
+        final Vehicle vehicle = myRealm.copyFromRealm(managedVehicle);
+        myRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmUtils.deleteVehicle(managedVehicle);
+            }
+        });
+//        super.onItemSwipedDismiss(position);
         String text = vehicle.getType().getName() + " " + vehicle.getName() + " deleted";
         Snackbar snackbar = Snackbar.make(viewForSnackbar, text, Snackbar.LENGTH_LONG);
         snackbar.setAction("Undo", new View.OnClickListener() {

@@ -24,6 +24,7 @@ import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class ListFragment extends Fragment {
     private Realm myRealm;
@@ -85,6 +86,7 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
+                    adapter.setDeleteType(RealmUtils.DeleteType.SERVICE);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -108,6 +110,7 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
+                    adapter.setDeleteType(RealmUtils.DeleteType.EXPENSE);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -129,6 +132,7 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
+                    adapter.setDeleteType(RealmUtils.DeleteType.REFUELING);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -152,6 +156,7 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
+                    adapter.setDeleteType(RealmUtils.DeleteType.INSURANCE);
                     recyclerView.setAdapter(adapter);
                 }
                 break;
