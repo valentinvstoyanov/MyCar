@@ -24,4 +24,5 @@ public interface RealmTable {
     String TARGET_ODOMETER = "targetOdometer";
     String ACTION = "action";
     String PRICE = "price";
+    String ODOMETER_NOTIFICATION = "odometerNotification";
 }

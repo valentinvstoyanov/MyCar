@@ -29,6 +29,7 @@
     <string name="price">Price</string>
     <string name="company_name">Company</string>
     <string name="expiration_date">Expiration date</string>
+    <string name="expiration_time">Expiration time</string>
     <string name="notification_date">Target date</string>
     <string name="add_fuel_tank">+ Add fuel tank</string>
     <string name="add">Add</string>

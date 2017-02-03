@@ -27,9 +27,9 @@ import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.dialogs.NewCompanyDialog;
 import stoyanov.valentin.mycar.realm.models.Action;
 import stoyanov.valentin.mycar.realm.models.Company;
+import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.Note;
-import stoyanov.valentin.mycar.realm.models.RealmNotification;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
@@ -98,6 +98,8 @@ public class NewInsuranceActivity extends NewBaseActivity {
         }
         TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_insurance_current_odometer);
         setCurrentOdometer(tvCurrentOdometer);
+        tilExpirationDate.setHint(getString(R.string.expiration_date));
+        tilExpirationTime.setHint(getString(R.string.expiration_time));
     }
 
     @Override
@@ -136,9 +138,9 @@ public class NewInsuranceActivity extends NewBaseActivity {
         TextUtils.setTextToTil(tilDate, DateUtils.dateToString(insurance.getAction().getDate()));
         TextUtils.setTextToTil(tilTime, DateUtils.timeToString(insurance.getAction().getDate()));
         TextUtils.setTextToTil(tilExpirationDate, DateUtils
-                .dateToString(insurance.getNotification().getNotificationDate()));
+                .dateToString(insurance.getNotification().getDate()));
         TextUtils.setTextToTil(tilExpirationTime, DateUtils
-                .dateToString(insurance.getNotification().getNotificationDate()));
+                .dateToString(insurance.getNotification().getDate()));
         TextUtils.setTextToTil(tilOdometer, String.valueOf(insurance.getAction().getOdometer()));
         tilOdometer.setEnabled(false);
         TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(insurance.getAction()
@@ -175,7 +177,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
             @Override
             public void execute(Realm realm) {
                 Insurance insurance;
-                RealmNotification notification;
+                DateNotification notification;
                 if (isUpdate()) {
                     insurance = realm.where(Insurance.class).equalTo(RealmTable.ID, insuranceId)
                             .findFirst();
@@ -184,10 +186,10 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 }else {
                     insuranceId = UUID.randomUUID().toString();
                     insurance = realm.createObject(Insurance.class, insuranceId);
-                    notification = realm.createObject(RealmNotification.class,
+                    notification = realm.createObject(DateNotification.class,
                             UUID.randomUUID().toString());
                     int id;
-                    Number number = realm.where(RealmNotification.class)
+                    Number number = realm.where(DateNotification.class)
                             .max(RealmTable.NOTIFICATION_ID);
                     if (number == null) {
                         id = 0;
@@ -196,7 +198,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
                     }
                     notification.setNotificationId(id);
                 }
-                notification.setNotificationDate(DateUtils.stringToDatetime(TextUtils
+                notification.setDate(DateUtils.stringToDatetime(TextUtils
                         .getTextFromTil(tilExpirationDate),
                                 TextUtils.getTextFromTil(tilExpirationTime)));
                 notification.setTriggered(false);
@@ -247,7 +249,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
                         .equalTo(RealmTable.ID, insuranceId).findFirst();
 
 
-                Date notificationDate = insurance.getNotification().getNotificationDate();
+                Date notificationDate = insurance.getNotification().getDate();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(notificationDate);
 
@@ -255,7 +257,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
                         getVehicleId(), RealmTable.INSURANCES + RealmTable.ID, insurance.getId(),
                         ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Expiring insurance",
                         insurance.getCompany().getName() + " insurance is expiring on " +
-                                DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()),
+                                DateUtils.datetimeToString(insurance.getNotification().getDate()),
                         R.drawable.ic_insurance_black);
 
                 NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,

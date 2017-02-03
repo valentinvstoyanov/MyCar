@@ -13,7 +13,7 @@ import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.broadcasts.NotificationReceiver;
-import stoyanov.valentin.mycar.realm.models.RealmNotification;
+import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class NotificationUtils {
@@ -53,17 +53,17 @@ public class NotificationUtils {
     public static void triggerNotification(Context context, final int notificationId,
                                            Notification notification) {
         final Realm myRealm = Realm.getDefaultInstance();
-        final RealmNotification realmNotification = myRealm.where(RealmNotification.class)
+        final DateNotification dateNotification = myRealm.where(DateNotification.class)
                 .equalTo(RealmTable.NOTIFICATION_ID, notificationId)
                 .findFirst();
-        if (!realmNotification.isTriggered()) {
+        if (!dateNotification.isTriggered()) {
             NotificationManager manager = (NotificationManager)
                     context.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(notificationId, notification);
             myRealm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    realmNotification.setTriggered(true);
+                    dateNotification.setTriggered(true);
                 }
             });
         }

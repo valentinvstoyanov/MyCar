@@ -39,7 +39,7 @@ public class InsuranceRecyclerViewAdapter extends BaseRealmAdapter<Insurance,
         viewHolder.tvCompany.setText(insurance.getCompany().getName());
         viewHolder.tvDate.setText(text);
         text = String.format(getContext().getString(R.string.expiration_date_placeholder),
-                DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()));
+                DateUtils.datetimeToString(insurance.getNotification().getDate()));
         viewHolder.tvExpirationDate.setText(text);
         text = String.format(getContext().getString(R.string.price_placeholder),
                 MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));

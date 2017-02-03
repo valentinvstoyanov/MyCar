@@ -2,6 +2,7 @@ package stoyanov.valentin.mycar.utils;
 
 import io.realm.RealmList;
 import io.realm.RealmModel;
+import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.Refueling;
@@ -15,7 +16,12 @@ public class RealmUtils {
             case SERVICE:
                 Service service = (Service) model;
                 service.getNote().deleteFromRealm();
-                service.getNotification().deleteFromRealm();
+                DateNotification dateNotification = service.getDateNotification();
+                if (dateNotification == null) {
+                    service.getOdometerNotification().deleteFromRealm();
+                }else {
+                    dateNotification.deleteFromRealm();
+                }
                 service.getAction().deleteFromRealm();
                 //Stop ALARM IF NEEDED
                 service.deleteFromRealm();

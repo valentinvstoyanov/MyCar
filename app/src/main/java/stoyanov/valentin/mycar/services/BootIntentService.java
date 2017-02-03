@@ -40,10 +40,10 @@ public class BootIntentService extends IntentService {
                     vehicleId, RealmTable.INSURANCES + RealmTable.ID, insurance.getId(),
                     ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Expiring insurance",
                     insurance.getCompany().getName() + " insurance is expiring on " +
-                            DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()),
+                            DateUtils.datetimeToString(insurance.getNotification().getDate()),
                     R.drawable.ic_insurance_black);
 
-            Date notificationDate = insurance.getNotification().getNotificationDate();
+            Date notificationDate = insurance.getNotification().getDate();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(notificationDate);
 

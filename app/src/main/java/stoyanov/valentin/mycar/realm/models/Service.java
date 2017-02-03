@@ -4,13 +4,14 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Service extends RealmObject {
+
     @PrimaryKey
     private String id;
     private ServiceType type;
     private Note note;
     private Action action;
-    private RealmNotification notification;
-    private long targetOdometer;
+    private DateNotification dateNotification;
+    private OdometerNotification odometerNotification;
 
     public String getId() {
         return id;
@@ -44,19 +45,19 @@ public class Service extends RealmObject {
         this.action = action;
     }
 
-    public RealmNotification getNotification() {
-        return notification;
+    public DateNotification getDateNotification() {
+        return dateNotification;
     }
 
-    public void setNotification(RealmNotification notification) {
-        this.notification = notification;
+    public void setDateNotification(DateNotification dateNotification) {
+        this.dateNotification = dateNotification;
     }
 
-    public long getTargetOdometer() {
-        return targetOdometer;
+    public OdometerNotification getOdometerNotification() {
+        return odometerNotification;
     }
 
-    public void setTargetOdometer(long targetOdometer) {
-        this.targetOdometer = targetOdometer;
+    public void setOdometerNotification(OdometerNotification odometerNotification) {
+        this.odometerNotification = odometerNotification;
     }
 }

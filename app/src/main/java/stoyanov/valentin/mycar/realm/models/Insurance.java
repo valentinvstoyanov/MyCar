@@ -8,7 +8,7 @@ public class Insurance extends RealmObject {
     private String id;
     private Action action;
     private Note note;
-    private RealmNotification notification;
+    private DateNotification notification;
     private Company company;
 
     public String getId() {
@@ -35,11 +35,11 @@ public class Insurance extends RealmObject {
         this.note = note;
     }
 
-    public RealmNotification getNotification() {
+    public DateNotification getNotification() {
         return notification;
     }
 
-    public void setNotification(RealmNotification notification) {
+    public void setNotification(DateNotification notification) {
         this.notification = notification;
     }
 

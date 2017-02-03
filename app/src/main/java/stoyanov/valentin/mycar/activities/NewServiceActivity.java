@@ -26,8 +26,9 @@ import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
+import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Note;
-import stoyanov.valentin.mycar.realm.models.RealmNotification;
+import stoyanov.valentin.mycar.realm.models.OdometerNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
@@ -103,6 +104,8 @@ public class NewServiceActivity extends NewBaseActivity {
                 android.R.layout.simple_dropdown_item_1line,
                 getServiceTypeNamesFromResults());
         actvType.setAdapter(adapter);
+        tilNotificationDate.setHint(getString(R.string.expiration_date));
+        tilNotificationTime.setHint(getString(R.string.expiration_time));
     }
 
     @Override
@@ -213,44 +216,55 @@ public class NewServiceActivity extends NewBaseActivity {
                 action.setPrice(price);
                 service.setAction(action);
 
-                RealmNotification realmNotification = service.getNotification();
+                DateNotification dateNotification = service.getDateNotification();
                 if (isChecked) {
-                    if (realmNotification == null) {
-                        realmNotification = realm.createObject(RealmNotification.class,
+                    if (dateNotification == null) {
+                        dateNotification = realm.createObject(DateNotification.class,
                                 UUID.randomUUID().toString());
                         int id;
-                        Number number = realm.where(RealmNotification.class)
+                        Number number = realm.where(DateNotification.class)
                                 .max(RealmTable.NOTIFICATION_ID);
                         if (number == null) {
                             id = 0;
                         }else {
                             id = number.intValue() + 1;
                         }
-                        realmNotification.setNotificationId(id);
+                        dateNotification.setNotificationId(id);
                     }
-                    realmNotification.setTriggered(false);
+                    dateNotification.setTriggered(false);
                     Date notificationDate = DateUtils.stringToDatetime(TextUtils.getTextFromTil(tilNotificationDate),
                             TextUtils.getTextFromTil(tilNotificationTime));
-                    realmNotification.setNotificationDate(notificationDate);
-                    service.setNotification(realmNotification);
+                    dateNotification.setDate(notificationDate);
+                    service.setDateNotification(dateNotification);
                 }else {
-                    service.setTargetOdometer(
-                            Long.parseLong(TextUtils.getTextFromTil(tilOdometerNotification)));
-                    if (realmNotification != null) {
-                        Date notificationDate = realmNotification.getNotificationDate();
+                    if (dateNotification != null) {
+                        Date notificationDate = dateNotification.getDate();
                         calendar.setTime(notificationDate);
 
-                        Notification notification = NotificationUtils.createNotification(getApplicationContext(),
-                                getVehicleId(), RealmTable.SERVICES + RealmTable.ID, service.getId(),
-                                ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Service",
-                                service.getType().getName() + " should be revised on " +
-                                        DateUtils.datetimeToString(service.getNotification().getNotificationDate()),
-                                R.drawable.ic_services_black);
+                        Notification notification = NotificationUtils.createNotification
+                                (
+                                        getApplicationContext(), getVehicleId(),
+                                        RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                                        ViewActivity.ViewType.INSURANCE, ViewActivity.class,
+                                        "Service", service.getType().getName() +
+                                        " should be revised on " + DateUtils.datetimeToString
+                                        (
+                                                service.getDateNotification().getDate()
+                                        ), R.drawable.ic_services_black);
 
-                        NotificationUtils.cancelNotification(getApplicationContext(), realmNotification.getNotificationId(),
-                                notification);
-                        realmNotification.deleteFromRealm();
+                        NotificationUtils.cancelNotification(getApplicationContext(),
+                                dateNotification.getNotificationId(), notification);
+                        dateNotification.deleteFromRealm();
                     }
+                    OdometerNotification odometerNotification;
+                    odometerNotification = service.getOdometerNotification();
+                    if (odometerNotification == null) {
+                        odometerNotification = realm.createObject(OdometerNotification.class,
+                                UUID.randomUUID().toString());
+                    }
+                    odometerNotification.setTargetOdometer(
+                            Long.parseLong(TextUtils.getTextFromTil(tilOdometerNotification)));
+                    service.setOdometerNotification(odometerNotification);
                 }
 
                 Vehicle vehicle = realm.where(Vehicle.class)
@@ -276,19 +290,24 @@ public class NewServiceActivity extends NewBaseActivity {
                 if (isChecked) {
                     Service service = myRealm.where(Service.class)
                             .equalTo(RealmTable.ID, serviceId).findFirst();
-                    Date notificationDate = service.getNotification().getNotificationDate();
+                    Date notificationDate = service.getDateNotification().getDate();
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(notificationDate);
 
-                    Notification notification = NotificationUtils.createNotification(getApplicationContext(),
-                            getVehicleId(), RealmTable.SERVICES + RealmTable.ID, service.getId(),
-                            ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Service",
-                            service.getType().getName() + " should be revised on " +
-                                    DateUtils.datetimeToString(service.getNotification().getNotificationDate()),
-                            R.drawable.ic_services_black);
+                    Notification notification = NotificationUtils.createNotification
+                            (
+                                    getApplicationContext(), getVehicleId(),
+                                    RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                                    ViewActivity.ViewType.INSURANCE, ViewActivity.class,
+                                    "Service", service.getType().getName() +
+                                    " should be revised on " + DateUtils.datetimeToString
+                                    (
+                                            service.getDateNotification().getDate()
+                                    ), R.drawable.ic_services_black);
 
                     NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
-                            service.getNotification().getNotificationId(), calendar.getTimeInMillis());
+                            service.getDateNotification().getNotificationId(),
+                            calendar.getTimeInMillis());
                 }
 
                 if (isUpdate()) {

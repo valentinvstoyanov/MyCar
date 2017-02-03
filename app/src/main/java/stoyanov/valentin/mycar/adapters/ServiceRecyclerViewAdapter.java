@@ -12,6 +12,7 @@ import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
+import stoyanov.valentin.mycar.realm.models.OdometerNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
@@ -36,7 +37,14 @@ public class ServiceRecyclerViewAdapter extends BaseRealmAdapter<Service, Servic
         viewHolder.tvType.setText(service.getType().getName());
         viewHolder.tvDatetime.setText(DateUtils
                 .datetimeToString(service.getAction().getDate()));
-        viewHolder.tvNotifDatetime.setText("PROVIDE ME NOTIFDATE");
+        String text = "Reminder: ";
+        OdometerNotification odometerNotification = service.getOdometerNotification();
+        if (odometerNotification == null) {
+            text += DateUtils.datetimeToString(service.getDateNotification().getDate());
+        }else {
+            text += odometerNotification.getTargetOdometer();
+        }
+        viewHolder.tvNotifDatetime.setText(text);
         viewHolder.tvPrice.setText(MoneyUtils
                 .longToString(new BigDecimal(service.getAction().getPrice())));
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {

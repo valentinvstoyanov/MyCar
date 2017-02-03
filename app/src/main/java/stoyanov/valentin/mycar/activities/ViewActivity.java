@@ -180,7 +180,7 @@ public class ViewActivity extends BaseActivity {
                 setToolbarTitle(insurance.getCompany().getName());
                 date = insurance.getAction().getDate();
                 displayView(getString(R.string.expiration_date),
-                        DateUtils.datetimeToString(insurance.getNotification().getNotificationDate()));
+                        DateUtils.datetimeToString(insurance.getNotification().getDate()));
                 displayView(getString(R.string.company_name), insurance.getCompany().getName());
                 vehicleOdometer = insurance.getAction().getOdometer();
                 price = insurance.getAction().getPrice();
