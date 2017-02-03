@@ -20,6 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.sromku.simple.storage.SimpleStorage;
+import com.sromku.simple.storage.Storage;
+
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
@@ -39,6 +42,8 @@ public class ViewVehicleActivity extends BaseActivity {
     private String vehicleId;
     private LinearLayout llFuelTanks;
     private ProgressBar progressBar;
+    protected static final String FILENAME = "VehicleJsonFile";
+    protected static final String DIRNAME = "MyCarData";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,10 +141,15 @@ public class ViewVehicleActivity extends BaseActivity {
             onBackPressed();
             return true;
         }else if (id == R.id.action_export){
+            Storage storage = SimpleStorage.getInternalStorage(getApplicationContext());
+            storage.createDirectory(DIRNAME, true);
+            String content = "SOME CONTENT";
+            storage.createFile(DIRNAME, FILENAME, content);
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Text text text");
             shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, content);
+           // shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(storage.getFile(DIRNAME, FILENAME)));
             shareIntent.setPackage("com.android.bluetooth");
             startActivity(Intent.createChooser(shareIntent, "Send to"));
             return true;

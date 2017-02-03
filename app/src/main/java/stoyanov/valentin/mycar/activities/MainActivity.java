@@ -2,6 +2,7 @@ package stoyanov.valentin.mycar.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.sromku.simple.storage.SimpleStorage;
+import com.sromku.simple.storage.Storage;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
@@ -92,22 +97,39 @@ public class MainActivity extends BaseActivity
             settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
             return true;
         }else if (id == R.id.action_import) {
-            Intent intent = getIntent();
-            String action = intent.getAction();
-            String type = intent.getType();
-            if (Intent.ACTION_SEND.equals(action) && type != null) {
-                if ("text/plain".equals(type)) {
-                    String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-                    if (sharedText != null) {
-                        showMessage(sharedText);
-                    }else {
-                        showMessage("NULL");
-                    }
+            Storage storage;
+            if (SimpleStorage.isExternalStorageWritable()) {
+                storage = SimpleStorage.getExternalStorage();
+                File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                if (storage.isFileExist(dir.getName(), "bluetooth_content_share.html")) {
+                    byte[] bytes = storage.readFile(dir.getName(), "bluetooth_content_share.html");
+                    Log.d("Bytes: ", "content : " + new String(bytes));
+                    showMessage(new String(bytes).substring(0, 10));
+                }else {
+                    Log.d("file does not exist", "onOptionsItemSelected: ");
                 }
+
+                /*boolean fileExists = storage.isFileExist(dir.getAbsolutePath(), ViewVehicleActivity.FILENAME);
+                if (fileExists) {
+                    byte[] bytes = storage.readFile(dir.getAbsolutePath(), ViewVehicleActivity.FILENAME);
+                    Log.d("Bytes: ", "content : " + new String(bytes));
+                }else {
+                    Log.d("else2: ", "file does not exist");
+                }*/
+            }else {
+                Log.d("else1", "external storage not available");
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
