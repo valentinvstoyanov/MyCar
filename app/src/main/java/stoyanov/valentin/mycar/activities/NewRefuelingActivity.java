@@ -203,13 +203,21 @@ public class NewRefuelingActivity extends NewBaseActivity {
                 refueling.setQuantity(Integer.parseInt(quantity));
                 refueling.setFuelTankId(fuelTankId);
 
-                if (!isUpdate()) {
+                Vehicle vehicle = realm.where(Vehicle.class)
+                        .equalTo(RealmTable.ID, getVehicleId())
+                        .findFirst();
+                if (odometer > getVehicleOdometer()) {
+                    setVehicleOdometer(odometer);
+                    vehicle.setOdometer(odometer);
+                }
+                vehicle.getRefuelings().add(refueling);
+               /* if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
                             .findFirst();
                     vehicle.getRefuelings().add(refueling);
                     vehicle.setOdometer(odometer);
-                }
+                }*/
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -224,6 +232,7 @@ public class NewRefuelingActivity extends NewBaseActivity {
                 }else {
                     showMessage("New refueling saved!");
                 }
+                listener.onChange(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {

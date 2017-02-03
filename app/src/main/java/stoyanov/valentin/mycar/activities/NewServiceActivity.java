@@ -207,8 +207,7 @@ public class NewServiceActivity extends NewBaseActivity {
                 calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
                 calendar.set(Calendar.MINUTE, time.getMinutes());
                 action.setDate(calendar.getTime());
-                long odometer = Long.parseLong(tilOdometer.getEditText()
-                        .getText().toString());
+                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
                 action.setOdometer(odometer);
                 long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
                 action.setPrice(price);
@@ -254,13 +253,21 @@ public class NewServiceActivity extends NewBaseActivity {
                     }
                 }
 
-                if (!isUpdate()) {
+                Vehicle vehicle = realm.where(Vehicle.class)
+                        .equalTo(RealmTable.ID, getVehicleId())
+                        .findFirst();
+                if (odometer > getVehicleOdometer()) {
+                    setVehicleOdometer(odometer);
+                    vehicle.setOdometer(odometer);
+                }
+                vehicle.getServices().add(service);
+                /*if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
                             .findFirst();
                     vehicle.getServices().add(service);
                     vehicle.setOdometer(odometer);
-                }
+                }*/
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -294,6 +301,7 @@ public class NewServiceActivity extends NewBaseActivity {
                 }else {
                     showMessage("New service saved!");
                 }
+                listener.onChange(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {

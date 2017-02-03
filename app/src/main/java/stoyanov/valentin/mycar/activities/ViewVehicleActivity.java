@@ -28,6 +28,7 @@ import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class ViewVehicleActivity extends BaseActivity {
 
@@ -158,13 +159,7 @@ public class ViewVehicleActivity extends BaseActivity {
                                     Vehicle vehicle = realm.where(Vehicle.class)
                                             .equalTo(RealmTable.ID, vehicleId)
                                             .findFirst();
-                                    vehicle.getFuelTanks().deleteAllFromRealm();
-                                    vehicle.getInsurances().deleteAllFromRealm();
-                                    vehicle.getNote().deleteFromRealm();
-                                    vehicle.getServices().deleteAllFromRealm();
-                                    vehicle.getExpenses().deleteAllFromRealm();
-                                    vehicle.getRefuelings().deleteAllFromRealm();
-                                    vehicle.deleteFromRealm();
+                                    RealmUtils.deleteVehicle(vehicle);
                                 }
                             }, new Realm.Transaction.OnSuccess() {
                                 @Override

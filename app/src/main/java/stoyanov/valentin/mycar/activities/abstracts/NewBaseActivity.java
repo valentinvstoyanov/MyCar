@@ -20,6 +20,7 @@ import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
+import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
@@ -36,11 +37,6 @@ public abstract class NewBaseActivity extends BaseActivity
     protected OnOdometerChangeListener listener;
     protected Realm myRealm;
     protected TextInputLayout tilDate, tilOdometer, tilNote;
-
-/*
-    abstract protected void saveToRealm();*/
-    /*abstract protected void setContent();
-    abstract protected void saveToRealm();*/
 
     @Override
     public void initComponents() {
@@ -63,8 +59,10 @@ public abstract class NewBaseActivity extends BaseActivity
         listener = new OnOdometerChangeListener() {
             @Override
             public void onChange(long odometer) {
+                RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
                 RealmResults<Service> services = myRealm.where(Service.class)
-                        .lessThanOrEqualTo(RealmTable.TARGET_ODOMETER, 800)
+                        .lessThanOrEqualTo(RealmTable.TARGET_ODOMETER,
+                                odometer + settings.getDistanceInAdvance())
                         .findAll();
                 for (Service service : services) {
                     //if (odometer + 200 > service.getTargetOdometer()) {

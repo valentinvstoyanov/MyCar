@@ -28,6 +28,7 @@ import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class ViewActivity extends BaseActivity {
 
@@ -70,12 +71,12 @@ public class ViewActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final int id = item.getItemId();
+        final int menuId = item.getItemId();
 
-        if(id == android.R.id.home) {
+        if(menuId == android.R.id.home) {
             onBackPressed();
             return true;
-        }else if (id == R.id.action_delete) {
+        }else if (menuId == R.id.action_delete) {
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewActivity.this);
             builder.setTitle(getToolbarTitle());
             builder.setMessage("Are you sure you want to delete it?");
@@ -90,27 +91,35 @@ public class ViewActivity extends BaseActivity {
                                 public void execute(Realm realm) {
                                     switch (type) {
                                         case INSURANCE:
-                                            realm.where(Insurance.class).equalTo(RealmTable.ID, id)
-                                                    .findFirst().deleteFromRealm();
+                                            Insurance insurance = realm.where(Insurance.class)
+                                                    .equalTo(RealmTable.ID, id)
+                                                    .findFirst();
+                                            RealmUtils.deleteProperty(insurance, RealmUtils.DeleteType.INSURANCE);
                                             break;
                                         case EXPENSE:
-                                            realm.where(Expense.class).equalTo(RealmTable.ID, id)
-                                                    .findFirst().deleteFromRealm();
+                                            Expense expense = realm.where(Expense.class)
+                                                    .equalTo(RealmTable.ID, id)
+                                                    .findFirst();
+                                            RealmUtils.deleteProperty(expense, RealmUtils.DeleteType.EXPENSE);
                                             break;
                                         case SERVICE:
-                                            realm.where(Service.class).equalTo(RealmTable.ID, id)
-                                                    .findFirst().deleteFromRealm();
+                                            Service service = realm.where(Service.class)
+                                                    .equalTo(RealmTable.ID, id)
+                                                    .findFirst();
+                                            RealmUtils.deleteProperty(service, RealmUtils.DeleteType.SERVICE);
                                             break;
                                         case REFUELING:
-                                            realm.where(Refueling.class).equalTo(RealmTable.ID, id)
-                                                    .findFirst().deleteFromRealm();
+                                            Refueling refueling = realm.where(Refueling.class)
+                                                    .equalTo(RealmTable.ID, id)
+                                                    .findFirst();
+                                            RealmUtils.deleteProperty(refueling, RealmUtils.DeleteType.REFUELING);
                                             break;
                                     }
                                 }
                             }, new Realm.Transaction.OnSuccess() {
                                 @Override
                                 public void onSuccess() {
-                                    showMessage(aClass.getName() + " deleted!");
+                                    showMessage("Deleted!");
                                     finish();
                                 }
                             }, new Realm.Transaction.OnError() {

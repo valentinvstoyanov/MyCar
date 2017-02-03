@@ -223,38 +223,31 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 action.setPrice(price);
                 insurance.setAction(action);
 
-               // insurance.setExpirationDate(DateUtils.stringToDatetime(getTextFromTil(tilExpirationDate),
-                 //       getTextFromTil(tilExpirationTime)));
 
-
-                if (!isUpdate()) {
+                Vehicle vehicle = realm.where(Vehicle.class)
+                        .equalTo(RealmTable.ID, getVehicleId())
+                        .findFirst();
+                if (odometer > getVehicleOdometer()) {
+                    setVehicleOdometer(odometer);
+                    vehicle.setOdometer(odometer);
+                }
+                vehicle.getInsurances().add(insurance);
+                /*if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
                             .findFirst();
                     vehicle.setOdometer(odometer);
                     vehicle.getInsurances().add(insurance);
-                }
+                }*/
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                /*Notification notification = newNotification("Insurance",
-                        "You should renew your insurance", R.drawable.ic_insurance_black);
-                Date notificationDate = DateUtils.stringToDatetime(
-                        getTextFromTil(tilExpirationDate),
-                        getTextFromTil(tilExpirationTime));
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(notificationDate);
-                addNotification(notification, calendar.getTimeInMillis());*/
-
                 Insurance insurance = myRealm.where(Insurance.class)
                         .equalTo(RealmTable.ID, insuranceId).findFirst();
 
 
                 Date notificationDate = insurance.getNotification().getNotificationDate();
-                /*DateUtils.stringToDatetime(
-                        getTextFromTil(tilExpirationDate),
-                        getTextFromTil(tilExpirationTime));*/
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(notificationDate);
 
@@ -278,6 +271,7 @@ public class NewInsuranceActivity extends NewBaseActivity {
                 }else {
                     showMessage("New insurance saved!");
                 }
+                listener.onChange(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {

@@ -46,31 +46,33 @@ public class RealmUtils {
     public static void deleteVehicle(Vehicle vehicle) {
         vehicle.getNote().deleteFromRealm();
 
+        //Reverse iteration due to an error
         RealmList<Service> services = vehicle.getServices();
-        for (Service service : services) {
-            deleteProperty(service, DeleteType.SERVICE);
+        for (int i = services.size() - 1; i >= 0; i--) {
+            deleteProperty(services.get(i), DeleteType.SERVICE);
         }
         services.deleteAllFromRealm();
 
         RealmList<Insurance> insurances = vehicle.getInsurances();
-        for (Insurance insurance : insurances) {
-            deleteProperty(insurance, DeleteType.INSURANCE);
+        for (int i = insurances.size() - 1; i >= 0; i--) {
+            deleteProperty(insurances.get(i), DeleteType.INSURANCE);
         }
         insurances.deleteAllFromRealm();
 
         RealmList<Refueling> refuelings = vehicle.getRefuelings();
-        for (Refueling refueling : refuelings) {
-            deleteProperty(refueling, DeleteType.REFUELING);
+        for (int i = refuelings.size() - 1; i >= 0; i--) {
+            deleteProperty(refuelings.get(i), DeleteType.REFUELING);
         }
         refuelings.deleteAllFromRealm();
 
         RealmList<Expense> expenses = vehicle.getExpenses();
-        for (Expense expense : expenses) {
-            deleteProperty(expense, DeleteType.EXPENSE);
+        for (int i = expenses.size() - 1; i >= 0; i--) {
+            deleteProperty(expenses.get(i), DeleteType.EXPENSE);
         }
         expenses.deleteAllFromRealm();
 
         vehicle.getFuelTanks().deleteAllFromRealm();
+        vehicle.deleteFromRealm();
     }
 
     public enum DeleteType {
