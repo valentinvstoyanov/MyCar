@@ -153,6 +153,7 @@ public class ViewVehicleActivity extends BaseActivity {
                     .equalTo(RealmTable.ID, vehicleId).findFirst();
             vehicle = myRealm.copyFromRealm(vehicle);
             String content = new Gson().toJson(vehicle);
+            myRealm.close();
             storage.createFile(DIRNAME, FILENAME, content);
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);

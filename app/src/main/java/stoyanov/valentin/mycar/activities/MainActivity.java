@@ -1,15 +1,16 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -39,20 +40,9 @@ import stoyanov.valentin.mycar.dialogs.SettingsDialog;
 import stoyanov.valentin.mycar.fragments.InfoFragment;
 import stoyanov.valentin.mycar.fragments.ListFragment;
 import stoyanov.valentin.mycar.fragments.StatisticsFragment;
-import stoyanov.valentin.mycar.realm.models.Brand;
-import stoyanov.valentin.mycar.realm.models.Color;
-import stoyanov.valentin.mycar.realm.models.Company;
-import stoyanov.valentin.mycar.realm.models.Expense;
-import stoyanov.valentin.mycar.realm.models.ExpenseType;
-import stoyanov.valentin.mycar.realm.models.FuelTank;
-import stoyanov.valentin.mycar.realm.models.FuelType;
-import stoyanov.valentin.mycar.realm.models.Insurance;
-import stoyanov.valentin.mycar.realm.models.Model;
-import stoyanov.valentin.mycar.realm.models.Service;
-import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -156,7 +146,7 @@ public class MainActivity extends BaseActivity
                     if (inputStream != null) {
                         final BufferedReader reader = new BufferedReader(new InputStreamReader(
                                 inputStream));
-                        StringBuilder stringBuilder = new StringBuilder();
+                        final StringBuilder stringBuilder = new StringBuilder();
                         String line;
                         while ((line = reader.readLine()) != null) {
                             stringBuilder.append(line);
@@ -165,95 +155,40 @@ public class MainActivity extends BaseActivity
                         Log.i("Content: ", content);
                         inputStream.close();
                         reader.close();
-                        myRealm.executeTransactionAsync(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                Vehicle vehicle = new Gson().fromJson(content, Vehicle.class);
-                                Brand brand = realm.where(Brand.class)
-                                        .equalTo(RealmTable.NAME, vehicle.getBrand().getName())
-                                        .findFirst();
-                                if (brand == null) {
-                                    brand = vehicle.getBrand();
-                                }
-                                vehicle.setBrand(brand);
-
-                                Model model = realm.where(Model.class)
-                                        .equalTo(RealmTable.NAME, vehicle.getModel().getName())
-                                        .findFirst();
-                                if (model == null) {
-                                    model = vehicle.getModel();
-                                }
-                                vehicle.setModel(model);
-
-                                Color color = realm.where(Color.class)
-                                        .equalTo(RealmTable.COLOR, vehicle.getColor().getColor())
-                                        .findFirst();
-                                if (color == null) {
-                                    color = vehicle.getColor();
-                                }
-                                vehicle.setColor(color);
-
-                                VehicleType vehicleType = realm.where(VehicleType.class)
-                                        .equalTo(RealmTable.NAME, vehicle.getType().getName())
-                                        .findFirst();
-                                if (vehicleType == null) {
-                                    vehicleType = vehicle.getType();
-                                }
-                                vehicle.setType(vehicleType);
-
-                                for (Expense expense : vehicle.getExpenses()) {
-                                    ExpenseType expenseType = realm.where(ExpenseType.class)
-                                            .equalTo(RealmTable.NAME, expense.getType().getName())
-                                            .findFirst();
-                                    if (expenseType == null) {
-                                        expenseType = expense.getType();
-                                    }
-                                    expense.setType(expenseType);
-                                }
-
-                                for (FuelTank fuelTank : vehicle.getFuelTanks()) {
-                                    FuelType fuelType = realm.where(FuelType.class)
-                                            .equalTo(RealmTable.NAME, fuelTank.getFuelType().getName())
-                                            .findFirst();
-                                    if (fuelType == null) {
-                                        fuelType = fuelTank.getFuelType();
-                                    }
-                                    fuelTank.setFuelType(fuelType);
-                                }
-
-                                for (Insurance insurance : vehicle.getInsurances()) {
-                                    Company company = realm.where(Company.class)
-                                            .equalTo(RealmTable.NAME, insurance.getCompany().getName())
-                                            .findFirst();
-                                    if (company == null) {
-                                        company = insurance.getCompany();
-                                    }
-                                    insurance.setCompany(company);
-                                }
-
-                                for (Service service : vehicle.getServices()) {
-                                    ServiceType serviceType = realm.where(ServiceType.class)
-                                            .equalTo(RealmTable.NAME, service.getType().getName())
-                                            .findFirst();
-                                    if (serviceType == null) {
-                                        serviceType = service.getType();
-                                    }
-                                    service.setType(serviceType);
-                                }
-
-                                realm.copyToRealm(vehicle);
-                            }
-                        }, new Realm.Transaction.OnSuccess() {
+                        final Vehicle vehicle = new Gson().fromJson(content, Vehicle.class);
+                        final Realm.Transaction.OnSuccess onSuccess = new Realm.Transaction.OnSuccess() {
                             @Override
                             public void onSuccess() {
                                 showMessage("Vehicle imported!");
                             }
-                        }, new Realm.Transaction.OnError() {
+                        };
+                        final Realm.Transaction.OnError onError = new Realm.Transaction.OnError() {
                             @Override
                             public void onError(Throwable error) {
                                 error.printStackTrace();
+                                showMessage("Something went wrong...");
                             }
-                        });
+                        };
+                        if (myRealm.where(Vehicle.class)
+                                .equalTo(RealmTable.NAME, vehicle.getName())
+                                .findFirst() != null)
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("Conflict");
+                            builder.setMessage(vehicle.getName() + " " + vehicle.getType().getName().toLowerCase()
+                            + " already exist. Would you like to update it?");
+                            builder.setCancelable(true);
+                            builder.setNegativeButton("Abort", null);
+                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    importVehicle(vehicle, true);
+                                }
+                            });
+                            builder.show();
+                        }else {
+                            importVehicle(vehicle, false);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -263,12 +198,22 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+    private void importVehicle(Vehicle vehicle, boolean exists) {
+        Realm.Transaction.OnSuccess onSuccess = new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                openFragment();
+                showMessage("Vehicle imported!");
+            }
+        };
+        Realm.Transaction.OnError onError = new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                error.printStackTrace();
+                showMessage("Something went wrong...");
+            }
+        };
+        RealmUtils.importVehicle(vehicle, exists, myRealm, onSuccess, onError);
     }
 
     @Override
@@ -379,6 +324,9 @@ public class MainActivity extends BaseActivity
                         intent.putExtra(RealmTable.ID, vehicleId);
                         intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
                     }
+                    startActivity(intent);
+                }else if (menuItem.getItemId() == R.id.action_add_car) {
+                    intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
                     startActivity(intent);
                 }
                 return true;
