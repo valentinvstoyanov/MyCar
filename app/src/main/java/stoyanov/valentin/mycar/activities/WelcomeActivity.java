@@ -176,7 +176,7 @@ public class WelcomeActivity extends BaseActivity
                                         .findFirst();
                                 vehicle.setType(vehicleType);
                                 vehicle.setName(String.valueOf(Math.abs(new Random().nextInt())));
-                                vehicle.setManufactureDate(DateUtils.manufactureStringToDate("Jan 2016"));
+                                vehicle.setManufactureDate(DateUtils.stringToDate("22.08.2016"));
                                 vehicle.setRegistrationPlate("asdasdsa");
                                 vehicle.setVinPlate("asdasdsa");
                                 vehicle.setOdometer(455);

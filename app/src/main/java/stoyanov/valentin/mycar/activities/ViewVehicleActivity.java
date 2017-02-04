@@ -3,6 +3,7 @@ package stoyanov.valentin.mycar.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -10,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.sromku.simple.storage.SimpleStorage;
 import com.sromku.simple.storage.Storage;
+
+import java.io.File;
 
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
@@ -141,15 +146,21 @@ public class ViewVehicleActivity extends BaseActivity {
             onBackPressed();
             return true;
         }else if (id == R.id.action_export){
-            Storage storage = SimpleStorage.getInternalStorage(getApplicationContext());
+            Storage storage = SimpleStorage.getExternalStorage();
             storage.createDirectory(DIRNAME, true);
-            String content = "SOME CONTENT";
+            Realm myRealm = Realm.getDefaultInstance();
+            Vehicle vehicle = myRealm.where(Vehicle.class)
+                    .equalTo(RealmTable.ID, vehicleId).findFirst();
+            vehicle = myRealm.copyFromRealm(vehicle);
+            String content = new Gson().toJson(vehicle);
             storage.createFile(DIRNAME, FILENAME, content);
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
+            File file = storage.getFile(DIRNAME, FILENAME);
+            Uri uri = Uri.fromFile(file);
+            Log.d("URI : ", uri.toString() + " *** " + uri.getPath());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, content);
-           // shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(storage.getFile(DIRNAME, FILENAME)));
             shareIntent.setPackage("com.android.bluetooth");
             startActivity(Intent.createChooser(shareIntent, "Send to"));
             return true;
@@ -191,6 +202,11 @@ public class ViewVehicleActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
