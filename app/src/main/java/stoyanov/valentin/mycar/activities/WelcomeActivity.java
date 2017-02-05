@@ -40,8 +40,8 @@ import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.ColorUtils;
-import stoyanov.valentin.mycar.utils.CsvUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.FileUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
 
 public class WelcomeActivity extends BaseActivity
@@ -73,11 +73,11 @@ public class WelcomeActivity extends BaseActivity
                 @Override
                 public void run() {
                     InputStream inputStream = getResources().openRawResource(R.raw.brands);
-                    final String[] brandNames = CsvUtils.getParsedCsv(inputStream);
+                    final String[] brandNames = FileUtils.getParsedCsv(inputStream);
                     inputStream = getResources().openRawResource(R.raw.service_types);
-                    final String[] serviceTypeNames = CsvUtils.getParsedCsv(inputStream);
+                    final String[] serviceTypeNames = FileUtils.getParsedCsv(inputStream);
                     inputStream = getResources().openRawResource(R.raw.companies);
-                    final String[] companies = CsvUtils.getParsedCsv(inputStream);
+                    final String[] companies = FileUtils.getParsedCsv(inputStream);
                     try {
                         inputStream.close();
                     } catch (IOException e) {

@@ -2,16 +2,16 @@ package stoyanov.valentin.mycar.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.sromku.simple.storage.SimpleStorage;
-import com.sromku.simple.storage.Storage;
 
 import java.io.File;
 
@@ -35,7 +33,9 @@ import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
+import stoyanov.valentin.mycar.utils.FileUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
+import stoyanov.valentin.mycar.utils.PermissionUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class ViewVehicleActivity extends BaseActivity {
@@ -47,8 +47,7 @@ public class ViewVehicleActivity extends BaseActivity {
     private String vehicleId;
     private LinearLayout llFuelTanks;
     private ProgressBar progressBar;
-    protected static final String FILENAME = "VehicleJsonFile";
-    protected static final String DIRNAME = "MyCarData";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,13 +139,56 @@ public class ViewVehicleActivity extends BaseActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PermissionUtils.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportVehicle();
+            } else {
+                showMessage("No permission provided");
+            }
+        }
+    }
+
+    private void exportVehicle() {
+        File dir = FileUtils.createAppDir(getApplicationContext());
+        if (dir != null) {
+            Realm myRealm = Realm.getDefaultInstance();
+            Vehicle vehicle = myRealm.where(Vehicle.class)
+                    .equalTo(RealmTable.ID, vehicleId).findFirst();
+            vehicle = myRealm.copyFromRealm(vehicle);
+            String content = new Gson().toJson(vehicle);
+            myRealm.close();
+            File file = FileUtils.createFile(getApplicationContext(), dir,
+                    vehicle.getType().getName() + "_" + vehicle.getName(), content);
+            if (file != null) {
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, FileUtils.getFileUri(file));
+                shareIntent.setType("text/plain");
+                shareIntent.setPackage("com.android.bluetooth");
+                startActivity(Intent.createChooser(shareIntent, "Send to"));
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == android.R.id.home) {
             onBackPressed();
             return true;
         }else if (id == R.id.action_export){
-            Storage storage = SimpleStorage.getExternalStorage();
+            if (FileUtils.isExternalStorageWritable()) {
+                if (PermissionUtils.hasWriteExternalStoragePermission(getApplicationContext())) {
+                    exportVehicle();
+                }else {
+                    showMessage("No permission to access storage");
+                    PermissionUtils.requestWriteExternalStoragePermission(ViewVehicleActivity.this);
+                }
+            }else {
+                showMessage("No external storage");
+            }
+            /*Storage storage = SimpleStorage.getExternalStorage();
             storage.createDirectory(DIRNAME, true);
             Realm myRealm = Realm.getDefaultInstance();
             Vehicle vehicle = myRealm.where(Vehicle.class)
@@ -163,7 +205,7 @@ public class ViewVehicleActivity extends BaseActivity {
             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
             shareIntent.setType("text/plain");
             shareIntent.setPackage("com.android.bluetooth");
-            startActivity(Intent.createChooser(shareIntent, "Send to"));
+            startActivity(Intent.createChooser(shareIntent, "Send to"));*/
             return true;
         }else if (id == R.id.action_delete){
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewVehicleActivity.this);

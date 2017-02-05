@@ -21,11 +21,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
@@ -42,6 +41,7 @@ import stoyanov.valentin.mycar.fragments.ListFragment;
 import stoyanov.valentin.mycar.fragments.StatisticsFragment;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
+import stoyanov.valentin.mycar.utils.FileUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class MainActivity extends BaseActivity
@@ -137,46 +137,21 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == READ_REQUEST_CODE && resultCode == RESULT_OK) {
-            Uri uri = null;
+            Uri uri;
             if (data != null) {
                 uri = data.getData();
-                InputStream inputStream = null;
                 try {
-                    inputStream = getContentResolver().openInputStream(uri);
-                    if (inputStream != null) {
-                        final BufferedReader reader = new BufferedReader(new InputStreamReader(
-                                inputStream));
-                        final StringBuilder stringBuilder = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            stringBuilder.append(line);
-                        }
-                        final String content = stringBuilder.toString();
-                        Log.i("Content: ", content);
-                        inputStream.close();
-                        reader.close();
-                        final Vehicle vehicle = new Gson().fromJson(content, Vehicle.class);
-                        final Realm.Transaction.OnSuccess onSuccess = new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                showMessage("Vehicle imported!");
-                            }
-                        };
-                        final Realm.Transaction.OnError onError = new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                error.printStackTrace();
-                                showMessage("Something went wrong...");
-                            }
-                        };
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    String content = FileUtils.getContentFromInputStream(inputStream);
+                    final Vehicle vehicle = new Gson().fromJson(content, Vehicle.class);
+                    if (vehicle != null) {
                         if (myRealm.where(Vehicle.class)
                                 .equalTo(RealmTable.NAME, vehicle.getName())
-                                .findFirst() != null)
-                        {
+                                .findFirst() != null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setTitle("Conflict");
                             builder.setMessage(vehicle.getName() + " " + vehicle.getType().getName().toLowerCase()
-                            + " already exist. Would you like to update it?");
+                                    + " already exist. Would you like to update it?");
                             builder.setCancelable(true);
                             builder.setNegativeButton("Abort", null);
                             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -186,15 +161,20 @@ public class MainActivity extends BaseActivity
                                 }
                             });
                             builder.show();
-                        }else {
+                        } else {
                             importVehicle(vehicle, false);
                         }
+                    }else {
+                        showMessage("Couldn't save vehicle");
                     }
-                } catch (IOException e) {
+                } catch (JsonSyntaxException e) {
                     e.printStackTrace();
+                    showMessage("Couldn't get vehicle");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    showMessage("File not found");
                 }
             }
-
         }
     }
 
@@ -318,15 +298,12 @@ public class MainActivity extends BaseActivity
                     default:
                         return false;
                 }
-                if (valid) {
+                if (valid || menuItem.getItemId() == R.id.action_add_car) {
                     intent = new Intent(getApplicationContext(), aClass);
                     if (vehicleId != null) {
                         intent.putExtra(RealmTable.ID, vehicleId);
                         intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
                     }
-                    startActivity(intent);
-                }else if (menuItem.getItemId() == R.id.action_add_car) {
-                    intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
                     startActivity(intent);
                 }
                 return true;
