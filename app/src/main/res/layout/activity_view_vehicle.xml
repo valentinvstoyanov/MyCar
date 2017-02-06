@@ -34,14 +34,6 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-            <ProgressBar
-                android:layout_gravity="bottom"
-                android:id="@+id/pb_view_vehicle_export_bluetooth"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:indeterminate="false"
-                android:layout_width="match_parent"
-                android:layout_height="3dp" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

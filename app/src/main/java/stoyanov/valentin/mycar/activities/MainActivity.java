@@ -107,28 +107,6 @@ public class MainActivity extends BaseActivity
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             startActivityForResult(intent, READ_REQUEST_CODE);
-            /*Storage storage;
-            if (SimpleStorage.isExternalStorageWritable()) {
-                storage = SimpleStorage.getExternalStorage();
-                File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (storage.isFileExist(dir.getName(), "bluetooth_content_share.html")) {
-                    byte[] bytes = storage.readFile(dir.getName(), "bluetooth_content_share.html");
-                    Log.d("Bytes: ", "content : " + new String(bytes));
-                    showMessage(new String(bytes).substring(0, 10));
-                }else {
-                    Log.d("file does not exist", "onOptionsItemSelected: ");
-                }
-
-                /*boolean fileExists = storage.isFileExist(dir.getAbsolutePath(), ViewVehicleActivity.FILENAME);
-                if (fileExists) {
-                    byte[] bytes = storage.readFile(dir.getAbsolutePath(), ViewVehicleActivity.FILENAME);
-                    Log.d("Bytes: ", "content : " + new String(bytes));
-                }else {
-                    Log.d("else2: ", "file does not exist");
-                }
-        }else {
-                Log.d("else1", "external storage not available");
-        }*/
             return true;
         }
         return super.onOptionsItemSelected(item);

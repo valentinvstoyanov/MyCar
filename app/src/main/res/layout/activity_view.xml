@@ -10,10 +10,14 @@
 
     <include layout="@layout/toolbar"/>
 
-    <include layout="@layout/content_view" />
+    <ScrollView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/content_view" />
+    </ScrollView>
 
     <com.google.android.gms.ads.AdView
-        android:id="@+id/adView_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

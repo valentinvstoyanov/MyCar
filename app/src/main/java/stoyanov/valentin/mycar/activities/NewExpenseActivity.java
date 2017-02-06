@@ -125,6 +125,12 @@ public class NewExpenseActivity extends NewBaseActivity {
 
     @Override
     public void saveToRealm() {
+        /*if (getInterstitialAd().isLoaded()) {
+            showMessage("ad");
+            getInterstitialAd().show();
+        }else {
+            showMessage("not ad");
+        }*/
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

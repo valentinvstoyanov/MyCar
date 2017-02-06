@@ -67,7 +67,7 @@ public class LineChartFragment extends Fragment {
         final LineData lineData = new LineData(servicesDataSet);
 
 
-        ArrayList<Float> ivalues = ChartUtils.getPricesFromInsurances(vehicle.getInsurances());;
+        ArrayList<Float> ivalues = ChartUtils.getPricesFromInsurances(vehicle.getInsurances());
         ArrayList<Entry> ientries = new ArrayList<>(ivalues.size());
         i = 0;
         for (Float f : ivalues) {
@@ -86,7 +86,7 @@ public class LineChartFragment extends Fragment {
         lineData.addDataSet(iDataSet);
 
 
-        final ArrayList<Float> rvalues = ChartUtils.getPricesFromRefuelings(vehicle.getRefuelings());;
+        final ArrayList<Float> rvalues = ChartUtils.getPricesFromRefuelings(vehicle.getRefuelings());
         ArrayList<Entry> rentries = new ArrayList<>(rvalues.size());
         i = 0;
         for (Float f : rvalues) {
@@ -104,7 +104,7 @@ public class LineChartFragment extends Fragment {
         rDataSet.setDrawValues(false);
         lineData.addDataSet(rDataSet);
 
-        ArrayList<Float> evalues = ChartUtils.getPricesFromExpenses(vehicle.getExpenses());;
+        ArrayList<Float> evalues = ChartUtils.getPricesFromExpenses(vehicle.getExpenses());
         ArrayList<Entry> eentries = new ArrayList<>(evalues.size());
         i = 0;
         for (Float f : evalues) {
@@ -130,22 +130,27 @@ public class LineChartFragment extends Fragment {
                 String label = d.getLabel();
                 int index = d.getEntryIndex(e);
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                if (label.equals("Insurances")) {
-                    Insurance insurance = vehicle.getInsurances().get(index);
-                    intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
-                }else if (label.equals("Expenses")) {
-                    Expense expense = vehicle.getExpenses().get(index);
-                    intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
-                }else if (label.equals("Refuelings")) {
-                    Refueling refueling = vehicle.getRefuelings().get(index);
-                    intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
-                }else {
-                    Service service = vehicle.getServices().get(index);
-                    intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                switch (label) {
+                    case "Insurances":
+                        Insurance insurance = vehicle.getInsurances().get(index);
+                        intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
+                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
+                        break;
+                    case "Expenses":
+                        Expense expense = vehicle.getExpenses().get(index);
+                        intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
+                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
+                        break;
+                    case "Refuelings":
+                        Refueling refueling = vehicle.getRefuelings().get(index);
+                        intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
+                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
+                        break;
+                    default:
+                        Service service = vehicle.getServices().get(index);
+                        intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
+                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                        break;
                 }
                 intent.putExtra(RealmTable.ID, vehicleId);
                 startActivity(intent);

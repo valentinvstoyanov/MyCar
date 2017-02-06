@@ -4,10 +4,6 @@
     <item name="ic_menu_expense" type="drawable">@drawable/ic_expenses_black</item>
     <item name="ic_menu_refueling" type="drawable">@drawable/ic_gas_station_black</item>
     <item name="ic_menu_insurance" type="drawable">@drawable/ic_insurance_black</item>
-    <item name="ic_menu_reminder" type="drawable">@drawable/ic_alarm_black</item>
     <item name="ic_menu_statistic" type="drawable">@drawable/ic_statistics_black</item>
-    <item name="ic_menu_upcoming_event" type="drawable">@drawable/ic_event_black</item>
-    <item name="ic_menu_history" type="drawable">@drawable/ic_history_black</item>
-    <item name="ic_menu_share" type="drawable">@drawable/ic_menu_share</item>
     <item name="ic_menu_about" type="drawable">@drawable/ic_info_black</item>
 </resources>

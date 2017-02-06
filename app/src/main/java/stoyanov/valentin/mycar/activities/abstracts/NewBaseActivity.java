@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.InterstitialAd;
+
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Calendar;
@@ -34,9 +36,14 @@ public abstract class NewBaseActivity extends BaseActivity
     private boolean update = false;
     private String vehicleId;
     private long vehicleOdometer;
+    private InterstitialAd interstitialAd;
     protected OnOdometerChangeListener listener;
     protected Realm myRealm;
     protected TextInputLayout tilDate, tilOdometer, tilNote;
+
+    public InterstitialAd getInterstitialAd() {
+        return interstitialAd;
+    }
 
     @Override
     public void initComponents() {
@@ -55,6 +62,12 @@ public abstract class NewBaseActivity extends BaseActivity
         Intent intent = getIntent();
         vehicleId = intent.getStringExtra(RealmTable.ID);
         vehicleOdometer = intent.getLongExtra(RealmTable.ODOMETER, 0);
+       /* interstitialAd = new InterstitialAd(getApplicationContext());
+        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        interstitialAd.loadAd(adRequest);*/
+
         myRealm = Realm.getDefaultInstance();
         listener = new OnOdometerChangeListener() {
             @Override

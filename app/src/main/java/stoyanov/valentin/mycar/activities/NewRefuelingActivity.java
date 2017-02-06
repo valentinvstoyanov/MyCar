@@ -240,7 +240,7 @@ public class NewRefuelingActivity extends NewBaseActivity {
             public void onError(Throwable error) {
                 showMessage("Something went wrong...");
                 error.printStackTrace();
-                finish();
+//                finish();
             }
         });
     }

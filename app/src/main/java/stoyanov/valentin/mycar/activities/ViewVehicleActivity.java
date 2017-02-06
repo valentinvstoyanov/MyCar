@@ -267,7 +267,6 @@ public class ViewVehicleActivity extends BaseActivity {
         llFuelTanks = (LinearLayout) findViewById(R.id.ll_view_vehicle_fuel_tanks);
         Intent intent = getIntent();
         vehicleId = intent.getStringExtra(RealmTable.ID);
-        progressBar = (ProgressBar) findViewById(R.id.pb_view_vehicle_export_bluetooth);
     }
 
     @Override

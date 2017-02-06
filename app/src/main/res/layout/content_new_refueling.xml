@@ -16,20 +16,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <!--<android.support.design.widget.TextInputLayout
-            android:id="@+id/til_new_refueling_date"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="wrap_content">
-            <android.support.design.widget.TextInputEditText
-                android:focusable="false"
-                android:cursorVisible="false"
-                android:hint="@string/date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </android.support.design.widget.TextInputLayout>-->
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
 
         <include layout="@layout/til_date"
             android:layout_width="0dp"
@@ -57,19 +45,6 @@
         android:layout_height="wrap_content"/>
 
     <include layout="@layout/til_odometer" />
-    <!--<android.support.design.widget.TextInputLayout
-        android:id="@+id/til_new_refueling_odometer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:inputType="number"
-            android:maxLines="1"
-            android:maxLength="16"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/odometer"/>
-    </android.support.design.widget.TextInputLayout>-->
 
     <TextView
         android:id="@+id/tv_new_refueling_current_odometer"
@@ -123,17 +98,4 @@
     </android.support.design.widget.TextInputLayout>
 
     <include layout="@layout/til_note" />
-    <!--<android.support.design.widget.TextInputLayout
-        android:id="@+id/til_new_refueling_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:inputType="textMultiLine"
-            android:maxLines="16"
-            android:maxLength="256"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/notes"/>
-    </android.support.design.widget.TextInputLayout>-->
 </LinearLayout>

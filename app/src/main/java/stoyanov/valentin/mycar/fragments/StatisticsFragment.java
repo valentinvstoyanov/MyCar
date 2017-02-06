@@ -19,7 +19,6 @@ import stoyanov.valentin.mycar.R;
 
 public class StatisticsFragment extends Fragment {
 
-    private ViewPager viewPager;
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
 
@@ -61,7 +60,7 @@ public class StatisticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_statistics, container, false);
         appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.app_bar_layout);
-        viewPager = (ViewPager) view.findViewById(R.id.vp_statistics);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.vp_statistics);
         tabLayout = new TabLayout(getContext());
         appBarLayout.addView(tabLayout);
         int color = ResourcesCompat.getColor(getResources(), R.color.colorTextIcons, null);

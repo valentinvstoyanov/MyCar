@@ -5,16 +5,11 @@ import android.app.Notification;
 import android.content.Intent;
 
 import java.util.Calendar;
-import java.util.Date;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
-import stoyanov.valentin.mycar.realm.models.Insurance;
-import stoyanov.valentin.mycar.realm.models.Vehicle;
+import stoyanov.valentin.mycar.broadcasts.BootReceiver;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
-import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.NotificationUtils;
 
 public class BootIntentService extends IntentService {
@@ -27,7 +22,21 @@ public class BootIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Realm myRealm = Realm.getDefaultInstance();
+        Notification notification = NotificationUtils.createNotification(getApplicationContext(),
+                "asdsadad", RealmTable.INSURANCES + RealmTable.ID, "sadasdasd",
+                ViewActivity.ViewType.INSURANCE, ViewActivity.class, "Expiring insurance",
+                 " insurance is expiring on ",
+                R.drawable.ic_insurance_black);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, 5);
+
+        NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
+                19239,
+                calendar.getTimeInMillis());
+        //Log.d("Service: ", "we are in the service");
+
+       /*Realm myRealm = Realm.getDefaultInstance();
         RealmResults<Insurance> insurances = myRealm.where(Insurance.class)
                 .equalTo(FIELD_NAME, false).findAll();
 
@@ -51,5 +60,7 @@ public class BootIntentService extends IntentService {
                     insurance.getNotification().getNotificationId(),
                     calendar.getTimeInMillis());
         }
+        myRealm.close();*/
+        BootReceiver.completeWakefulIntent(intent);
     }
 }
