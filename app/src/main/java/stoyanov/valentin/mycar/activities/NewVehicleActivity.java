@@ -130,7 +130,7 @@ public class NewVehicleActivity extends NewBaseActivity {
 
     @Override
     public void setContent() {
-        spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType().getName()));
+        spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType()));
         TextUtils.setTextToTil(tilName, vehicle.getName());
         TextUtils.setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
         TextUtils.setTextToAutoComplete(tilModel, vehicle.getModel().getName());
@@ -139,7 +139,7 @@ public class NewVehicleActivity extends NewBaseActivity {
         TextUtils.setTextToTil(tilCubicCentimeters, String.valueOf(vehicle.getCubicCentimeter()));
         TextUtils.setTextToTil(tilRegistrationPlate, vehicle.getRegistrationPlate());
         TextUtils.setTextToTil(tilVinPlate, vehicle.getVinPlate());
-        TextUtils.setTextToTil(tilNote, vehicle.getNote().getContent());
+        TextUtils.setTextToTil(tilNote, vehicle.getNote());
         TextUtils.setTextToTil(tilDate, DateUtils.dateToString(vehicle.getManufactureDate()));
         btnColor.setBackgroundColor(vehicle.getColor().getColor());
         existingFuelTanks = new ArrayList<>(vehicle.getFuelTanks().size());
@@ -225,17 +225,17 @@ public class NewVehicleActivity extends NewBaseActivity {
                     realmVehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
                             .findFirst();
-                    realmVehicle.getNote().deleteFromRealm();
+                    //realmVehicle.getNote().deleteFromRealm();
                 }else {
                     realmVehicle = realm.createObject(Vehicle.class,
                             UUID.randomUUID().toString());
                 }
 
                 String vehicleTypeName = spnVehicleType.getSelectedItem().toString();
-                VehicleType vehicleType = realm.where(VehicleType.class)
+                /*VehicleType vehicleType = realm.where(VehicleType.class)
                         .equalTo(RealmTable.NAME, vehicleTypeName)
-                        .findFirst();
-                realmVehicle.setType(vehicleType);
+                        .findFirst();*/
+                realmVehicle.setType(vehicleTypeName);
 
                 realmVehicle.setName(TextUtils.getTextFromTil(tilName));
                 realmVehicle.setManufactureDate(DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate)));
@@ -287,17 +287,18 @@ public class NewVehicleActivity extends NewBaseActivity {
                             UUID.randomUUID().toString());
                     realmFuelTank.setCapacity(fuelTank.getCapacity());
                     realmFuelTank.setConsumption(fuelTank.getConsumption());
-                    String fuelTypeName = fuelTank.getFuelType().getName();
-                    FuelType fuelType = realm.where(FuelType.class)
+                    String fuelTypeName = fuelTank.getType();
+                    /*FuelType fuelType = realm.where(FuelType.class)
                             .equalTo(RealmTable.NAME, fuelTypeName)
                             .findFirst();
-                    realmFuelTank.setFuelType(fuelType);
+                    realmFuelTank.setFuelType(fuelType);*/
+                    realmFuelTank.setType(fuelTypeName);
                     realmVehicle.getFuelTanks().add(realmFuelTank);
                 }
 
-                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(TextUtils.getTextFromTil(tilNote));
-                realmVehicle.setNote(note);
+                /*Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
+                note.setContent(TextUtils.getTextFromTil(tilNote));*/
+                realmVehicle.setNote(TextUtils.getTextFromTil(tilNote));
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -364,11 +365,11 @@ public class NewVehicleActivity extends NewBaseActivity {
     private ArrayList<String> getFuelTankFuelTypes() {
         ArrayList<String> fuelTypes = new ArrayList<>();
         for (FuelTank fuelTank : fuelTanks) {
-            fuelTypes.add(fuelTank.getFuelType().getName());
+            fuelTypes.add(fuelTank.getType());
         }
         if (existingFuelTanks != null) {
             for (FuelTank fuelTank : existingFuelTanks) {
-                fuelTypes.add(fuelTank.getFuelType().getName());
+                fuelTypes.add(fuelTank.getType());
             }
         }
         return fuelTypes;
@@ -404,8 +405,7 @@ public class NewVehicleActivity extends NewBaseActivity {
         TextView tvFuelConsumption = (TextView) view.findViewById(R.id.tv_row_ft_consumption);
         ImageButton imgBtnRemove = (ImageButton) view.findViewById(R.id.img_btn_remove);
         tvFuelTank.setText(getString(R.string.fuel_tank));
-        String text = String.format(getString(R.string.fuel_type_placeholder),
-                fuelTank.getFuelType().getName());
+        String text = String.format(getString(R.string.fuel_type_placeholder), fuelTank.getType());
         tvFuelType.setText(text);
         text = String.format(getString(R.string.capacity_placeholder), fuelTank.getCapacity());
         tvFuelCapacity.setText(text);

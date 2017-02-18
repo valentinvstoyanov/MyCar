@@ -61,9 +61,9 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
             public void onClick(View view) {
                 if (isInputValid()) {
                     FuelTank fuelTank = new FuelTank();
-                    FuelType fuelType = new FuelType();
-                    fuelType.setName(spnFTfuelType.getSelectedItem().toString());
-                    fuelTank.setFuelType(fuelType);
+                    //FuelType fuelType = new FuelType();
+                    //fuelType.setName(spnFTfuelType.getSelectedItem().toString());
+                    fuelTank.setType(spnFTfuelType.getSelectedItem().toString());
                     fuelTank.setCapacity(Integer.parseInt(TextUtils.getTextFromTil(tilFTCapacity)));
                     fuelTank.setConsumption(Integer.parseInt(TextUtils.getTextFromTil(tilFTConsumption)));
                     listener.onAddFuelTank(fuelTank);

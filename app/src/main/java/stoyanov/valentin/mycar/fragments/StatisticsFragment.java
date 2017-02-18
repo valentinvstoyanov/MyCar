@@ -64,7 +64,6 @@ public class StatisticsFragment extends Fragment {
         tabLayout = new TabLayout(getContext());
         appBarLayout.addView(tabLayout);
         int color = ResourcesCompat.getColor(getResources(), R.color.colorTextIcons, null);
-        tabLayout.setSelectedTabIndicatorHeight(16);
         tabLayout.setTabTextColors(color, color);
         tabLayout.setupWithViewPager(viewPager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
@@ -82,33 +81,6 @@ public class StatisticsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d("tabs", "onDestroyView: ");
         appBarLayout.removeView(tabLayout);
     }
-
-    //    @Override
-//    public void onStart() {
-//        super.onStart();
-//        Log.d("tabs", "onStart: ");
-//        appBarLayout.addView(tabLayout);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        Log.d("tabs", "onStop: ");
-//        appBarLayout.removeView(tabLayout);
-//    }
-
-/*    @Override
-    public void onResume() {
-        super.onResume();
-        appBarLayout.addView(tabLayout);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        appBarLayout.removeView(tabLayout);
-    }*/
 }

@@ -1,16 +1,25 @@
 package stoyanov.valentin.mycar.realm.models;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class Refueling extends RealmObject {
     @PrimaryKey
     private String id;
-    private String fuelTankId;
-    private Action action;
+    private FuelTank fuelTank;
     private long fuelPrice;
     private int quantity;
-    private Note note;
+    private Date date;
+    private long odometer;
+    private long price;
+    private String note;
+    //private String fuelTankId;
+    //private Action action;
+    // private Note note;
+
 
     public String getId() {
         return id;
@@ -20,20 +29,12 @@ public class Refueling extends RealmObject {
         this.id = id;
     }
 
-    public String getFuelTankId() {
-        return fuelTankId;
+    public FuelTank getFuelTank() {
+        return fuelTank;
     }
 
-    public void setFuelTankId(String fuelTankId) {
-        this.fuelTankId = fuelTankId;
-    }
-
-    public Action getAction() {
-        return action;
-    }
-
-    public void setAction(Action action) {
-        this.action = action;
+    public void setFuelTank(FuelTank fuelTank) {
+        this.fuelTank = fuelTank;
     }
 
     public long getFuelPrice() {
@@ -52,11 +53,35 @@ public class Refueling extends RealmObject {
         this.quantity = quantity;
     }
 
-    public Note getNote() {
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public long getOdometer() {
+        return odometer;
+    }
+
+    public void setOdometer(long odometer) {
+        this.odometer = odometer;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public String getNote() {
         return note;
     }
 
-    public void setNote(Note note) {
+    public void setNote(String note) {
         this.note = note;
     }
 }

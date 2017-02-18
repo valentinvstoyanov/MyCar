@@ -19,6 +19,7 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
@@ -37,7 +38,6 @@ public abstract class NewBaseActivity extends BaseActivity
     private String vehicleId;
     private long vehicleOdometer;
     private InterstitialAd interstitialAd;
-    protected OnOdometerChangeListener listener;
     protected Realm myRealm;
     protected TextInputLayout tilDate, tilOdometer, tilNote;
 
@@ -69,40 +69,6 @@ public abstract class NewBaseActivity extends BaseActivity
         interstitialAd.loadAd(adRequest);*/
 
         myRealm = Realm.getDefaultInstance();
-        listener = new OnOdometerChangeListener() {
-            @Override
-            public void onChange(long odometer) {
-                RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
-                RealmResults<Service> services = myRealm.where(Service.class)
-                        .lessThanOrEqualTo(RealmTable.ODOMETER_NOTIFICATION + "." +
-                                RealmTable.TARGET_ODOMETER,
-                                odometer + settings.getDistanceInAdvance())
-                        .equalTo(RealmTable.ODOMETER_NOTIFICATION + "." + RealmTable.IS_TRIGGERED,
-                                false)
-                        .findAll();
-                for (final Service service : services) {
-                    Notification notification = NotificationUtils
-                            .createNotification(
-                                    getApplicationContext(),
-                                    vehicleId, RealmTable.SERVICES + RealmTable.ID,
-                                    service.getId(), ViewActivity.ViewType.SERVICE,
-                                    ViewActivity.class, "Service", service.getType()
-                                            .getName() + " should be revised at " + service
-                                            .getOdometerNotification().getTargetOdometer(),
-                                    R.drawable.ic_services_black
-                            );
-                    NotificationManager manager = (NotificationManager) getApplicationContext()
-                            .getSystemService(Context.NOTIFICATION_SERVICE);
-                    manager.notify(0, notification);
-                    myRealm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            service.getOdometerNotification().setTriggered(true);
-                        }
-                    });
-                }
-            }
-        };
     }
 
     @Override
@@ -111,6 +77,38 @@ public abstract class NewBaseActivity extends BaseActivity
                 DateTimePickerUtils.PickerLimits.MAX);
     }
 
+    protected void odometerChanged(long odometer){
+        RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
+        long targetOdometer = odometer + settings.getDistanceInAdvance();
+        RealmResults<Service> services = myRealm
+                .where(Service.class)
+                .equalTo(RealmTable.SHOULD_NOTIFY, true)
+                .equalTo(RealmTable.IS_ODOMETER_TRIGGERED, false)
+                .notEqualTo(RealmTable.TARGET_ODOMETER, 0)
+                .lessThanOrEqualTo(RealmTable.TARGET_ODOMETER, targetOdometer)
+                .findAll();
+        String text = "%s should be revised at %d " + settings.getLengthUnit();
+        for (final Service service : services) {
+            Notification notification = NotificationUtils.createNotification
+                    (
+                            getApplicationContext(), vehicleId,
+                            RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                            ActivityType.SERVICE, ViewActivity.class, "Service",
+                            String.format(text, service.getType().getName(),
+                                    service.getTargetOdometer()),
+                            R.drawable.ic_services_black
+                    );
+            NotificationManager manager = (NotificationManager) getApplicationContext()
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(0, notification);
+            myRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    service.setOdometerTriggered(true);
+                }
+            });
+        }
+    }
     public boolean isUpdate() {
         return update;
     }
@@ -165,9 +163,5 @@ public abstract class NewBaseActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         myRealm.close();
-    }
-
-    protected interface OnOdometerChangeListener{
-        void onChange(long odometer);
     }
 }

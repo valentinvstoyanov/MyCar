@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.provider.Settings;
 
 import io.realm.Realm;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.broadcasts.NotificationReceiver;
@@ -20,14 +21,14 @@ public class NotificationUtils {
 
     public static Notification createNotification(Context context, String vehicleId,
                                                   String propertyKey, String propertyId,
-                                                  ViewActivity.ViewType viewType, Class aClass,
+                                                  ActivityType activityType, Class aClass,
                                                   String title, String content,
                                                   int smallIcon) {
 
         Intent resultIntent = new Intent(context, aClass);
         resultIntent.putExtra(RealmTable.ID, vehicleId);
         resultIntent.putExtra(propertyKey, propertyId);
-        resultIntent.putExtra(RealmTable.TYPE, viewType.ordinal());
+        resultIntent.putExtra(RealmTable.TYPE, activityType.ordinal());
 
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(

@@ -7,6 +7,7 @@ import io.realm.RealmBasedRecyclerViewAdapter;
 import io.realm.RealmModel;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 
@@ -16,7 +17,7 @@ public abstract class BaseRealmAdapter<T extends RealmModel, VH extends RealmVie
     private int color;
     private String vehicleId;
     private RealmSettings realmSettings;
-    private RealmUtils.DeleteType deleteType;
+    private ActivityType deleteType;
 
 
     public BaseRealmAdapter(Context context, RealmResults<T> realmResults, boolean automaticUpdate,
@@ -61,7 +62,7 @@ public abstract class BaseRealmAdapter<T extends RealmModel, VH extends RealmVie
         return realmSettings;
     }
 
-    public void setDeleteType(RealmUtils.DeleteType deleteType) {
+    public void setDeleteType(ActivityType deleteType) {
         this.deleteType = deleteType;
     }
 }

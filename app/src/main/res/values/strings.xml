@@ -30,7 +30,7 @@
     <string name="expiration_date">Expiration date</string>
     <string name="expiration_time">Expiration time</string>
     <string name="notification_date">Target date</string>
-    <string name="add_fuel_tank">+ Add fuel tank</string>
+    <string name="add_fuel_tank">Add fuel tank</string>
     <string name="add">Add</string>
 
     <string name="next">NEXT</string>
@@ -109,4 +109,9 @@
     <string name="banner_ad_unit_id">ca-app-pub-5561372550558397/5266340262</string>
 
     <string name="reminder_distance_in_advance">Reminder distance in advance</string>
+    <string name="reset_app">Reset app</string>
+    <string name="length_unit">Length unit:</string>
+    <string name="currency_unit">Currency unit:</string>
+    <string name="costs">Costs</string>
+    <string name="nothing_to_show">There is nothing to show here. Please add something ...</string>
 </resources>

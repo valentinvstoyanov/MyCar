@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import io.realm.Realm;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
@@ -97,14 +99,13 @@ public class NewExpenseActivity extends NewBaseActivity {
         Expense expense = myRealm.where(Expense.class)
                 .equalTo(RealmTable.ID, expenseId)
                 .findFirst();
-        spnType.setSelection(expenseTypes.indexOf(expense.getType().getName()));
-        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(expense.getAction().getDate()));
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(expense.getAction().getDate()));
-        TextUtils.setTextToTil(tilOdometer, String.valueOf(expense.getAction().getOdometer()));
+        spnType.setSelection(expenseTypes.indexOf(expense.getType()));
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(expense.getDate()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(expense.getDate()));
+        TextUtils.setTextToTil(tilOdometer, String.valueOf(expense.getOdometer()));
         tilOdometer.setEnabled(false);
-        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(expense.getAction()
-                .getPrice())));
-        TextUtils.setTextToTil(tilNote, expense.getNote().getContent());
+        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(expense.getPrice())));
+        TextUtils.setTextToTil(tilNote, expense.getNote());
     }
 
     @Override
@@ -138,33 +139,36 @@ public class NewExpenseActivity extends NewBaseActivity {
                 if (isUpdate()) {
                     expense = realm.where(Expense.class).equalTo(RealmTable.ID, expenseId)
                             .findFirst();
-                    expense.getNote().deleteFromRealm();
-                    expense.getAction().deleteFromRealm();
+//                    expense.getNote().deleteFromRealm();
+//                    expense.getAction().deleteFromRealm();
                 }else {
                     expense = realm.createObject(Expense.class, UUID.randomUUID().toString());
                 }
-                ExpenseType type = realm.where(ExpenseType.class)
+                /*ExpenseType type = realm.where(ExpenseType.class)
                         .equalTo(RealmTable.NAME, spnType.getSelectedItem().toString())
-                        .findFirst();
-                expense.setType(type);
+                        .findFirst();*/
+                expense.setType(spnType.getSelectedItem().toString());
 
-                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(TextUtils.getTextFromTil(tilNote));
-                expense.setNote(note);
+                /*Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
+                note.setContent(TextUtils.getTextFromTil(tilNote));*/
+                expense.setNote(TextUtils.getTextFromTil(tilNote));
 
-                Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
-                Calendar calendar = Calendar.getInstance();
+                //Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
+                //Calendar calendar = Calendar.getInstance();
                 Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
-                calendar.setTime(date);
+                //calendar.setTime(date);
                 Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
-                calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
-                calendar.set(Calendar.MINUTE, time.getMinutes());
-                action.setDate(calendar.getTime());
+                expense.setDate(DateUtils.dateTime(date, time));
+               // calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
+                //calendar.set(Calendar.MINUTE, time.getMinutes());
+               // action.setDate(calendar.getTime());
                 long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
-                action.setOdometer(odometer);
+                expense.setOdometer(odometer);
+                //action.setOdometer(odometer);
                 long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
-                action.setPrice(price);
-                expense.setAction(action);
+                expense.setPrice(price);
+               // action.setPrice(price);
+                //expense.setAction(action);
 
                // if (!isUpdate()) {
                     Vehicle vehicle = realm.where(Vehicle.class)
@@ -185,12 +189,13 @@ public class NewExpenseActivity extends NewBaseActivity {
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
                     intent.putExtra(RealmTable.ID, getVehicleId());
                     intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expenseId);
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
+                    intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New expense saved!");
                 }
-                listener.onChange(getVehicleOdometer());
+                //listener.onChange(getVehicleOdometer());
+                odometerChanged(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {

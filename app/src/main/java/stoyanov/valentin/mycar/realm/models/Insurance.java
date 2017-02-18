@@ -1,15 +1,23 @@
 package stoyanov.valentin.mycar.realm.models;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class Insurance extends RealmObject {
     @PrimaryKey
     private String id;
-    private Action action;
-    private Note note;
+    private Date date;
+    private long odometer;
+    private long price;
     private DateNotification notification;
     private Company company;
+    private String note;
+    //private Action action;
+    //private Note note;
+
 
     public String getId() {
         return id;
@@ -19,20 +27,28 @@ public class Insurance extends RealmObject {
         this.id = id;
     }
 
-    public Action getAction() {
-        return action;
+    public Date getDate() {
+        return date;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public Note getNote() {
-        return note;
+    public long getOdometer() {
+        return odometer;
     }
 
-    public void setNote(Note note) {
-        this.note = note;
+    public void setOdometer(long odometer) {
+        this.odometer = odometer;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
     }
 
     public DateNotification getNotification() {
@@ -49,5 +65,13 @@ public class Insurance extends RealmObject {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

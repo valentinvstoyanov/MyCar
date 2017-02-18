@@ -20,6 +20,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.MainActivity;
 import stoyanov.valentin.mycar.activities.ViewActivity;
@@ -134,22 +135,22 @@ public class LineChartFragment extends Fragment {
                     case "Insurances":
                         Insurance insurance = vehicle.getInsurances().get(index);
                         intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
-                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
+                        intent.putExtra(RealmTable.TYPE, ActivityType.INSURANCE.ordinal());
                         break;
                     case "Expenses":
                         Expense expense = vehicle.getExpenses().get(index);
                         intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
-                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
+                        intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
                         break;
                     case "Refuelings":
                         Refueling refueling = vehicle.getRefuelings().get(index);
                         intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
-                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
+                        intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
                         break;
                     default:
                         Service service = vehicle.getServices().get(index);
                         intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
-                        intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                        intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
                         break;
                 }
                 intent.putExtra(RealmTable.ID, vehicleId);

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.Insurance;
@@ -34,23 +35,22 @@ public class InsuranceRecyclerViewAdapter extends BaseRealmAdapter<Insurance,
     @Override
     public void onBindRealmViewHolder(InsuranceRecyclerViewAdapter.ViewHolder viewHolder, int position) {
         final Insurance insurance = realmResults.get(position);
-        String text = String.format(getContext().getString(R.string.date_placeholder),
-                DateUtils.datetimeToString(insurance.getAction().getDate()));
+        String text = String.format(getContext().getString(R.string.date_placeholder), DateUtils.datetimeToString(insurance.getDate()));
         viewHolder.tvCompany.setText(insurance.getCompany().getName());
         viewHolder.tvDate.setText(text);
         text = String.format(getContext().getString(R.string.expiration_date_placeholder),
                 DateUtils.datetimeToString(insurance.getNotification().getDate()));
         viewHolder.tvExpirationDate.setText(text);
         text = String.format(getContext().getString(R.string.price_placeholder),
-                MoneyUtils.longToString(new BigDecimal(insurance.getAction().getPrice())));
-        viewHolder.tvPrice.setText(text);
+                MoneyUtils.longToString(new BigDecimal(insurance.getPrice())));
+        viewHolder.tvPrice.setText(text + " " + getRealmSettings().getCurrencyUnit());
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
                 intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
-                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.INSURANCE.ordinal());
+                intent.putExtra(RealmTable.TYPE, ActivityType.INSURANCE.ordinal());
                 getContext().startActivity(intent);
             }
         });

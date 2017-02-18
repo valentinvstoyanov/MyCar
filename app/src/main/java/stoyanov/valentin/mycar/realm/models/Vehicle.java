@@ -5,6 +5,7 @@ import java.util.Date;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class Vehicle extends RealmObject {
 
@@ -16,7 +17,8 @@ public class Vehicle extends RealmObject {
     private int horsePower;
     private int cubicCentimeter;
     private long odometer;
-    private VehicleType type;
+    private String type;
+    private String drawableName;
     private Brand brand;
     private Model model;
     private String registrationPlate;
@@ -26,8 +28,11 @@ public class Vehicle extends RealmObject {
     private RealmList<Service> services;
     private RealmList<Insurance> insurances;
     private RealmList<Expense> expenses;
-    private Note note;
-    
+    private String note;
+    //private Note note;
+    //private VehicleType type;
+
+
     public String getId() {
         return id;
     }
@@ -84,12 +89,20 @@ public class Vehicle extends RealmObject {
         this.odometer = odometer;
     }
 
-    public VehicleType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(VehicleType type) {
+    public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDrawableName() {
+        return drawableName;
+    }
+
+    public void setDrawableName(String drawableName) {
+        this.drawableName = drawableName;
     }
 
     public Brand getBrand() {
@@ -164,11 +177,11 @@ public class Vehicle extends RealmObject {
         this.expenses = expenses;
     }
 
-    public Note getNote() {
+    public String getNote() {
         return note;
     }
 
-    public void setNote(Note note) {
+    public void setNote(String note) {
         this.note = note;
     }
 }

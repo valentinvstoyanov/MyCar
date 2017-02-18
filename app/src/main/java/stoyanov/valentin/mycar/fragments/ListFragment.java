@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.MainActivity;
 import stoyanov.valentin.mycar.adapters.ExpenseRecyclerViewAdapter;
@@ -20,6 +22,7 @@ import stoyanov.valentin.mycar.adapters.ServiceRecyclerViewAdapter;
 import stoyanov.valentin.mycar.adapters.VehicleRecyclerViewAdapter;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.Insurance;
+import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
@@ -86,7 +89,8 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
-                    adapter.setDeleteType(RealmUtils.DeleteType.SERVICE);
+                    adapter.setDeleteType(ActivityType.SERVICE);
+                    adapter.setRealmSettings(myRealm.where(RealmSettings.class).findFirst());
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -110,7 +114,8 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
-                    adapter.setDeleteType(RealmUtils.DeleteType.EXPENSE);
+                    adapter.setDeleteType(ActivityType.EXPENSE);
+                    adapter.setRealmSettings(myRealm.where(RealmSettings.class).findFirst());
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -132,7 +137,8 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
-                    adapter.setDeleteType(RealmUtils.DeleteType.REFUELING);
+                    adapter.setDeleteType(ActivityType.REFUELING);
+                    adapter.setRealmSettings(myRealm.where(RealmSettings.class).findFirst());
                     recyclerView.setAdapter(adapter);
                 }
                 break;
@@ -156,7 +162,8 @@ public class ListFragment extends Fragment {
                     });
                     adapter.setColor(vehicle.getColor().getColor());
                     adapter.setVehicleId(vehicleId);
-                    adapter.setDeleteType(RealmUtils.DeleteType.INSURANCE);
+                    adapter.setDeleteType(ActivityType.INSURANCE);
+                    adapter.setRealmSettings(myRealm.where(RealmSettings.class).findFirst());
                     recyclerView.setAdapter(adapter);
                 }
                 break;

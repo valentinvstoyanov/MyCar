@@ -2,13 +2,18 @@ package stoyanov.valentin.mycar.realm.models;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class FuelTank extends RealmObject {
     @PrimaryKey
     private String id;
-    private FuelType fuelType;
+    private String type;
     private int capacity;
     private double consumption;
+    private String unit;
+
+    //private FuelType fuelType;
+
 
     public String getId() {
         return id;
@@ -18,12 +23,12 @@ public class FuelTank extends RealmObject {
         this.id = id;
     }
 
-    public FuelType getFuelType() {
-        return fuelType;
+    public String getType() {
+        return type;
     }
 
-    public void setFuelType(FuelType fuelType) {
-        this.fuelType = fuelType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getCapacity() {
@@ -40,5 +45,13 @@ public class FuelTank extends RealmObject {
 
     public void setConsumption(double consumption) {
         this.consumption = consumption;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

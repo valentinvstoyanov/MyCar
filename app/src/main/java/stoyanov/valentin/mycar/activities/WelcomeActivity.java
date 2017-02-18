@@ -108,14 +108,14 @@ public class WelcomeActivity extends BaseActivity
                                 Log.d("Service types", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
-                            for (String typeName : vehicleTypes) {
+                            /*for (String typeName : vehicleTypes) {
                                 VehicleType vehicleType = realm.createObject(VehicleType.class,
                                         UUID.randomUUID().toString());
                                 vehicleType.setName(typeName);
                                 vehicleType.setDrawableName(ImageViewUtils
                                         .getDrawableNameByVehicleType(typeName));
                                 Log.d("vehicle type", "execute: ");
-                            }
+                            }*/
                             progressBar.incrementProgressBy(10);
                             for (String companyName : companies) {
                                 Company company = realm.createObject(Company.class,
@@ -124,7 +124,7 @@ public class WelcomeActivity extends BaseActivity
                                 Log.d("Company", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
-                            for (String fuelName : fuelTypes) {
+                            /*for (String fuelName : fuelTypes) {
                                 FuelType fuelType = realm.createObject(FuelType.class,
                                         UUID.randomUUID().toString());
                                 fuelType.setName(fuelName);
@@ -140,7 +140,7 @@ public class WelcomeActivity extends BaseActivity
                                 }
                                 fuelType.setUnit(unit);
                                 Log.d("fuel type", "execute: ");
-                            }
+                            }*/
                             progressBar.incrementProgressBy(20);
                             for (int i = 0; i < primaryColors.length(); i++) {
                                 Color color = realm.createObject(Color.class, UUID.randomUUID().toString());
@@ -152,22 +152,21 @@ public class WelcomeActivity extends BaseActivity
                                 Log.d("Color", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
-                            for (String expenseTypeName : expenseTypes) {
+                            /*for (String expenseTypeName : expenseTypes) {
                                 ExpenseType expenseType = realm.createObject(ExpenseType.class,
                                         UUID.randomUUID().toString());
                                 expenseType.setName(expenseTypeName);
                                 Log.d("Expense type", "execute: ");
-                            }
+                            }*/
                             progressBar.incrementProgressBy(5);
-                            RealmSettings settings = realm.createObject(RealmSettings.class,
-                                    UUID.randomUUID().toString());
+                            RealmSettings settings = realm.createObject(RealmSettings.class);
                             settings.setLengthUnit("km");
                             settings.setDistanceInAdvance(1000);
                             settings.setCurrencyUnit("BGN");
                             Log.d("Settings", "execute: ");
                             progressBar.incrementProgressBy(5);
 
-                            for (int i = 0; i < 90; i++) {
+                           /* for (int i = 0; i < 90; i++) {
                                 Vehicle vehicle = realm.createObject(Vehicle.class, UUID.randomUUID().toString());
                                 Color color = realm.where(Color.class).findAll().get(2);
                                 vehicle.setColor(color);
@@ -203,7 +202,7 @@ public class WelcomeActivity extends BaseActivity
                                 note.setContent(notes);
                                 vehicle.setNote(note);
                                 Log.d("Vehicles", "execute: ");
-                            }
+                            }*/
                         }
                     }, new Realm.Transaction.OnSuccess() {
                         @Override
@@ -226,8 +225,8 @@ public class WelcomeActivity extends BaseActivity
                         public void execute(Realm realm) {
 
                         }
-                    });*/
-                    /*myRealm.close();*/
+                    });
+                    myRealm.close();*/
                 }
             });
             thread.run();

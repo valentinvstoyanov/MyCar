@@ -1,17 +1,22 @@
 package stoyanov.valentin.mycar.realm.models;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class Expense extends RealmObject {
     @PrimaryKey
     private String id;
-    private ExpenseType type;
-    private Action action;
-    private Note note;
-   // private Location location;
-    //private Date notificationDate;
-
+    private String type;
+    private Date date;
+    private long odometer;
+    private long price;
+    private String note;
+    //private ExpenseType type;
+   // private Action action;
+   // private Note note;
 
     public String getId() {
         return id;
@@ -21,27 +26,43 @@ public class Expense extends RealmObject {
         this.id = id;
     }
 
-    public ExpenseType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(ExpenseType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public Action getAction() {
-        return action;
+    public Date getDate() {
+        return date;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public Note getNote() {
+    public long getOdometer() {
+        return odometer;
+    }
+
+    public void setOdometer(long odometer) {
+        this.odometer = odometer;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public String getNote() {
         return note;
     }
 
-    public void setNote(Note note) {
+    public void setNote(String note) {
         this.note = note;
     }
 }

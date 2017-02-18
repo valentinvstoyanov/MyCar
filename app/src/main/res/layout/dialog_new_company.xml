@@ -19,6 +19,8 @@
 
         <android.support.design.widget.TextInputEditText
             android:inputType="textAutoComplete|text"
+            android:maxLines="1"
+            android:maxLength="12"
             android:hint="@string/company_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

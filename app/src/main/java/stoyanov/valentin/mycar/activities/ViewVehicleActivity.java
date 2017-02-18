@@ -3,7 +3,6 @@ package stoyanov.valentin.mycar.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,13 +18,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
-
 import java.io.File;
-
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
@@ -46,8 +41,6 @@ public class ViewVehicleActivity extends BaseActivity {
     private TextView tvVinPlate, tvNotes;
     private String vehicleId;
     private LinearLayout llFuelTanks;
-    private ProgressBar progressBar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +52,10 @@ public class ViewVehicleActivity extends BaseActivity {
     }
 
     private void setStatusBarColor(int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(color);
-        }
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(color);
     }
 
     public void setContent() {
@@ -94,11 +85,8 @@ public class ViewVehicleActivity extends BaseActivity {
             }
         });
         appBarLayout.setBackgroundColor(vehicle.getColor().getColor());
-        progressBar.setBackgroundColor(vehicle.getColor().getColor());
-        progressBar.getIndeterminateDrawable().setColorFilter(vehicle.getColor().getTextIconsColor(),
-                PorterDuff.Mode.MULTIPLY);
         setStatusBarColor(vehicle.getColor().getRelevantDarkColor());
-        imageView.setBackground(ImageViewUtils.getDrawableByVehicleType(vehicle.getType().getName(),
+        imageView.setBackground(ImageViewUtils.getDrawableByVehicleType(vehicle.getType(),
                 getApplicationContext(), vehicle.getColor().getTextIconsColor()));
         tvBrand.setText(vehicle.getBrand().getName());
         tvModel.setText(vehicle.getModel().getName());
@@ -111,7 +99,7 @@ public class ViewVehicleActivity extends BaseActivity {
         for (FuelTank fuelTank : vehicle.getFuelTanks()) {
             displayFuelTanks(fuelTank);
         }
-        tvNotes.setText(vehicle.getNote().getContent());
+        tvNotes.setText(vehicle.getNote());
     }
 
     private void displayFuelTanks(FuelTank fuelTank) {
@@ -122,8 +110,7 @@ public class ViewVehicleActivity extends BaseActivity {
         TextView tvConsumption = (TextView) view.findViewById(R.id.tv_row_view_ft_consumption);
         imageView.setBackground(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.ic_menu_refueling, null));
-        String text = String.format(getString(R.string.fuel_type_placeholder),
-                fuelTank.getFuelType().getName());
+        String text = String.format(getString(R.string.fuel_type_placeholder), fuelTank.getType());
         tvFuelType.setText(text);
         text = String.format(getString(R.string.capacity_placeholder), fuelTank.getCapacity());
         tvCapacity.setText(text);
@@ -159,7 +146,7 @@ public class ViewVehicleActivity extends BaseActivity {
             String content = new Gson().toJson(vehicle);
             myRealm.close();
             File file = FileUtils.createFile(getApplicationContext(), dir,
-                    vehicle.getType().getName() + "_" + vehicle.getName(), content);
+                    vehicle.getType() + "_" + vehicle.getName(), content);
             if (file != null) {
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
@@ -179,7 +166,7 @@ public class ViewVehicleActivity extends BaseActivity {
             return true;
         }else if (id == R.id.action_export){
             if (FileUtils.isExternalStorageWritable()) {
-                if (PermissionUtils.hasWriteExternalStoragePermission(getApplicationContext())) {
+                if (PermissionUtils.hasWriteExternalStoragePermission(ViewVehicleActivity.this)) {
                     exportVehicle();
                 }else {
                     showMessage("No permission to access storage");

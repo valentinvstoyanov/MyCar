@@ -11,6 +11,5 @@
         android:title="@string/import_vehicle"
         android:id="@+id/action_import"
         android:orderInCategory="1"
-        android:icon="@drawable/ic_import_24dp"
         app:showAsAction="never" />
 </menu>

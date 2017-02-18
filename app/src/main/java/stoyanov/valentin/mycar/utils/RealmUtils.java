@@ -1,8 +1,12 @@
 package stoyanov.valentin.mycar.utils;
 
+import android.app.Activity;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmModel;
+import io.realm.RealmObject;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.Color;
 import stoyanov.valentin.mycar.realm.models.Company;
@@ -22,69 +26,70 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class RealmUtils {
 
-    public static void deleteProperty(RealmModel model, DeleteType type) {
+    public static void deleteProperty(RealmModel model, ActivityType type) {
         switch (type) {
             case SERVICE:
                 Service service = (Service) model;
-                service.getNote().deleteFromRealm();
+               // service.getNote().deleteFromRealm();
                 DateNotification dateNotification = service.getDateNotification();
-                if (dateNotification == null) {
-                    service.getOdometerNotification().deleteFromRealm();
-                }else {
+                if (dateNotification != null) {
                     dateNotification.deleteFromRealm();
                 }
-                service.getAction().deleteFromRealm();
+                //service.getAction().deleteFromRealm();
                 //Stop ALARM IF NEEDED
                 service.deleteFromRealm();
                 break;
             case INSURANCE:
                 Insurance insurance = (Insurance) model;
-                insurance.getNote().deleteFromRealm();
+                //insurance.getNote().deleteFromRealm();
                 insurance.getNotification().deleteFromRealm();
-                insurance.getAction().deleteFromRealm();
+                //insurance.getAction().deleteFromRealm();
                 //STOP ALARM
                 insurance.deleteFromRealm();
                 break;
-            case REFUELING:
+            default:
+                ((RealmObject)model).deleteFromRealm();
+                break;
+           /* case REFUELING:
                 Refueling refueling = (Refueling) model;
-                refueling.getNote().deleteFromRealm();
-                refueling.getAction().deleteFromRealm();
+               // refueling.getNote().deleteFromRealm();
+               // refueling.getAction().deleteFromRealm();
                 refueling.deleteFromRealm();
                 break;
             case EXPENSE:
                 Expense expense = (Expense) model;
-                expense.getNote().deleteFromRealm();
-                expense.getAction().deleteFromRealm();
+                //expense.getNote().deleteFromRealm();
+                //expense.getAction().deleteFromRealm();
                 expense.deleteFromRealm();
-                break;
+                break;*/
         }
     }
 
     public static void deleteVehicle(Vehicle vehicle) {
-        vehicle.getNote().deleteFromRealm();
+       // vehicle.getNote().deleteFromRealm();
 
         //Reverse iteration due to an error
         RealmList<Service> services = vehicle.getServices();
         for (int i = services.size() - 1; i >= 0; i--) {
-            deleteProperty(services.get(i), DeleteType.SERVICE);
+            deleteProperty(services.get(i), ActivityType.SERVICE);
         }
         services.deleteAllFromRealm();
 
         RealmList<Insurance> insurances = vehicle.getInsurances();
         for (int i = insurances.size() - 1; i >= 0; i--) {
-            deleteProperty(insurances.get(i), DeleteType.INSURANCE);
+            deleteProperty(insurances.get(i), ActivityType.INSURANCE);
         }
         insurances.deleteAllFromRealm();
 
         RealmList<Refueling> refuelings = vehicle.getRefuelings();
         for (int i = refuelings.size() - 1; i >= 0; i--) {
-            deleteProperty(refuelings.get(i), DeleteType.REFUELING);
+            deleteProperty(refuelings.get(i), ActivityType.REFUELING);
         }
         refuelings.deleteAllFromRealm();
 
         RealmList<Expense> expenses = vehicle.getExpenses();
         for (int i = expenses.size() - 1; i >= 0; i--) {
-            deleteProperty(expenses.get(i), DeleteType.EXPENSE);
+            deleteProperty(expenses.get(i), ActivityType.EXPENSE);
         }
         expenses.deleteAllFromRealm();
 
@@ -126,15 +131,15 @@ public class RealmUtils {
                 }
                 vehicle.setColor(color);
 
-                VehicleType vehicleType = realm.where(VehicleType.class)
+               /* VehicleType vehicleType = realm.where(VehicleType.class)
                         .equalTo(RealmTable.NAME, vehicle.getType().getName())
                         .findFirst();
                 if (vehicleType == null) {
                     vehicleType = vehicle.getType();
-                }
-                vehicle.setType(vehicleType);
+                }*/
+                //vehicle.setType(vehicleType);
 
-                for (Expense expense : vehicle.getExpenses()) {
+                /*for (Expense expense : vehicle.getExpenses()) {
                     ExpenseType expenseType = realm.where(ExpenseType.class)
                             .equalTo(RealmTable.NAME, expense.getType().getName())
                             .findFirst();
@@ -142,9 +147,9 @@ public class RealmUtils {
                         expenseType = expense.getType();
                     }
                     expense.setType(expenseType);
-                }
+                }*/
 
-                for (FuelTank fuelTank : vehicle.getFuelTanks()) {
+                /*for (FuelTank fuelTank : vehicle.getFuelTanks()) {
                     FuelType fuelType = realm.where(FuelType.class)
                             .equalTo(RealmTable.NAME, fuelTank.getFuelType().getName())
                             .findFirst();
@@ -152,7 +157,7 @@ public class RealmUtils {
                         fuelType = fuelTank.getFuelType();
                     }
                     fuelTank.setFuelType(fuelType);
-                }
+                }*/
 
                 for (Insurance insurance : vehicle.getInsurances()) {
                     Company company = realm.where(Company.class)
@@ -177,9 +182,5 @@ public class RealmUtils {
                 realm.copyToRealm(vehicle);
             }
         }, onSuccess, onError);
-    }
-
-    public enum DeleteType {
-        SERVICE, INSURANCE, REFUELING, EXPENSE
     }
 }

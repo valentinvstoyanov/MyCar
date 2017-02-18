@@ -66,7 +66,10 @@ public class MainActivity extends BaseActivity
                     spinnerAdapter.clear();
                     spinnerAdapter.addAll(spinnerDataSet);
                     spinnerAdapter.notifyDataSetChanged();
-
+                    //TODO this should not be like this
+                    if (spinnerAdapter.getCount() > 0) {
+                        spnChooseVehicle.setSelection(0);
+                    }
                 }
             };
 
@@ -128,7 +131,7 @@ public class MainActivity extends BaseActivity
                                 .findFirst() != null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setTitle("Conflict");
-                            builder.setMessage(vehicle.getName() + " " + vehicle.getType().getName().toLowerCase()
+                            builder.setMessage(vehicle.getName() + " " + vehicle.getType().toLowerCase()
                                     + " already exist. Would you like to update it?");
                             builder.setCancelable(true);
                             builder.setNegativeButton("Abort", null);
@@ -222,7 +225,6 @@ public class MainActivity extends BaseActivity
         spnChooseVehicle.setSelection(0);
         navigationView.getMenu().performIdentifierAction(menuId, 0);
         navigationView.setCheckedItem(menuId);
-        Log.d("menuid", "initComponents: " + menuId);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnChooseVehicle.setAdapter(spinnerAdapter);
     }

@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
@@ -36,18 +37,22 @@ public class RefuelingRecyclerViewAdapter extends BaseRealmAdapter<Refueling,
         final Refueling refueling = realmResults.get(position);
         String text;
         Realm myRealm = Realm.getDefaultInstance();
-        FuelTank fuelTank = myRealm.where(FuelTank.class)
-                .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();
-        viewHolder.tvFuelType.setText(fuelTank.getFuelType().getName());
-        text = fuelTank.getFuelType().getUnit();
+        FuelTank fuelTank = refueling.getFuelTank();
+                /*myRealm.where(FuelTank.class)
+                .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();*/
+        viewHolder.tvFuelType.setText(fuelTank.getType());
+        text = "%d " + fuelTank.getUnit();
         myRealm.close();
-        text = String.format("%d %s", refueling.getQuantity(), text);
+        text = String.format(text, refueling.getQuantity());
         viewHolder.tvQuantity.setText(text);
         text = String.format(getContext().getString(R.string.fuel_price_placeholder),
                 MoneyUtils.longToString(new BigDecimal(refueling.getFuelPrice())));
+        String currencyUnit = " " + getRealmSettings().getCurrencyUnit();
+        text += currencyUnit;
         viewHolder.tvFuelPrice.setText(text);
         text = String.format(getContext().getString(R.string.price_placeholder),
-                MoneyUtils.longToString(new BigDecimal(refueling.getAction().getPrice())));
+                MoneyUtils.longToString(new BigDecimal(refueling.getPrice())));
+        text += currencyUnit;
         viewHolder.tvPrice.setText(text);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +60,7 @@ public class RefuelingRecyclerViewAdapter extends BaseRealmAdapter<Refueling,
                 Intent intent = new Intent(getContext(), ViewActivity.class);
                 intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
-                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
+                intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
                 getContext().startActivity(intent);
             }
         });

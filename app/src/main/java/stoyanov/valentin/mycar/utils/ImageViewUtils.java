@@ -14,7 +14,7 @@ public class ImageViewUtils {
             case "Motorcycle":
                 return "ic_motorcycle_black";
             case "Truck":
-                return "ic_truck_black_24dp";
+                return "ic_truck_black";
             default:
                 return "ic_car_black";
         }

@@ -10,8 +10,10 @@ import java.math.BigDecimal;
 
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
+import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.OdometerNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
@@ -36,24 +38,25 @@ public class ServiceRecyclerViewAdapter extends BaseRealmAdapter<Service, Servic
         final Service service = realmResults.get(position);
         viewHolder.tvType.setText(service.getType().getName());
         viewHolder.tvDatetime.setText(DateUtils
-                .datetimeToString(service.getAction().getDate()));
+                .datetimeToString(service.getDate()));
         String text = "Reminder: ";
-        OdometerNotification odometerNotification = service.getOdometerNotification();
-        if (odometerNotification == null) {
-            text += DateUtils.datetimeToString(service.getDateNotification().getDate());
+        DateNotification dateNotification = service.getDateNotification();
+        if (dateNotification == null) {
+            text += service.getTargetOdometer() + getRealmSettings().getLengthUnit();
         }else {
-            text += odometerNotification.getTargetOdometer();
+            text += DateUtils.datetimeToString(service.getDateNotification().getDate());
         }
         viewHolder.tvNotifDatetime.setText(text);
-        viewHolder.tvPrice.setText(MoneyUtils
-                .longToString(new BigDecimal(service.getAction().getPrice())));
+        text = MoneyUtils.longToString(new BigDecimal(service.getPrice())) +
+                getRealmSettings().getCurrencyUnit();
+        viewHolder.tvPrice.setText(text);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
                 intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
-                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
                 getContext().startActivity(intent);
             }
         });

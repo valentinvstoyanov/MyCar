@@ -2,30 +2,13 @@ package stoyanov.valentin.mycar.realm.models;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class RealmSettings extends RealmObject {
 
-    @PrimaryKey
-    private String id;
     private int distanceInAdvance;
     private String lengthUnit;
     private String currencyUnit;
-
-    public RealmSettings() {}
-
-    public RealmSettings(int distanceInAdvance, String lengthUnit, String currencyUnit) {
-        this.distanceInAdvance = distanceInAdvance;
-        this.lengthUnit = lengthUnit;
-        this.currencyUnit = currencyUnit;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public int getDistanceInAdvance() {
         return distanceInAdvance;

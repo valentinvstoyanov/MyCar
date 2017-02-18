@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
@@ -121,19 +123,17 @@ public class NewRefuelingActivity extends NewBaseActivity {
         Refueling refueling = myRealm.where(Refueling.class)
                 .equalTo(RealmTable.ID, refuelingId)
                 .findFirst();
-        FuelTank fuelTank = myRealm.where(FuelTank.class)
-                .equalTo(RealmTable.ID, refueling.getFuelTankId())
-                .findFirst();
+        FuelTank fuelTank = refueling.getFuelTank();
         spnFuelTanks.setSelection(results.indexOf(fuelTank));
-        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(refueling.getAction().getDate()));
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(refueling.getAction().getDate()));
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(refueling.getDate()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(refueling.getDate()));
         if (refueling.getQuantity() == fuelTank.getCapacity()) {
             toggleButton.setChecked(true);
         }else{
             toggleButton.setChecked(false);
         }
         TextUtils.setTextToTil(tilQuantity, String.valueOf(tilQuantity));
-        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(refueling.getAction().getPrice())));
+        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(refueling.getPrice())));
     }
 
     @Override
@@ -173,35 +173,41 @@ public class NewRefuelingActivity extends NewBaseActivity {
                     refueling = realm.where(Refueling.class)
                             .equalTo(RealmTable.ID, refuelingId)
                             .findFirst();
-                    refueling.getAction().deleteFromRealm();
-                    refueling.getNote().deleteFromRealm();
+                   // refueling.getAction().deleteFromRealm();
+                   // refueling.getNote().deleteFromRealm();
                 } else {
                     refueling = realm.createObject(Refueling.class, UUID.randomUUID().toString());
                 }
 
-                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(TextUtils.getTextFromTil(tilNote));
-                refueling.setNote(note);
+                //Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
+                //note.setContent(TextUtils.getTextFromTil(tilNote));
+                refueling.setNote(TextUtils.getTextFromTil(tilNote));
 
-                Action action = realm.createObject(Action.class,
-                        UUID.randomUUID().toString());
-                Calendar calendar = Calendar.getInstance();
+                //Action action = realm.createObject(Action.class,
+                 //       UUID.randomUUID().toString());
+                //Calendar calendar = Calendar.getInstance();
                 Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
-                calendar.setTime(date);
+                //calendar.setTime(date);
                 Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
-                calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
-                calendar.set(Calendar.MINUTE, time.getMinutes());
-                action.setDate(calendar.getTime());
+                refueling.setDate(DateUtils.dateTime(date, time));
+               // calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
+               // calendar.set(Calendar.MINUTE, time.getMinutes());
+               // action.setDate(calendar.getTime());
                 long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
-                action.setOdometer(odometer);
+                refueling.setOdometer(odometer);
+               // action.setOdometer(odometer);
                 String price = TextUtils.getTextFromTil(tilPrice);
-                action.setPrice(MoneyUtils.stringToLong(price));
-                refueling.setAction(action);
+                refueling.setPrice(MoneyUtils.stringToLong(price));
+               // action.setPrice(MoneyUtils.stringToLong(price));
+                //refueling.setAction(action);
 
                 String quantity = TextUtils.getTextFromTil(tilQuantity);
                 refueling.setFuelPrice(MoneyUtils.calculateFuelPrice(price, quantity));
                 refueling.setQuantity(Integer.parseInt(quantity));
-                refueling.setFuelTankId(fuelTankId);
+                refueling.setFuelTank(
+                        realm.where(FuelTank.class)
+                                .equalTo(RealmTable.ID, fuelTankId)
+                                .findFirst());
 
                 Vehicle vehicle = realm.where(Vehicle.class)
                         .equalTo(RealmTable.ID, getVehicleId())
@@ -227,12 +233,13 @@ public class NewRefuelingActivity extends NewBaseActivity {
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
                     intent.putExtra(RealmTable.ID, getVehicleId());
                     intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refuelingId);
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.REFUELING.ordinal());
+                    intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New refueling saved!");
                 }
-                listener.onChange(getVehicleOdometer());
+                //listener.onChange(getVehicleOdometer());
+                odometerChanged(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {
@@ -248,7 +255,7 @@ public class NewRefuelingActivity extends NewBaseActivity {
     private ArrayList<String> getFuelTypeNamesFromResults() {
         ArrayList<String> types = new ArrayList<>(results.size());
         for (FuelTank fuelTank : results) {
-            types.add(fuelTank.getFuelType().getName());
+            types.add(fuelTank.getType());
         }
         return types;
     }

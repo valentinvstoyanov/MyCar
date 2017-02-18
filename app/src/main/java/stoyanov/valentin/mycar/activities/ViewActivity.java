@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import io.realm.Realm;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.realm.models.Expense;
@@ -33,7 +34,7 @@ import stoyanov.valentin.mycar.utils.RealmUtils;
 public class ViewActivity extends BaseActivity {
 
     private String id;
-    private ViewType type;
+    private ActivityType type;
     private Class aClass;
     private long vehicleOdometer;
     private String typeStr;
@@ -94,25 +95,25 @@ public class ViewActivity extends BaseActivity {
                                             Insurance insurance = realm.where(Insurance.class)
                                                     .equalTo(RealmTable.ID, id)
                                                     .findFirst();
-                                            RealmUtils.deleteProperty(insurance, RealmUtils.DeleteType.INSURANCE);
+                                            RealmUtils.deleteProperty(insurance, type);
                                             break;
                                         case EXPENSE:
                                             Expense expense = realm.where(Expense.class)
                                                     .equalTo(RealmTable.ID, id)
                                                     .findFirst();
-                                            RealmUtils.deleteProperty(expense, RealmUtils.DeleteType.EXPENSE);
+                                            RealmUtils.deleteProperty(expense, type);
                                             break;
                                         case SERVICE:
                                             Service service = realm.where(Service.class)
                                                     .equalTo(RealmTable.ID, id)
                                                     .findFirst();
-                                            RealmUtils.deleteProperty(service, RealmUtils.DeleteType.SERVICE);
+                                            RealmUtils.deleteProperty(service, type);
                                             break;
                                         case REFUELING:
                                             Refueling refueling = realm.where(Refueling.class)
                                                     .equalTo(RealmTable.ID, id)
                                                     .findFirst();
-                                            RealmUtils.deleteProperty(refueling, RealmUtils.DeleteType.REFUELING);
+                                            RealmUtils.deleteProperty(refueling, type);
                                             break;
                                     }
                                 }
@@ -144,7 +145,7 @@ public class ViewActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setBackNavigation();
-        type = ViewType.values()[getIntent().getIntExtra(RealmTable.TYPE, 0)];
+        type = ActivityType.values()[getIntent().getIntExtra(RealmTable.TYPE, 0)];
         vehicleId = getIntent().getStringExtra(RealmTable.ID);
     }
 
@@ -178,13 +179,13 @@ public class ViewActivity extends BaseActivity {
                 final Insurance insurance = myRealm.where(Insurance.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 setToolbarTitle(insurance.getCompany().getName());
-                date = insurance.getAction().getDate();
+                date = insurance.getDate();
                 displayView(getString(R.string.expiration_date),
                         DateUtils.datetimeToString(insurance.getNotification().getDate()));
                 displayView(getString(R.string.company_name), insurance.getCompany().getName());
-                vehicleOdometer = insurance.getAction().getOdometer();
-                price = insurance.getAction().getPrice();
-                note = insurance.getNote().getContent();
+                vehicleOdometer = insurance.getOdometer();
+                price = insurance.getPrice();
+                note = insurance.getNote();
                 aClass = NewInsuranceActivity.class;
                 break;
             case EXPENSE:
@@ -192,11 +193,11 @@ public class ViewActivity extends BaseActivity {
                 id = intent.getStringExtra(typeStr + RealmTable.ID);
                 Expense expense = myRealm.where(Expense.class)
                         .equalTo(RealmTable.ID, id).findFirst();
-                setToolbarTitle(expense.getType().getName());
-                date = expense.getAction().getDate();
-                vehicleOdometer = expense.getAction().getOdometer();
-                price = expense.getAction().getPrice();
-                note = expense.getNote().getContent();
+                setToolbarTitle(expense.getType());
+                date = expense.getDate();
+                vehicleOdometer = expense.getOdometer();
+                price = expense.getPrice();
+                note = expense.getNote();
                 aClass = NewExpenseActivity.class;
                 break;
             case REFUELING:
@@ -204,17 +205,17 @@ public class ViewActivity extends BaseActivity {
                 id = intent.getStringExtra(typeStr + RealmTable.ID);
                 Refueling refueling = myRealm.where(Refueling.class)
                         .equalTo(RealmTable.ID, id).findFirst();
-                FuelTank fuelTank = myRealm.where(FuelTank.class)
-                        .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();
-                setToolbarTitle(fuelTank.getFuelType().getName());
-                date = refueling.getAction().getDate();
-                vehicleOdometer = refueling.getAction().getOdometer();
-                price = refueling.getAction().getPrice();
-                displayView(getString(R.string.quantity),
-                        String.valueOf(refueling.getQuantity()) + fuelTank.getFuelType().getUnit());
+                FuelTank fuelTank = refueling.getFuelTank();
+                        /*myRealm.where(FuelTank.class)
+                        .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();*/
+                setToolbarTitle(fuelTank.getType());
+                date = refueling.getDate();
+                vehicleOdometer = refueling.getOdometer();
+                price = refueling.getPrice();
+                displayView(getString(R.string.quantity), String.valueOf(refueling.getQuantity()) + fuelTank.getUnit());
                 displayView(getString(R.string.fuel_price_placeholder),
                         MoneyUtils.longToString(new BigDecimal(refueling.getFuelPrice())));
-                note = refueling.getNote().getContent();
+                note = refueling.getNote();
                 aClass = NewRefuelingActivity.class;
                 typeStr = RealmTable.REFUELINGS;
                 break;
@@ -224,11 +225,10 @@ public class ViewActivity extends BaseActivity {
                 Service service = myRealm.where(Service.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 setToolbarTitle(service.getType().getName());
-                date = service.getAction().getDate();
-                vehicleOdometer = service.getAction().getOdometer();
-                price = service.getAction().getPrice();
-                note = service.getNote().getContent();
-                displayView(getString(R.string.notes), service.getNote().getContent());
+                date = service.getDate();
+                vehicleOdometer = service.getOdometer();
+                price = service.getPrice();
+                note = service.getNote();
                 aClass = NewServiceActivity.class;
                 break;
         }
@@ -249,9 +249,5 @@ public class ViewActivity extends BaseActivity {
         tvValue.setText(value);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.content_view);
         linearLayout.addView(view);
-    }
-
-    public enum ViewType {
-        INSURANCE, EXPENSE, REFUELING, SERVICE
     }
 }

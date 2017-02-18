@@ -90,4 +90,16 @@ public class DateUtils {
         Date today = new Date();
         return today.compareTo(date) > 0 ;
     }
+
+    public static Date dateTime(Date date, Date time) {
+        Calendar cDate = Calendar.getInstance();
+        Calendar cTime = Calendar.getInstance();
+        cDate.setTime(date);
+        cTime.setTime(time);
+        cDate.set(Calendar.HOUR_OF_DAY, cTime.get(Calendar.HOUR_OF_DAY));
+        cDate.set(Calendar.MINUTE, cTime.get(Calendar.MINUTE));
+        cDate.set(Calendar.SECOND, 0);
+        cDate.set(Calendar.MILLISECOND, 0);
+        return cDate.getTime();
+    }
 }

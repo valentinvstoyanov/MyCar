@@ -11,8 +11,8 @@ public class PermissionUtils {
 
     public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 5;
 
-    public static boolean hasWriteExternalStoragePermission(Context context) {
-        return ContextCompat.checkSelfPermission(context,
+    public static boolean hasWriteExternalStoragePermission(Activity activity) {
+        return ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 

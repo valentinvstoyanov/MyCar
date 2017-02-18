@@ -53,7 +53,7 @@ public class FileUtils {
 
     public static File createAppDir(Context context) {
         File appDir = new File(Environment.getExternalStorageDirectory(), DIRNAME);
-        if (appDir.mkdir()) {
+        if (appDir.exists() || appDir.mkdir()) {
             return appDir;
         }
         Toast.makeText(context, "Couldn't create app directory", Toast.LENGTH_SHORT).show();

@@ -1,5 +1,6 @@
 package stoyanov.valentin.mycar.activities;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.realm.models.Action;
@@ -144,12 +146,24 @@ public class NewServiceActivity extends NewBaseActivity {
                 .equalTo(RealmTable.ID, serviceId)
                 .findFirst();
         TextUtils.setTextToAutoComplete(tilType, service.getType().getName());
-        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(service.getAction().getDate()));
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(service.getAction().getDate()));
-        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(service.getAction().getPrice())));
-        TextUtils.setTextToTil(tilOdometer, String.valueOf(service.getAction().getOdometer()));
+        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(service.getDate()));
+        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(service.getDate()));
+        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(service.getPrice())));
+        TextUtils.setTextToTil(tilOdometer, String.valueOf(service.getOdometer()));
         tilOdometer.setEnabled(false);
-        TextUtils.setTextToTil(tilNote, service.getNote().getContent());
+        TextUtils.setTextToTil(tilNote, service.getNote());
+        if (service.shouldNotify()) {
+            if (service.getDateNotification() == null) {
+                toggleButton.setChecked(false);
+                TextUtils.setTextToTil(tilOdometerNotification, String.valueOf(
+                        service.getTargetOdometer()));
+            }else {
+                toggleButton.setChecked(true);
+                DateNotification dateNotification = service.getDateNotification();
+                TextUtils.setTextToTil(tilNotificationDate, DateUtils.dateToString(dateNotification.getDate()));
+                TextUtils.setTextToTil(tilNotificationTime, DateUtils.timeToString(dateNotification.getDate()));
+            }
+        }
     }
 
     @Override
@@ -182,8 +196,8 @@ public class NewServiceActivity extends NewBaseActivity {
                 if (isUpdate()) {
                     service = realm.where(Service.class)
                             .equalTo(RealmTable.ID, serviceId).findFirst();
-                    service.getNote().deleteFromRealm();
-                    service.getAction().deleteFromRealm();
+                    //service.getNote().deleteFromRealm();
+                    //service.getAction().deleteFromRealm();
                 }else {
                     serviceId = UUID.randomUUID().toString();
                     service = realm.createObject(Service.class, serviceId);
@@ -198,23 +212,26 @@ public class NewServiceActivity extends NewBaseActivity {
                 }
                 service.setType(type);
 
-                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
+                /*Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
                 note.setContent(TextUtils.getTextFromTil(tilNote));
-                service.setNote(note);
+                service.setNote(note);*/
 
-                Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
-                Calendar calendar = Calendar.getInstance();
+                //Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
+                //Calendar calendar = Calendar.getInstance();
                 Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
-                calendar.setTime(date);
+                //calendar.setTime(date);
                 Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
-                calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
-                calendar.set(Calendar.MINUTE, time.getMinutes());
-                action.setDate(calendar.getTime());
+                service.setDate(DateUtils.dateTime(date, time));
+//                calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
+//                calendar.set(Calendar.MINUTE, time.getMinutes());
+                //action.setDate(calendar.getTime());
                 long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
-                action.setOdometer(odometer);
+                service.setOdometer(odometer);
+                //action.setOdometer(odometer);
                 long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
-                action.setPrice(price);
-                service.setAction(action);
+                service.setPrice(price);
+                //action.setPrice(price);
+                //service.setAction(action);
 
                 DateNotification dateNotification = service.getDateNotification();
                 if (isChecked) {
@@ -238,16 +255,16 @@ public class NewServiceActivity extends NewBaseActivity {
                     service.setDateNotification(dateNotification);
                 }else {
                     if (dateNotification != null) {
-                        Date notificationDate = dateNotification.getDate();
-                        calendar.setTime(notificationDate);
+                        //Date notificationDate = dateNotification.getDate();
+                        //calendar.setTime(notificationDate);
 
                         Notification notification = NotificationUtils.createNotification
                                 (
                                         getApplicationContext(), getVehicleId(),
                                         RealmTable.SERVICES + RealmTable.ID, service.getId(),
-                                        ViewActivity.ViewType.INSURANCE, ViewActivity.class,
+                                        ActivityType.SERVICE, ViewActivity.class,
                                         "Service", service.getType().getName() +
-                                        " should be revised on " + DateUtils.datetimeToString
+                                        " should be revised at " + DateUtils.datetimeToString
                                         (
                                                 service.getDateNotification().getDate()
                                         ), R.drawable.ic_services_black);
@@ -256,7 +273,9 @@ public class NewServiceActivity extends NewBaseActivity {
                                 dateNotification.getNotificationId(), notification);
                         dateNotification.deleteFromRealm();
                     }
-                    OdometerNotification odometerNotification;
+                    service.setTargetOdometer(Long.parseLong(TextUtils.getTextFromTil(tilOdometerNotification)));
+
+                    /*OdometerNotification odometerNotification;
                     odometerNotification = service.getOdometerNotification();
                     if (odometerNotification == null) {
                         odometerNotification = realm.createObject(OdometerNotification.class,
@@ -264,7 +283,7 @@ public class NewServiceActivity extends NewBaseActivity {
                     }
                     odometerNotification.setTargetOdometer(
                             Long.parseLong(TextUtils.getTextFromTil(tilOdometerNotification)));
-                    service.setOdometerNotification(odometerNotification);
+                    service.setOdometerNotification(odometerNotification);*/
                 }
 
                 Vehicle vehicle = realm.where(Vehicle.class)
@@ -291,23 +310,22 @@ public class NewServiceActivity extends NewBaseActivity {
                     Service service = myRealm.where(Service.class)
                             .equalTo(RealmTable.ID, serviceId).findFirst();
                     Date notificationDate = service.getDateNotification().getDate();
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(notificationDate);
 
                     Notification notification = NotificationUtils.createNotification
                             (
                                     getApplicationContext(), getVehicleId(),
                                     RealmTable.SERVICES + RealmTable.ID, service.getId(),
-                                    ViewActivity.ViewType.INSURANCE, ViewActivity.class,
+                                    ActivityType.SERVICE, ViewActivity.class,
                                     "Service", service.getType().getName() +
-                                    " should be revised on " + DateUtils.datetimeToString
+                                    " should be revised at " + DateUtils.datetimeToString
                                     (
                                             service.getDateNotification().getDate()
-                                    ), R.drawable.ic_services_black);
+                                    ), R.drawable.ic_services_black
+                            );
 
                     NotificationUtils.setNotificationOnDate(getApplicationContext(), notification,
                             service.getDateNotification().getNotificationId(),
-                            calendar.getTimeInMillis());
+                            notificationDate.getTime());
                 }
 
                 if (isUpdate()) {
@@ -315,12 +333,13 @@ public class NewServiceActivity extends NewBaseActivity {
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
                     intent.putExtra(RealmTable.ID, getVehicleId());
                     intent.putExtra(RealmTable.SERVICES + RealmTable.ID, serviceId);
-                    intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.SERVICE.ordinal());
+                    intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New service saved!");
                 }
-                listener.onChange(getVehicleOdometer());
+               // listener.onChange(getVehicleOdometer());
+                odometerChanged(getVehicleOdometer());
                 finish();
             }
         }, new Realm.Transaction.OnError() {

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
+import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.realm.models.Expense;
@@ -35,11 +36,11 @@ public class ExpenseRecyclerViewAdapter extends
     @Override
     public void onBindRealmViewHolder(ViewHolder viewHolder, int position) {
         final Expense expense = realmResults.get(position);
-        viewHolder.tvType.setText(expense.getType().getName());
+        viewHolder.tvType.setText(expense.getType());
         viewHolder.tvDatetime.setText(DateUtils
-                .datetimeToString(expense.getAction().getDate()));
-        String price = MoneyUtils
-                .longToString(new BigDecimal(expense.getAction().getPrice()));
+                .datetimeToString(expense.getDate()));
+        String price = MoneyUtils.longToString(new BigDecimal(expense.getPrice()))
+                + " " + getRealmSettings().getCurrencyUnit();
         viewHolder.tvPrice.setText(price);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +48,7 @@ public class ExpenseRecyclerViewAdapter extends
                 Intent intent = new Intent(getContext(), ViewActivity.class);
                 intent.putExtra(RealmTable.ID, getVehicleId());
                 intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
-                intent.putExtra(RealmTable.TYPE, ViewActivity.ViewType.EXPENSE.ordinal());
+                intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
                 getContext().startActivity(intent);
             }
         });

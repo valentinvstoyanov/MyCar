@@ -10,5 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:rrvLayoutType="LinearLayout"
+        app:rrvEmptyLayoutId="@layout/view_nothing_to_show"
         app:rrvSwipeToDelete="true"/>
 </FrameLayout>

@@ -45,7 +45,7 @@ public class VehicleRecyclerViewAdapter extends
         final Vehicle vehicle = realmResults.get(position);
         viewHolder.relativeLayout.setBackgroundColor(vehicle.getColor().getColor());
         viewHolder.imageView.setBackground(ImageViewUtils.getDrawableByVehicleType(vehicle
-                .getType().getName(), getContext(), vehicle.getColor().getTextIconsColor()));
+                .getType(), getContext(), vehicle.getColor().getTextIconsColor()));
         viewHolder.tvVehicleName.setText(vehicle.getName());
         String text = String.format("%s %s", vehicle.getBrand().getName(), vehicle.getModel().getName());
         viewHolder.tvVehicleBrandAndModel.setText(text);
@@ -72,7 +72,7 @@ public class VehicleRecyclerViewAdapter extends
             }
         });
 //        super.onItemSwipedDismiss(position);
-        String text = vehicle.getType().getName() + " " + vehicle.getName() + " deleted";
+        String text = vehicle.getType() + " " + vehicle.getName() + " deleted";
         Snackbar snackbar = Snackbar.make(viewForSnackbar, text, Snackbar.LENGTH_LONG);
         snackbar.setAction("Undo", new View.OnClickListener() {
             @Override
