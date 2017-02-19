@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.interfaces.IBaseActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
-import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {

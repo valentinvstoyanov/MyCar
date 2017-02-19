@@ -1,6 +1,5 @@
 package stoyanov.valentin.mycar.activities;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,10 +26,7 @@ import io.realm.RealmResults;
 import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
-import stoyanov.valentin.mycar.realm.models.Action;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
-import stoyanov.valentin.mycar.realm.models.Note;
-import stoyanov.valentin.mycar.realm.models.OdometerNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
@@ -106,8 +102,6 @@ public class NewServiceActivity extends NewBaseActivity {
                 android.R.layout.simple_dropdown_item_1line,
                 getServiceTypeNamesFromResults());
         actvType.setAdapter(adapter);
-        tilNotificationDate.setHint(getString(R.string.expiration_date));
-        tilNotificationTime.setHint(getString(R.string.expiration_time));
     }
 
     @Override
@@ -232,6 +226,9 @@ public class NewServiceActivity extends NewBaseActivity {
                 service.setPrice(price);
                 //action.setPrice(price);
                 //service.setAction(action);
+                if (true) {
+                    service.setShouldNotify(true);
+                }
 
                 DateNotification dateNotification = service.getDateNotification();
                 if (isChecked) {

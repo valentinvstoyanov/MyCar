@@ -12,7 +12,6 @@ import android.provider.Settings;
 import io.realm.Realm;
 import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.ViewActivity;
 import stoyanov.valentin.mycar.broadcasts.NotificationReceiver;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.table.RealmTable;

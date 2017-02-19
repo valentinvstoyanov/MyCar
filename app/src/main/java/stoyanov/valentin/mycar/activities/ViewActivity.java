@@ -172,6 +172,7 @@ public class ViewActivity extends BaseActivity {
         Date date;
         long price;
         String note;
+        RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
         switch (type) {
             case INSURANCE:
                 typeStr = RealmTable.INSURANCES;
@@ -213,7 +214,7 @@ public class ViewActivity extends BaseActivity {
                 vehicleOdometer = refueling.getOdometer();
                 price = refueling.getPrice();
                 displayView(getString(R.string.quantity), String.valueOf(refueling.getQuantity()) + fuelTank.getUnit());
-                displayView(getString(R.string.fuel_price_placeholder),
+                displayView(getString(R.string.fuel_price),
                         MoneyUtils.longToString(new BigDecimal(refueling.getFuelPrice())));
                 note = refueling.getNote();
                 aClass = NewRefuelingActivity.class;
@@ -225,6 +226,15 @@ public class ViewActivity extends BaseActivity {
                 Service service = myRealm.where(Service.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 setToolbarTitle(service.getType().getName());
+                if (service.shouldNotify()) {
+                    if (service.getDateNotification() == null) {
+                        displayView("Target odometer",
+                                String.valueOf(service.getTargetOdometer() + settings.getLengthUnit()));
+                    }else {
+                        displayView("Notification date",
+                                DateUtils.datetimeToString(service.getDateNotification().getDate()));
+                    }
+                }
                 date = service.getDate();
                 vehicleOdometer = service.getOdometer();
                 price = service.getPrice();
@@ -232,7 +242,6 @@ public class ViewActivity extends BaseActivity {
                 aClass = NewServiceActivity.class;
                 break;
         }
-        RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
         displayView(getString(R.string.date), DateUtils.datetimeToString(date));
         displayView(getString(R.string.odometer), String.valueOf(vehicleOdometer) + settings.getLengthUnit());
         displayView(getString(R.string.price), MoneyUtils.longToString(new BigDecimal(price)) + settings.getCurrencyUnit());

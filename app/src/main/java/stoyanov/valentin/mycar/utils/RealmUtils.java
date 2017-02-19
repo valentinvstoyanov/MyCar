@@ -1,7 +1,5 @@
 package stoyanov.valentin.mycar.utils;
 
-import android.app.Activity;
-
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmModel;
@@ -12,16 +10,12 @@ import stoyanov.valentin.mycar.realm.models.Color;
 import stoyanov.valentin.mycar.realm.models.Company;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Expense;
-import stoyanov.valentin.mycar.realm.models.ExpenseType;
-import stoyanov.valentin.mycar.realm.models.FuelTank;
-import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.Model;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class RealmUtils {

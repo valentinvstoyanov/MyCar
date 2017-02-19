@@ -1,6 +1,5 @@
 package stoyanov.valentin.mycar.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,7 +26,6 @@ import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
-import stoyanov.valentin.mycar.utils.RealmUtils;
 
 public class ListFragment extends Fragment {
     private Realm myRealm;

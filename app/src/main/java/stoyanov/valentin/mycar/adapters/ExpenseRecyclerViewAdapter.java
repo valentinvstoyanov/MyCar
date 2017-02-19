@@ -41,6 +41,8 @@ public class ExpenseRecyclerViewAdapter extends
                 .datetimeToString(expense.getDate()));
         String price = MoneyUtils.longToString(new BigDecimal(expense.getPrice()))
                 + " " + getRealmSettings().getCurrencyUnit();
+        String odometer = expense.getOdometer() + getRealmSettings().getLengthUnit();
+        viewHolder.tvOdometer.setText(odometer);
         viewHolder.tvPrice.setText(price);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +58,7 @@ public class ExpenseRecyclerViewAdapter extends
 
     public class ViewHolder extends RealmViewHolder {
 
-        public TextView tvType, tvDatetime, tvPrice;
+        public TextView tvType, tvDatetime, tvPrice, tvOdometer;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -65,6 +67,7 @@ public class ExpenseRecyclerViewAdapter extends
             tvType = (TextView) itemView.findViewById(R.id.tv_row_service_type);
             tvDatetime = (TextView) itemView.findViewById(R.id.tv_row_service_datetime);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_row_service_price);
+            tvOdometer = (TextView) itemView.findViewById(R.id.tv_row_service_notification_datetime);
         }
     }
 }

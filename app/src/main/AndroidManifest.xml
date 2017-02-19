@@ -76,7 +76,8 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".services.BootIntentService"
+            android:name=".services.ResetAlarmManagerService"
+            android:enabled="true"
             android:exported="false"/>
     </application>
 </manifest>

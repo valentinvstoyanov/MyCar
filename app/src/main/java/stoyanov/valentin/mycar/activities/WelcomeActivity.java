@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -30,19 +29,10 @@ import stoyanov.valentin.mycar.preferences.PreferenceManager;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.Color;
 import stoyanov.valentin.mycar.realm.models.Company;
-import stoyanov.valentin.mycar.realm.models.ExpenseType;
-import stoyanov.valentin.mycar.realm.models.FuelType;
-import stoyanov.valentin.mycar.realm.models.Model;
-import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
-import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.models.VehicleType;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.ColorUtils;
-import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.FileUtils;
-import stoyanov.valentin.mycar.utils.ImageViewUtils;
 
 public class WelcomeActivity extends BaseActivity
                         implements ViewPager.OnPageChangeListener{

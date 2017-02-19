@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -98,7 +99,6 @@
     <include layout="@layout/til_date" />
 
     <LinearLayout
-        android:gravity="center_horizontal"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -107,21 +107,22 @@
         <TextView
             android:gravity="center_vertical"
             android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:text="@string/select_color"
+            android:text="Color:"
             android:onClick="colorPicker"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/btn_new_vehicle_color"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:background="@color/blue"
+        <ImageButton
+            android:id="@+id/img_btn_new_vehicle_color"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            app:srcCompat="@drawable/ic_palette_black_24dp"
+            android:background="@color/colorPrimary"
+            android:scaleType="fitXY"
             android:onClick="colorPicker"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="40dp" />
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
     </LinearLayout>
 
     <LinearLayout

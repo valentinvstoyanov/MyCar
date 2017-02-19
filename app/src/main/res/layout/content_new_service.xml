@@ -44,12 +44,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ToggleButton
-        android:id="@+id/toggle_btn_new_service"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textOn="@string/by_date"
-        android:textOff="@string/by_odometer"/>
+        android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/ic_swap_horiz_black_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
+        <ToggleButton
+            android:id="@+id/toggle_btn_new_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textOn="@string/by_date"
+            android:textOff="@string/by_odometer"/>
+    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -72,6 +83,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false">
+
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_alarm_black_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_service_notification_date"
@@ -125,19 +142,31 @@
             android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_new_service_price"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/ic_monetization_black_24px"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
 
-        <android.support.design.widget.TextInputEditText
-            android:inputType="number"
-            android:maxLines="1"
-            android:maxLength="8"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/til_new_service_price"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/price"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:inputType="number"
+                android:maxLines="1"
+                android:maxLength="8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/price"/>
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
     <include layout="@layout/til_note" />
 </LinearLayout>

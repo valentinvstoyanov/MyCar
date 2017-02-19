@@ -3,7 +3,6 @@ package stoyanov.valentin.mycar.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -19,12 +18,16 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
+
 import java.io.File;
+
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
+import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
@@ -90,7 +93,8 @@ public class ViewVehicleActivity extends BaseActivity {
                 getApplicationContext(), vehicle.getColor().getTextIconsColor()));
         tvBrand.setText(vehicle.getBrand().getName());
         tvModel.setText(vehicle.getModel().getName());
-        tvOdometer.setText(String.valueOf(vehicle.getOdometer()));
+        RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
+        tvOdometer.setText(String.valueOf(vehicle.getOdometer() + settings.getLengthUnit()));
         tvManufactureDate.setText(DateUtils.dateToString(vehicle.getManufactureDate()));
         tvHorsePower.setText(String.valueOf(vehicle.getHorsePower()));
         tvCubicCentimeters.setText(String.valueOf(vehicle.getCubicCentimeter()));

@@ -87,6 +87,8 @@
     <string name="expiration_date_placeholder">Expiration date: <b>%s</b></string>
     <string name="current_odometer_placeholder">Current odometer: <b>%d</b></string>
 
+
+    <string name="fuel_price">Fuel price</string>
     <string name="time">Time</string>
     <string name="service_type">Service type</string>
     <string name="full_fuel_tank">Full fuel tank</string>

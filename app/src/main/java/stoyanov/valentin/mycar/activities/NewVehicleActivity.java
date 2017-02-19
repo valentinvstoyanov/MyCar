@@ -2,10 +2,12 @@ package stoyanov.valentin.mycar.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +35,8 @@ import stoyanov.valentin.mycar.dialogs.NewFuelTankDialog;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.Color;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
-import stoyanov.valentin.mycar.realm.models.FuelType;
 import stoyanov.valentin.mycar.realm.models.Model;
-import stoyanov.valentin.mycar.realm.models.Note;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.models.VehicleType;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
@@ -50,7 +49,8 @@ public class NewVehicleActivity extends NewBaseActivity {
     private ArrayAdapter<CharSequence> spinnerAdapter;
     private TextInputLayout tilName, tilBrand, tilModel, tilHorsePower;
     private TextInputLayout tilCubicCentimeters, tilRegistrationPlate, tilVinPlate;
-    private Button btnAddFuelTank, btnColor;
+    private Button btnAddFuelTank;
+    private ImageButton btnColor;
     private LinearLayout llFuelTanks;
     private ArrayList<FuelTank> fuelTanks;
     private ArrayList<FuelTank> existingFuelTanks;
@@ -93,7 +93,7 @@ public class NewVehicleActivity extends NewBaseActivity {
         llFuelTanks = (LinearLayout) findViewById(R.id.ll_new_vehicle_fuel_tanks);
         tilDate.setHint(getString(R.string.manifacture_date));
         btnAddFuelTank = (Button) findViewById(R.id.btn_new_vehicle_add_ft);
-        btnColor = (Button) findViewById(R.id.btn_new_vehicle_color);
+        btnColor = (ImageButton) findViewById(R.id.img_btn_new_vehicle_color);
         spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(),
                 R.array.vehicle_types, R.layout.textview_spinner);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
