@@ -173,7 +173,7 @@ public class RealmUtils {
                     service.setType(serviceType);
                 }
 
-                realm.copyToRealm(vehicle);
+                realm.copyToRealmOrUpdate(vehicle);
             }
         }, onSuccess, onError);
     }

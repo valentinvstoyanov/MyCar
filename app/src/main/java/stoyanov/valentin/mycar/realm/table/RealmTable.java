@@ -28,4 +28,6 @@ public interface RealmTable {
     String SHOULD_NOTIFY = "shouldNotify";
     String IS_ODOMETER_TRIGGERED = "isOdometerTriggered";
     String DATE_NOTIFICATION = "dateNotification";
+    String FUEL_PRICE = "fuelPrice";
+    String FUEL_TYPE = "fuelTank.type";
 }

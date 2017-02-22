@@ -15,19 +15,8 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "samolevski");
         if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
-            Log.i(TAG, "Boot event received!");
-            Log.e(TAG, "samolevski");
-            Intent serviceIntent = new Intent(context, ResetAlarmManagerService.class);
-            ComponentName componentName = context.startService(serviceIntent);
-            //.startService(serviceIntent);
-            if (componentName != null) {
-                Log.i(TAG, "ResetAlarmManagerService successfully started!");
-            }else {
-                Log.i(TAG, "ResetAlarmManagerService is not running...");
-            }
-            //startWakefulService(context, serviceIntent);
+            context.startService(new Intent(context, ResetAlarmManagerService.class));
         }
     }
 }

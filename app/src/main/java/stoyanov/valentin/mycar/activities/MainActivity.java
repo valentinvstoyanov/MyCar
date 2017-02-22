@@ -219,7 +219,7 @@ public class MainActivity extends BaseActivity
                 .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
         spinnerDataSet = getVehicleNamesFromResults();
         spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_dropdown_item_1line, spinnerDataSet);
+                R.layout.textview_spinner_white, spinnerDataSet);
         results.addChangeListener(callback);
         spnChooseVehicle.setSelection(0);
         navigationView.getMenu().performIdentifierAction(menuId, 0);
@@ -321,9 +321,5 @@ public class MainActivity extends BaseActivity
             names.add(vehicle.getName());
         }
         return names;
-    }
-
-    public enum Actions {
-        SERVICE, INSURANCE, EXPENSE, REFUELING
     }
 }
