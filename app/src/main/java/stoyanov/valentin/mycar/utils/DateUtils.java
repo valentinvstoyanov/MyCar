@@ -80,15 +80,32 @@ public class DateUtils {
 
     public static boolean isDateInFuture(String strDate, String strTime) {
         Calendar now = Calendar.getInstance();
-        now.add(Calendar.MINUTE, 2);
         Date today = now.getTime();
         Date date = stringToDatetime(strDate, strTime);
         return today.compareTo(date) < 0;
     }
 
-    public static boolean isDateInPast(Date date) {
-        Date today = new Date();
-        return today.compareTo(date) > 0 ;
+    public static boolean isDateInPast(String strDate, String strTime) {
+        Calendar now = Calendar.getInstance();
+        Date today = now.getTime();
+        Date date = stringToDatetime(strDate, strTime);
+        return today.compareTo(date) > 0;
+    }
+
+    public static boolean isNotValidDate(String date, boolean time) {
+        SimpleDateFormat dateFormat;
+        if (time) {
+            dateFormat = new SimpleDateFormat(datePattern, Locale.getDefault());
+        }else {
+            dateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+        }
+        try {
+            dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return true;
+        }
+        return false;
     }
 
     public static Date dateTime(Date date, Date time) {

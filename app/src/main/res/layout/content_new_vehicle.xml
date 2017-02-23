@@ -118,7 +118,7 @@
             android:id="@+id/img_btn_new_vehicle_color"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             app:srcCompat="@drawable/ic_palette_black_24dp"
-            android:background="@color/colorPrimary"
+            android:background="@null"
             android:scaleType="fitXY"
             android:onClick="colorPicker"
             android:layout_width="48dp"

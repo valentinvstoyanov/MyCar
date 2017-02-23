@@ -26,6 +26,7 @@ import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
+import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
@@ -207,8 +208,6 @@ public class ViewActivity extends BaseActivity {
                 Refueling refueling = myRealm.where(Refueling.class)
                         .equalTo(RealmTable.ID, id).findFirst();
                 FuelTank fuelTank = refueling.getFuelTank();
-                        /*myRealm.where(FuelTank.class)
-                        .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();*/
                 setToolbarTitle(fuelTank.getType());
                 date = refueling.getDate();
                 vehicleOdometer = refueling.getOdometer();
@@ -246,6 +245,10 @@ public class ViewActivity extends BaseActivity {
         displayView(getString(R.string.odometer), String.valueOf(vehicleOdometer) + settings.getLengthUnit());
         displayView(getString(R.string.price), MoneyUtils.longToString(new BigDecimal(price)) + settings.getCurrencyUnit());
         displayView(getString(R.string.notes), note);
+        vehicleOdometer = myRealm.where(Vehicle.class)
+                .equalTo(RealmTable.ID, vehicleId)
+                .findFirst()
+                .getOdometer();
         myRealm.close();
     }
 

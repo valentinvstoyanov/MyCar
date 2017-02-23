@@ -1,12 +1,11 @@
 package stoyanov.valentin.mycar.activities;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +50,7 @@ public class NewVehicleActivity extends NewBaseActivity {
     private TextInputLayout tilCubicCentimeters, tilRegistrationPlate, tilVinPlate;
     private Button btnAddFuelTank;
     private ImageButton btnColor;
+    private int colorValue;
     private LinearLayout llFuelTanks;
     private ArrayList<FuelTank> fuelTanks;
     private ArrayList<FuelTank> existingFuelTanks;
@@ -61,6 +61,7 @@ public class NewVehicleActivity extends NewBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_vehicle);
         initComponents();
+        setContent();
         setComponentListeners();
     }
 
@@ -82,6 +83,9 @@ public class NewVehicleActivity extends NewBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
+        if (getVehicleId() != null) {
+            setUpdate(true);
+        }
         spnVehicleType = (Spinner) findViewById(R.id.spn_new_vehicle_type);
         tilName = (TextInputLayout) findViewById(R.id.til_new_vehicle_name);
         tilBrand = (TextInputLayout) findViewById(R.id.til_new_vehicle_brand);
@@ -91,7 +95,6 @@ public class NewVehicleActivity extends NewBaseActivity {
         tilRegistrationPlate = (TextInputLayout) findViewById(R.id.til_new_vehicle_registration_plate);
         tilVinPlate = (TextInputLayout) findViewById(R.id.til_new_vehicle_vin_plate);
         llFuelTanks = (LinearLayout) findViewById(R.id.ll_new_vehicle_fuel_tanks);
-        tilDate.setHint(getString(R.string.manifacture_date));
         btnAddFuelTank = (Button) findViewById(R.id.btn_new_vehicle_add_ft);
         btnColor = (ImageButton) findViewById(R.id.img_btn_new_vehicle_color);
         spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(),
@@ -99,14 +102,6 @@ public class NewVehicleActivity extends NewBaseActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnVehicleType.setAdapter(spinnerAdapter);
         fuelTanks = new ArrayList<>();
-        if (getVehicleId() != null) {
-            setUpdate(true);
-            vehicle = myRealm.where(Vehicle.class)
-                    .equalTo(RealmTable.ID, getVehicleId())
-                    .findFirst();
-            setToolbarTitle("Edit vehicle");
-            setContent();
-        }
         ArrayAdapter<String> brandsAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_dropdown_item_1line, getBrandNames());
         AutoCompleteTextView actvBrand = (AutoCompleteTextView) findViewById(R.id.actv_brand);
@@ -130,28 +125,36 @@ public class NewVehicleActivity extends NewBaseActivity {
 
     @Override
     public void setContent() {
-        spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType()));
-        TextUtils.setTextToTil(tilName, vehicle.getName());
-        TextUtils.setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
-        TextUtils.setTextToAutoComplete(tilModel, vehicle.getModel().getName());
-        TextUtils.setTextToTil(tilOdometer, String.valueOf(vehicle.getOdometer()));
-        TextUtils.setTextToTil(tilHorsePower, String.valueOf(vehicle.getHorsePower()));
-        TextUtils.setTextToTil(tilCubicCentimeters, String.valueOf(vehicle.getCubicCentimeter()));
-        TextUtils.setTextToTil(tilRegistrationPlate, vehicle.getRegistrationPlate());
-        TextUtils.setTextToTil(tilVinPlate, vehicle.getVinPlate());
-        TextUtils.setTextToTil(tilNote, vehicle.getNote());
-        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(vehicle.getManufactureDate()));
-        btnColor.setBackgroundColor(vehicle.getColor().getColor());
-        existingFuelTanks = new ArrayList<>(vehicle.getFuelTanks().size());
-        for (FuelTank fuelTank : vehicle.getFuelTanks()) {
-            existingFuelTanks.add(fuelTank);
-            displayNewFuelTank(fuelTank);
+        tilDate.setHint(getString(R.string.manifacture_date));
+        colorValue = ResourcesCompat.getColor(getResources(), R.color.colorAccent, null);
+        btnColor.setColorFilter(colorValue);
+        if (isUpdate()) {
+            vehicle = myRealm.where(Vehicle.class)
+                    .equalTo(RealmTable.ID, getVehicleId())
+                    .findFirst();
+            setToolbarTitle("Edit vehicle");
+            spnVehicleType.setSelection(spinnerAdapter.getPosition(vehicle.getType()));
+            TextUtils.setTextToTil(tilName, vehicle.getName());
+            TextUtils.setTextToAutoComplete(tilBrand, vehicle.getBrand().getName());
+            TextUtils.setTextToAutoComplete(tilModel, vehicle.getModel().getName());
+            TextUtils.setTextToTil(tilOdometer, String.valueOf(vehicle.getOdometer()));
+            TextUtils.setTextToTil(tilHorsePower, String.valueOf(vehicle.getHorsePower()));
+            TextUtils.setTextToTil(tilCubicCentimeters, String.valueOf(vehicle.getCubicCentimeter()));
+            TextUtils.setTextToTil(tilRegistrationPlate, vehicle.getRegistrationPlate());
+            TextUtils.setTextToTil(tilVinPlate, vehicle.getVinPlate());
+            TextUtils.setTextToTil(tilNote, vehicle.getNote());
+            TextUtils.setTextToTil(tilDate, DateUtils.dateToString(vehicle.getManufactureDate()));
+            btnColor.setColorFilter(vehicle.getColor().getColor());
+            existingFuelTanks = new ArrayList<>(vehicle.getFuelTanks().size());
+            for (FuelTank fuelTank : vehicle.getFuelTanks()) {
+                existingFuelTanks.add(fuelTank);
+                displayNewFuelTank(fuelTank);
+            }
         }
     }
 
     @Override
     public boolean isInputValid() {
-        boolean result = super.isInputValid();
         boolean valid = true;
         if (!ValidationUtils.isInputValid(TextUtils.getTextFromTil(tilName))) {
             tilName.setError("Incorrect vehicle name");
@@ -206,13 +209,13 @@ public class NewVehicleActivity extends NewBaseActivity {
             snackbar.show();
         }
         if (isUpdate()) {
-            if (Long.parseLong(TextUtils.getTextFromTil(tilOdometer)) <
-                    vehicle.getOdometer()) {
+            long odometer = vehicle.getOdometer();
+            if (Long.parseLong(TextUtils.getTextFromTil(tilOdometer)) < odometer) {
                 valid = false;
-                tilOdometer.setError("Odometer can't be decreased, current: " + vehicle.getOdometer());
+                tilOdometer.setError("Odometer can't be decreased, current: " + odometer);
             }
         }
-        return result && valid;
+        return super.isInputValid() && valid;
     }
 
     @Override
@@ -220,85 +223,71 @@ public class NewVehicleActivity extends NewBaseActivity {
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Vehicle realmVehicle;
+                Vehicle vehicle;
                 if (isUpdate()) {
-                    realmVehicle = realm.where(Vehicle.class)
+                    vehicle = realm.where(Vehicle.class)
                             .equalTo(RealmTable.ID, getVehicleId())
                             .findFirst();
-                    //realmVehicle.getNote().deleteFromRealm();
                 }else {
-                    realmVehicle = realm.createObject(Vehicle.class,
-                            UUID.randomUUID().toString());
+                    vehicle = realm.createObject(Vehicle.class, UUID.randomUUID().toString());
                 }
 
-                String vehicleTypeName = spnVehicleType.getSelectedItem().toString();
-                /*VehicleType vehicleType = realm.where(VehicleType.class)
-                        .equalTo(RealmTable.NAME, vehicleTypeName)
-                        .findFirst();*/
-                realmVehicle.setType(vehicleTypeName);
+                String typeText = spnVehicleType.getSelectedItem().toString();
+                vehicle.setType(typeText);
 
-                realmVehicle.setName(TextUtils.getTextFromTil(tilName));
-                realmVehicle.setManufactureDate(DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate)));
+                vehicle.setName(TextUtils.getTextFromTil(tilName));
+                vehicle.setManufactureDate(DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate)));
 
-                ColorDrawable colorDrawable = (ColorDrawable) btnColor.getBackground();
                 Color color = realm.where(Color.class)
-                        .equalTo(RealmTable.COLOR, colorDrawable.getColor())
+                        .equalTo(RealmTable.COLOR, colorValue)
                         .findFirst();
                 if (color == null) {
                     color = realm.createObject(Color.class, UUID.randomUUID().toString());
-                    int c = colorDrawable.getColor();
-                    color.setColor(c);
+                    color.setColor(colorValue);
                     color.setRelevantDarkColor(ColorUtils.getDarkColor(getApplicationContext(),
-                            c));
-                    color.setTextIconsColor(ColorUtils
-                            .pickColorByBackground(getApplicationContext(), c));
-
+                            colorValue));
+                    color.setTextIconsColor(ColorUtils.pickColorByBackground(getApplicationContext(),
+                            colorValue));
                 }
-                realmVehicle.setColor(color);
+                vehicle.setColor(color);
 
-                realmVehicle.setRegistrationPlate(TextUtils.getTextFromTil(tilRegistrationPlate));
-                realmVehicle.setVinPlate(TextUtils.getTextFromTil(tilVinPlate));
-                realmVehicle.setOdometer(Long.parseLong(TextUtils.getTextFromTil(tilOdometer)));
-                realmVehicle.setHorsePower(Integer.parseInt(TextUtils.getTextFromTil(tilHorsePower)));
-                realmVehicle.setCubicCentimeter(Integer.parseInt(TextUtils.getTextFromTil(tilCubicCentimeters)));
+                vehicle.setRegistrationPlate(TextUtils.getTextFromTil(tilRegistrationPlate));
+                vehicle.setVinPlate(TextUtils.getTextFromTil(tilVinPlate));
+                vehicle.setOdometer(NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometer)));
+                vehicle.setHorsePower(NumberUtils.createInteger(TextUtils.getTextFromTil(tilHorsePower)));
+                vehicle.setCubicCentimeter(NumberUtils.createInteger(TextUtils.getTextFromTil(tilCubicCentimeters)));
 
-                String brandName = TextUtils.getTextFromAutoComplete(tilBrand);
+                String brandText = TextUtils.getTextFromAutoComplete(tilBrand);
                 Brand brand = realm.where(Brand.class)
-                        .equalTo(RealmTable.NAME, brandName)
+                        .equalTo(RealmTable.NAME, brandText)
                         .findFirst();
                 if (brand == null) {
                     brand = realm.createObject(Brand.class, UUID.randomUUID().toString());
-                    brand.setName(brandName);
+                    brand.setName(brandText);
                 }
-                realmVehicle.setBrand(brand);
+                vehicle.setBrand(brand);
 
-                String modelName = TextUtils.getTextFromAutoComplete(tilModel);
+                String modelText = TextUtils.getTextFromAutoComplete(tilModel);
                 Model model = realm.where(Model.class)
-                        .equalTo(RealmTable.NAME, modelName)
+                        .equalTo(RealmTable.NAME, modelText)
                         .findFirst();
                 if (model == null) {
                     model = realm.createObject(Model.class, UUID.randomUUID().toString());
-                    model.setName(modelName);
+                    model.setName(modelText);
                 }
-                realmVehicle.setModel(model);
+                vehicle.setModel(model);
 
                 for (FuelTank fuelTank : fuelTanks) {
                     FuelTank realmFuelTank = realm.createObject(FuelTank.class,
                             UUID.randomUUID().toString());
                     realmFuelTank.setCapacity(fuelTank.getCapacity());
                     realmFuelTank.setConsumption(fuelTank.getConsumption());
-                    String fuelTypeName = fuelTank.getType();
-                    /*FuelType fuelType = realm.where(FuelType.class)
-                            .equalTo(RealmTable.NAME, fuelTypeName)
-                            .findFirst();
-                    realmFuelTank.setFuelType(fuelType);*/
-                    realmFuelTank.setType(fuelTypeName);
-                    realmVehicle.getFuelTanks().add(realmFuelTank);
+                    String fuelTypeText = fuelTank.getType();
+                    realmFuelTank.setType(fuelTypeText);
+                    vehicle.getFuelTanks().add(realmFuelTank);
                 }
 
-                /*Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(TextUtils.getTextFromTil(tilNote));*/
-                realmVehicle.setNote(TextUtils.getTextFromTil(tilNote));
+                vehicle.setNote(TextUtils.getTextFromTil(tilNote));
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -327,13 +316,13 @@ public class NewVehicleActivity extends NewBaseActivity {
         SpectrumDialog.Builder builder = new SpectrumDialog.Builder(NewVehicleActivity.this);
         builder.setColors(R.array.vehicles_primary_colors);
         builder.setDismissOnColorSelected(true);
-        ColorDrawable colorDrawable = (ColorDrawable) btnColor.getBackground();
-        builder.setSelectedColor(colorDrawable.getColor());
+        builder.setSelectedColor(colorValue);
         builder.setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
             @Override
             public void onColorSelected(boolean positiveResult, @ColorInt int color) {
                 if (positiveResult) {
-                    btnColor.setBackgroundColor(color);
+                    btnColor.setColorFilter(color);
+                    colorValue = color;
                 }
             }
         });

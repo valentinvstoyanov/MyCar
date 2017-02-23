@@ -31,6 +31,7 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewRefuelingActivity extends NewBaseActivity {
@@ -47,14 +48,18 @@ public class NewRefuelingActivity extends NewBaseActivity {
         setContentView(R.layout.activity_new_refueling);
         initComponents();
         setComponentListeners();
+        setContent();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        item.setEnabled(false);
         int id = item.getItemId();
         if (id == R.id.action_save) {
             if (isInputValid()) {
                 saveToRealm();
+            }else {
+                item.setEnabled(true);
             }
             return true;
         }else if(id == android.R.id.home) {
@@ -67,21 +72,15 @@ public class NewRefuelingActivity extends NewBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
-        tilDate.setHint("Date");
-        tilTime = (TextInputLayout) findViewById(R.id.til_new_refueling_time);
-        Calendar calendar = Calendar.getInstance();
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
-        tilPrice = (TextInputLayout) findViewById(R.id.til_new_refueling_price);
-        tilQuantity = (TextInputLayout) findViewById(R.id.til_new_refueling_quantity);
-        toggleButton = (ToggleButton) findViewById(R.id.toggle_btn_new_refueling_full_ft);
-        spnFuelTanks = (Spinner) findViewById(R.id.spn_new_refueling_fuel_tanks);
-        TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_refueling_current_odometer);
-        setCurrentOdometer(tvCurrentOdometer);
         refuelingId = getIntent().getStringExtra(RealmTable.REFUELINGS + RealmTable.ID);
         if (refuelingId != null) {
             setUpdate(true);
         }
-        Log.d(getVehicleId(), "initComponents: ");
+        tilTime = (TextInputLayout) findViewById(R.id.til_new_refueling_time);
+        tilPrice = (TextInputLayout) findViewById(R.id.til_new_refueling_price);
+        tilQuantity = (TextInputLayout) findViewById(R.id.til_new_refueling_quantity);
+        toggleButton = (ToggleButton) findViewById(R.id.toggle_btn_new_refueling_full_ft);
+        spnFuelTanks = (Spinner) findViewById(R.id.spn_new_refueling_fuel_tanks);
         results = myRealm.where(Vehicle.class)
                 .equalTo(RealmTable.ID, getVehicleId())
                 .findFirst().getFuelTanks().where().findAll();
@@ -90,9 +89,6 @@ public class NewRefuelingActivity extends NewBaseActivity {
                 R.layout.textview_spinner, fuelTypeNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnFuelTanks.setAdapter(adapter);
-        if (isUpdate()) {
-            setContent();
-        }
     }
 
     @Override
@@ -106,7 +102,6 @@ public class NewRefuelingActivity extends NewBaseActivity {
                     FuelTank fuelTank = getFuelTankFromSpinner();
                     TextUtils.setTextToTil(tilQuantity, String.valueOf(fuelTank.getCapacity()));
                     tilQuantity.setEnabled(false);
-                    Log.d(TextUtils.getTextFromTil(tilQuantity), "onCheckedChanged: ");
                 }else {
                     TextUtils.setTextToTil(tilQuantity, "");
                     tilQuantity.setEnabled(true);
@@ -117,25 +112,34 @@ public class NewRefuelingActivity extends NewBaseActivity {
 
     @Override
     public void setContent() {
-        Refueling refueling = myRealm.where(Refueling.class)
-                .equalTo(RealmTable.ID, refuelingId)
-                .findFirst();
-        FuelTank fuelTank = refueling.getFuelTank();
-        spnFuelTanks.setSelection(results.indexOf(fuelTank));
-        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(refueling.getDate()));
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(refueling.getDate()));
-        if (refueling.getQuantity() == fuelTank.getCapacity()) {
-            toggleButton.setChecked(true);
-        }else{
-            toggleButton.setChecked(false);
+        tilDate.setHint("Date");
+        TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_refueling_current_odometer);
+        setCurrentOdometer(tvCurrentOdometer);
+        if (isUpdate()) {
+            Refueling refueling = myRealm.where(Refueling.class)
+                    .equalTo(RealmTable.ID, refuelingId)
+                    .findFirst();
+            FuelTank fuelTank = refueling.getFuelTank();
+            spnFuelTanks.setSelection(results.indexOf(fuelTank));
+            TextUtils.setTextToTil(tilDate, DateUtils.dateToString(refueling.getDate()));
+            TextUtils.setTextToTil(tilTime, DateUtils.timeToString(refueling.getDate()));
+            TextUtils.setTextToTil(tilOdometer, String.valueOf(refueling.getOdometer()));
+            if (refueling.getQuantity() == fuelTank.getCapacity()) {
+                toggleButton.setChecked(true);
+            } else {
+                toggleButton.setChecked(false);
+                TextUtils.setTextToTil(tilQuantity, String.valueOf(refueling.getQuantity()));
+            }
+            TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(refueling.getPrice())));
+            TextUtils.setTextToTil(tilNote, refueling.getNote());
+        }else {
+            Calendar calendar = Calendar.getInstance();
+            TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
         }
-        TextUtils.setTextToTil(tilQuantity, String.valueOf(tilQuantity));
-        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(refueling.getPrice())));
     }
 
     @Override
     public boolean isInputValid() {
-        boolean result = super.isInputValid();
         boolean valid = true;
         if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilPrice))) {
             valid = false;
@@ -156,7 +160,7 @@ public class NewRefuelingActivity extends NewBaseActivity {
                 }
             }
         }
-        return result && valid;
+        return super.isInputValid() && valid;
     }
 
     @Override
@@ -165,62 +169,46 @@ public class NewRefuelingActivity extends NewBaseActivity {
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Refueling refueling;
-                if (isUpdate()) {
-                    refueling = realm.where(Refueling.class)
-                            .equalTo(RealmTable.ID, refuelingId)
-                            .findFirst();
-                   // refueling.getAction().deleteFromRealm();
-                   // refueling.getNote().deleteFromRealm();
-                } else {
-                    refueling = realm.createObject(Refueling.class, UUID.randomUUID().toString());
-                }
-
-                //Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                //note.setContent(TextUtils.getTextFromTil(tilNote));
-                refueling.setNote(TextUtils.getTextFromTil(tilNote));
-
-                //Action action = realm.createObject(Action.class,
-                 //       UUID.randomUUID().toString());
-                //Calendar calendar = Calendar.getInstance();
-                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
-                //calendar.setTime(date);
-                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
-                refueling.setDate(DateUtils.dateTime(date, time));
-               // calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
-               // calendar.set(Calendar.MINUTE, time.getMinutes());
-               // action.setDate(calendar.getTime());
-                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
-                refueling.setOdometer(odometer);
-               // action.setOdometer(odometer);
-                String price = TextUtils.getTextFromTil(tilPrice);
-                refueling.setPrice(MoneyUtils.stringToLong(price));
-               // action.setPrice(MoneyUtils.stringToLong(price));
-                //refueling.setAction(action);
-
-                String quantity = TextUtils.getTextFromTil(tilQuantity);
-                refueling.setFuelPrice(MoneyUtils.calculateFuelPrice(price, quantity));
-                refueling.setQuantity(Integer.parseInt(quantity));
-                refueling.setFuelTank(
-                        realm.where(FuelTank.class)
-                                .equalTo(RealmTable.ID, fuelTankId)
-                                .findFirst());
-
                 Vehicle vehicle = realm.where(Vehicle.class)
                         .equalTo(RealmTable.ID, getVehicleId())
                         .findFirst();
-                if (odometer > getVehicleOdometer()) {
-                    setVehicleOdometer(odometer);
-                    vehicle.setOdometer(odometer);
+                Refueling refueling = new Refueling();
+
+                if (isUpdate()) {
+                    vehicle.getRefuelings()
+                            .where()
+                            .equalTo(RealmTable.ID, refuelingId)
+                            .findFirst()
+                            .deleteFromRealm();
+                    refueling.setId(refuelingId);
+                }else {
+                    refueling.setId(UUID.randomUUID().toString());
                 }
-                vehicle.getRefuelings().add(refueling);
-               /* if (!isUpdate()) {
-                    Vehicle vehicle = realm.where(Vehicle.class)
-                            .equalTo(RealmTable.ID, getVehicleId())
-                            .findFirst();
-                    vehicle.getRefuelings().add(refueling);
+
+                FuelTank fuelTank = realm.where(FuelTank.class)
+                        .equalTo(RealmTable.ID, fuelTankId)
+                        .findFirst();
+                refueling.setFuelTank(fuelTank);
+
+                String price = TextUtils.getTextFromTil(tilPrice);
+                refueling.setPrice(MoneyUtils.stringToLong(price));
+
+                String quantity = TextUtils.getTextFromTil(tilQuantity);
+                refueling.setQuantity(NumberUtils.createInteger(quantity));
+                refueling.setFuelPrice(MoneyUtils.calculateFuelPrice(price, quantity));
+
+                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
+                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
+                refueling.setDate(DateUtils.dateTime(date, time));
+
+                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
+                refueling.setOdometer(odometer);
+                if (odometer > getVehicleOdometer()) {
                     vehicle.setOdometer(odometer);
-                }*/
+                    setVehicleOdometer(odometer);
+                }
+                refueling.setNote(TextUtils.getTextFromTil(tilNote));
+                vehicle.getRefuelings().add(realm.copyToRealmOrUpdate(refueling));
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -235,7 +223,6 @@ public class NewRefuelingActivity extends NewBaseActivity {
                 }else {
                     showMessage("New refueling saved!");
                 }
-                //listener.onChange(getVehicleOdometer());
                 odometerChanged(getVehicleOdometer());
                 finish();
             }
@@ -244,7 +231,7 @@ public class NewRefuelingActivity extends NewBaseActivity {
             public void onError(Throwable error) {
                 showMessage("Something went wrong...");
                 error.printStackTrace();
-//                finish();
+                finish();
             }
         });
     }

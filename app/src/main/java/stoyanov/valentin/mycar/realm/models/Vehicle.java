@@ -28,9 +28,6 @@ public class Vehicle extends RealmObject {
     private RealmList<Insurance> insurances;
     private RealmList<Expense> expenses;
     private String note;
-    //private Note note;
-    //private VehicleType type;
-
 
     public String getId() {
         return id;

@@ -41,10 +41,6 @@ public abstract class NewBaseActivity extends BaseActivity
     protected Realm myRealm;
     protected TextInputLayout tilDate, tilOdometer, tilNote;
 
-    public InterstitialAd getInterstitialAd() {
-        return interstitialAd;
-    }
-
     @Override
     public void initComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -109,47 +105,26 @@ public abstract class NewBaseActivity extends BaseActivity
             });
         }
     }
-    public boolean isUpdate() {
-        return update;
-    }
-
-    public void setUpdate(boolean update) {
-        this.update = update;
-    }
-
-    protected String getVehicleId() {
-        return vehicleId;
-    }
-
-    protected void setCurrentOdometer(TextView textView) {
-        String text = String.format(getString(R.string.current_odometer_placeholder),
-                vehicleOdometer);
-        textView.setText(String.valueOf(text));
-    }
-
-    public long getVehicleOdometer() {
-        return vehicleOdometer;
-    }
-
-    public void setVehicleOdometer(long vehicleOdometer) {
-        this.vehicleOdometer = vehicleOdometer;
-    }
 
     public boolean isInputValid() {
         boolean valid = true;
+        if (DateUtils.isNotValidDate(TextUtils.getTextFromTil(tilDate), false)) {
+            valid = false;
+            tilDate.setError("Invalid date");
+        }
         if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilOdometer))) {
             valid = false;
             tilOdometer.setError("Numeric value expected");
+        }else {
+            if (NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometer)) < NumberUtils.LONG_ZERO) {
+                valid = false;
+                tilOdometer.setError("Odometer cannot be negative");
+            }
         }
-        if (NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometer)) < NumberUtils.LONG_ZERO) {
+        if (TextUtils.getTextFromTil(tilNote).length() > 256) {
             valid = false;
-            tilOdometer.setError("Odometer can't be negative");
+            tilNote.setError("Too many characters");
         }
-        /*if (ValidationUtils.isInputValid(getTextFromTil(tilNote))
-                || !TextUtils.isEmpty(getTextFromTil(tilNote))) {
-            valid = false;
-            tilNote.setError("Invalid characters");
-        }*/
         return valid;
     }
 
@@ -163,5 +138,34 @@ public abstract class NewBaseActivity extends BaseActivity
     protected void onDestroy() {
         super.onDestroy();
         myRealm.close();
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
+    }
+
+    protected String getVehicleId() {
+        return vehicleId;
+    }
+
+    protected void setCurrentOdometer(TextView textView) {
+        String text = String.format(getString(R.string.current_odometer_placeholder), vehicleOdometer);
+        textView.setText(String.valueOf(text));
+    }
+
+    public long getVehicleOdometer() {
+        return vehicleOdometer;
+    }
+
+    public void setVehicleOdometer(long vehicleOdometer) {
+        this.vehicleOdometer = vehicleOdometer;
+    }
+
+    public InterstitialAd getInterstitialAd() {
+        return interstitialAd;
     }
 }

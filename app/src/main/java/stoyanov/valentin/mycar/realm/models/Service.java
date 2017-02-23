@@ -19,11 +19,6 @@ public class Service extends RealmObject {
     private boolean isOdometerTriggered;
     private String note;
 
-    //private Action action;
-    //private Note note;
-    //private OdometerNotification odometerNotification;
-
-
     public String getId() {
         return id;
     }

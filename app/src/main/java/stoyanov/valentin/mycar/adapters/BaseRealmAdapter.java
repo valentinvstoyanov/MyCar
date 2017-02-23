@@ -4,6 +4,7 @@ import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmChangeListener;
 import io.realm.RealmModel;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
@@ -18,6 +19,12 @@ public abstract class BaseRealmAdapter<T extends RealmModel, VH extends RealmVie
     private String vehicleId;
     private RealmSettings realmSettings;
     private ActivityType deleteType;
+    private RealmChangeListener<RealmResults<T>> callback = new RealmChangeListener<RealmResults<T>>() {
+        @Override
+        public void onChange(RealmResults<T> element) {
+            notifyDataSetChanged();
+        }
+    };
 
 
     public BaseRealmAdapter(Context context, RealmResults<T> realmResults, boolean automaticUpdate,
@@ -36,6 +43,14 @@ public abstract class BaseRealmAdapter<T extends RealmModel, VH extends RealmVie
             }
         });
         myRealm.close();
+    }
+
+    public void addCallback() {
+        realmResults.addChangeListener(callback);
+    }
+
+    public void removeCallback() {
+        realmResults.removeChangeListener(callback);
     }
 
     public void setColor(int color) {

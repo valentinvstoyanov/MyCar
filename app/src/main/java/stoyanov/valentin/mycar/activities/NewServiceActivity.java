@@ -13,11 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
@@ -35,6 +38,7 @@ import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 import stoyanov.valentin.mycar.utils.NotificationUtils;
+import stoyanov.valentin.mycar.utils.RealmUtils;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewServiceActivity extends NewBaseActivity {
@@ -53,15 +57,19 @@ public class NewServiceActivity extends NewBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_service);
         initComponents();
+        setContent();
         setComponentListeners();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        item.setEnabled(false);
         int id = item.getItemId();
         if (id == R.id.action_save) {
             if (isInputValid()) {
                 saveToRealm();
+            }else {
+                item.setEnabled(true);
             }
             return true;
         }else if(id == android.R.id.home) {
@@ -74,10 +82,11 @@ public class NewServiceActivity extends NewBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
-        tilDate.setHint("Date");
+        serviceId = getIntent().getStringExtra(RealmTable.SERVICES + RealmTable.ID);
+        if(serviceId != null) {
+            setUpdate(true);
+        }
         tilTime = (TextInputLayout) findViewById(R.id.til_new_service_time);
-        Calendar calendar = Calendar.getInstance();
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_service_price);
         tilType = (TextInputLayout) findViewById(R.id.til_new_service_type);
         toggleButton = (ToggleButton) findViewById(R.id.toggle_btn_new_service);
@@ -87,15 +96,6 @@ public class NewServiceActivity extends NewBaseActivity {
         tilOdometerNotification.setVisibility(View.GONE);
         tilNotificationDate = (TextInputLayout) findViewById(R.id.til_new_service_notification_date);
         tilNotificationTime = (TextInputLayout) findViewById(R.id.til_new_service_notification_time);
-        TextUtils.setTextToTil(tilNotificationDate, DateUtils.dateToString(calendar.getTime()));
-        TextUtils.setTextToTil(tilNotificationTime, DateUtils.timeToString(calendar.getTime()));
-        TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_service_current_odometer);
-        setCurrentOdometer(tvCurrentOdometer);
-        serviceId = getIntent().getStringExtra(RealmTable.SERVICES + RealmTable.ID);
-        if(serviceId != null) {
-            setUpdate(true);
-            setContent();
-        }
         results = myRealm.where(ServiceType.class).findAll();
         AutoCompleteTextView actvType = (AutoCompleteTextView) findViewById(R.id.actv_new_service_type);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
@@ -136,33 +136,42 @@ public class NewServiceActivity extends NewBaseActivity {
 
     @Override
     public void setContent() {
-        Service service = myRealm.where(Service.class)
-                .equalTo(RealmTable.ID, serviceId)
-                .findFirst();
-        TextUtils.setTextToAutoComplete(tilType, service.getType().getName());
-        TextUtils.setTextToTil(tilDate, DateUtils.dateToString(service.getDate()));
-        TextUtils.setTextToTil(tilTime, DateUtils.timeToString(service.getDate()));
-        TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(service.getPrice())));
-        TextUtils.setTextToTil(tilOdometer, String.valueOf(service.getOdometer()));
-        tilOdometer.setEnabled(false);
-        TextUtils.setTextToTil(tilNote, service.getNote());
-        if (service.shouldNotify()) {
-            if (service.getDateNotification() == null) {
-                toggleButton.setChecked(false);
-                TextUtils.setTextToTil(tilOdometerNotification, String.valueOf(
-                        service.getTargetOdometer()));
-            }else {
-                toggleButton.setChecked(true);
-                DateNotification dateNotification = service.getDateNotification();
-                TextUtils.setTextToTil(tilNotificationDate, DateUtils.dateToString(dateNotification.getDate()));
-                TextUtils.setTextToTil(tilNotificationTime, DateUtils.timeToString(dateNotification.getDate()));
+        tilDate.setHint("Date");
+        TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_service_current_odometer);
+        setCurrentOdometer(tvCurrentOdometer);
+        if (isUpdate()) {
+            Service service = myRealm.where(Service.class)
+                    .equalTo(RealmTable.ID, serviceId)
+                    .findFirst();
+            TextUtils.setTextToAutoComplete(tilType, service.getType().getName());
+            TextUtils.setTextToTil(tilDate, DateUtils.dateToString(service.getDate()));
+            TextUtils.setTextToTil(tilTime, DateUtils.timeToString(service.getDate()));
+            TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(service.getPrice())));
+            TextUtils.setTextToTil(tilOdometer, String.valueOf(service.getOdometer()));
+            tilOdometer.setEnabled(false);
+            TextUtils.setTextToTil(tilNote, service.getNote());
+            if (service.shouldNotify()) {
+                if (service.getDateNotification() == null) {
+                    toggleButton.setChecked(false);
+                    TextUtils.setTextToTil(tilOdometerNotification, String.valueOf(
+                            service.getTargetOdometer()));
+                } else {
+                    toggleButton.setChecked(true);
+                    DateNotification dateNotification = service.getDateNotification();
+                    TextUtils.setTextToTil(tilNotificationDate, DateUtils.dateToString(dateNotification.getDate()));
+                    TextUtils.setTextToTil(tilNotificationTime, DateUtils.timeToString(dateNotification.getDate()));
+                }
             }
+        }else {
+            Calendar calendar = Calendar.getInstance();
+            TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
+            TextUtils.setTextToTil(tilNotificationDate, DateUtils.dateToString(calendar.getTime()));
+            TextUtils.setTextToTil(tilNotificationTime, DateUtils.timeToString(calendar.getTime()));
         }
     }
 
     @Override
     public boolean isInputValid() {
-        boolean result = super.isInputValid();
         boolean valid = true;
         if (DateUtils.isDateInFuture(TextUtils.getTextFromTil(tilDate),
                 TextUtils.getTextFromTil(tilTime))) {
@@ -173,11 +182,17 @@ public class NewServiceActivity extends NewBaseActivity {
             valid = false;
             tilPrice.setError("Price should be number");
         }
-        /*if (ValidationUtils.isInputValid(TextUtils.getTextFromAutoComplete(tilType))) {
+        String type = TextUtils.getTextFromAutoComplete(tilType);
+        if (type.length() > 36) {
             valid = false;
-            tilType.setError("Incorrect input");
-        }*/
-        return result && valid;
+            tilType.setError("It is too long");
+        }else {
+            if (!StringUtils.isAlpha(type)) {
+                valid = false;
+                tilType.setError("Only letters allowed here");
+            }
+        }
+        return super.isInputValid() && valid;
     }
 
     @Override
@@ -186,126 +201,78 @@ public class NewServiceActivity extends NewBaseActivity {
         myRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Service service;
-                if (isUpdate()) {
-                    service = realm.where(Service.class)
-                            .equalTo(RealmTable.ID, serviceId).findFirst();
-                    //service.getNote().deleteFromRealm();
-                    //service.getAction().deleteFromRealm();
-                }else {
-                    serviceId = UUID.randomUUID().toString();
-                    service = realm.createObject(Service.class, serviceId);
-                }
-
-                String serviceTypeValue = TextUtils.getTextFromAutoComplete(tilType);
-                ServiceType type = realm.where(ServiceType.class)
-                        .equalTo(RealmTable.NAME, serviceTypeValue).findFirst();
-                if (type == null) {
-                    type = realm.createObject(ServiceType.class, UUID.randomUUID().toString());
-                    type.setName(serviceTypeValue);
-                }
-                service.setType(type);
-
-                /*Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                note.setContent(TextUtils.getTextFromTil(tilNote));
-                service.setNote(note);*/
-
-                //Action action = realm.createObject(Action.class, UUID.randomUUID().toString());
-                //Calendar calendar = Calendar.getInstance();
-                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
-                //calendar.setTime(date);
-                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
-                service.setDate(DateUtils.dateTime(date, time));
-//                calendar.set(Calendar.HOUR_OF_DAY, time.getHours());
-//                calendar.set(Calendar.MINUTE, time.getMinutes());
-                //action.setDate(calendar.getTime());
-                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
-                service.setOdometer(odometer);
-                //action.setOdometer(odometer);
-                long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
-                service.setPrice(price);
-                //action.setPrice(price);
-                //service.setAction(action);
-                if (true) {
-                    service.setShouldNotify(true);
-                }
-
-                DateNotification dateNotification = service.getDateNotification();
-                if (isChecked) {
-                    if (dateNotification == null) {
-                        dateNotification = realm.createObject(DateNotification.class,
-                                UUID.randomUUID().toString());
-                        int id;
-                        Number number = realm.where(DateNotification.class)
-                                .max(RealmTable.NOTIFICATION_ID);
-                        if (number == null) {
-                            id = 0;
-                        }else {
-                            id = number.intValue() + 1;
-                        }
-                        dateNotification.setNotificationId(id);
-                    }
-                    dateNotification.setTriggered(false);
-                    Date notificationDate = DateUtils.stringToDatetime(TextUtils.getTextFromTil(tilNotificationDate),
-                            TextUtils.getTextFromTil(tilNotificationTime));
-                    dateNotification.setDate(notificationDate);
-                    service.setDateNotification(dateNotification);
-                }else {
-                    if (dateNotification != null) {
-                        //Date notificationDate = dateNotification.getDate();
-                        //calendar.setTime(notificationDate);
-
-                        Notification notification = NotificationUtils.createNotification
-                                (
-                                        getApplicationContext(), getVehicleId(),
-                                        RealmTable.SERVICES + RealmTable.ID, service.getId(),
-                                        ActivityType.SERVICE, ViewActivity.class,
-                                        "Service", service.getType().getName() +
-                                        " should be revised at " + DateUtils.datetimeToString
-                                        (
-                                                service.getDateNotification().getDate()
-                                        ), R.drawable.ic_services_black);
-
-                        NotificationUtils.cancelNotification(getApplicationContext(),
-                                dateNotification.getNotificationId(), notification);
-                        dateNotification.deleteFromRealm();
-                    }
-                    service.setTargetOdometer(Long.parseLong(TextUtils.getTextFromTil(tilOdometerNotification)));
-
-                    /*OdometerNotification odometerNotification;
-                    odometerNotification = service.getOdometerNotification();
-                    if (odometerNotification == null) {
-                        odometerNotification = realm.createObject(OdometerNotification.class,
-                                UUID.randomUUID().toString());
-                    }
-                    odometerNotification.setTargetOdometer(
-                            Long.parseLong(TextUtils.getTextFromTil(tilOdometerNotification)));
-                    service.setOdometerNotification(odometerNotification);*/
-                }
-
                 Vehicle vehicle = realm.where(Vehicle.class)
                         .equalTo(RealmTable.ID, getVehicleId())
                         .findFirst();
-                if (odometer > getVehicleOdometer()) {
-                    setVehicleOdometer(odometer);
-                    vehicle.setOdometer(odometer);
-                }
-                vehicle.getServices().add(service);
-                /*if (!isUpdate()) {
-                    Vehicle vehicle = realm.where(Vehicle.class)
-                            .equalTo(RealmTable.ID, getVehicleId())
+                Service service = new Service();
+                if (isUpdate()) {
+                    Service oldService = realm.where(Service.class)
+                            .equalTo(RealmTable.ID, serviceId)
                             .findFirst();
-                    vehicle.getServices().add(service);
+                    RealmUtils.deleteProperty(oldService, ActivityType.SERVICE);
+                }else {
+                    serviceId = UUID.randomUUID().toString();
+                }
+                service.setId(serviceId);
+
+                String typeText = TextUtils.getTextFromAutoComplete(tilType);
+                ServiceType type = realm.where(ServiceType.class)
+                        .equalTo(RealmTable.NAME, typeText)
+                        .findFirst();
+                if (type == null) {
+                    type = realm.createObject(ServiceType.class, UUID.randomUUID().toString());
+                    type.setName(typeText);
+                }
+                service.setType(type);
+
+                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
+                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
+                service.setDate(DateUtils.dateTime(date, time));
+
+                long odometer = Long.parseLong(TextUtils.getTextFromTil(tilOdometer));
+                service.setOdometer(odometer);
+                if (odometer > getVehicleOdometer()) {
                     vehicle.setOdometer(odometer);
-                }*/
+                    setVehicleOdometer(odometer);
+                }
+
+                long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
+                service.setPrice(price);
+
+                //TODO: make service notification optional
+                service.setShouldNotify(true);
+                if (isChecked) {
+                    DateNotification notification = realm.createObject(DateNotification.class,
+                            UUID.randomUUID().toString());
+                    notification.setTriggered(false);
+                    date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilNotificationDate));
+                    time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilNotificationTime));
+                    notification.setDate(DateUtils.dateTime(date, time));
+                    int notificationId;
+                    Number number = realm.where(DateNotification.class)
+                            .max(RealmTable.NOTIFICATION_ID);
+                    if (number == null) {
+                        notificationId = 0;
+                    }else {
+                        notificationId = number.intValue() + 1;
+                    }
+                    notification.setNotificationId(notificationId);
+                    service.setDateNotification(notification);
+                }else {
+                    service.setTargetOdometer(NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometerNotification)));
+                    service.setOdometerTriggered(false);
+                }
+
+                service.setNote(TextUtils.getTextFromTil(tilNote));
+                vehicle.getServices().add(realm.copyToRealmOrUpdate(service));
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-
                 if (isChecked) {
                     Service service = myRealm.where(Service.class)
-                            .equalTo(RealmTable.ID, serviceId).findFirst();
+                            .equalTo(RealmTable.ID, serviceId)
+                            .findFirst();
                     Date notificationDate = service.getDateNotification().getDate();
 
                     Notification notification = NotificationUtils.createNotification
@@ -335,7 +302,6 @@ public class NewServiceActivity extends NewBaseActivity {
                 }else {
                     showMessage("New service saved!");
                 }
-               // listener.onChange(getVehicleOdometer());
                 odometerChanged(getVehicleOdometer());
                 finish();
             }

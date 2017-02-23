@@ -15,10 +15,6 @@ public class Refueling extends RealmObject {
     private long odometer;
     private long price;
     private String note;
-    //private String fuelTankId;
-    //private Action action;
-    // private Note note;
-
 
     public String getId() {
         return id;

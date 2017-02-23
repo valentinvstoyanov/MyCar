@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import io.realm.Realm;
 import io.realm.RealmBasedRecyclerViewAdapter;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
@@ -26,6 +27,12 @@ public class VehicleRecyclerViewAdapter extends
         RealmBasedRecyclerViewAdapter<Vehicle, VehicleRecyclerViewAdapter.ViewHolder> {
 
     private View viewForSnackbar;
+    private RealmChangeListener<RealmResults<Vehicle>> callback = new RealmChangeListener<RealmResults<Vehicle>>() {
+        @Override
+        public void onChange(RealmResults<Vehicle> element) {
+            notifyDataSetChanged();
+        }
+    };
 
     public VehicleRecyclerViewAdapter(Context context,
                                       RealmResults<Vehicle> realmResults,
@@ -115,7 +122,15 @@ public class VehicleRecyclerViewAdapter extends
         this.viewForSnackbar = viewForSnackbar;
     }
 
-    public class ViewHolder extends RealmViewHolder {
+    public void addCallback() {
+        realmResults.addChangeListener(callback);
+    }
+
+    public void removeCallback() {
+        realmResults.removeChangeListener(callback);
+    }
+
+    public static class ViewHolder extends RealmViewHolder {
         public RelativeLayout relativeLayout;
         public ImageView imageView;
         public TextView tvVehicleName;

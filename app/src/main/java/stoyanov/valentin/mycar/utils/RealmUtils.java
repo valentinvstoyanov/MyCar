@@ -35,9 +35,7 @@ public class RealmUtils {
                 break;
             case INSURANCE:
                 Insurance insurance = (Insurance) model;
-                //insurance.getNote().deleteFromRealm();
                 insurance.getNotification().deleteFromRealm();
-                //insurance.getAction().deleteFromRealm();
                 //STOP ALARM
                 insurance.deleteFromRealm();
                 break;

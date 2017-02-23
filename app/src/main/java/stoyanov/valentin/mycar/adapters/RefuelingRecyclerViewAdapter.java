@@ -38,8 +38,6 @@ public class RefuelingRecyclerViewAdapter extends BaseRealmAdapter<Refueling,
         String text;
         Realm myRealm = Realm.getDefaultInstance();
         FuelTank fuelTank = refueling.getFuelTank();
-                /*myRealm.where(FuelTank.class)
-                .equalTo(RealmTable.ID, refueling.getFuelTankId()).findFirst();*/
         viewHolder.tvFuelType.setText(fuelTank.getType());
         text = "%d " + fuelTank.getUnit();
         myRealm.close();

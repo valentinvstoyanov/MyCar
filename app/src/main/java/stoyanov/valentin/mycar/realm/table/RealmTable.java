@@ -30,4 +30,6 @@ public interface RealmTable {
     String DATE_NOTIFICATION = "dateNotification";
     String FUEL_PRICE = "fuelPrice";
     String FUEL_TYPE = "fuelTank.type";
+    String TYPE_NAME = "type.name";
+    String COMPANY_NAME = "company.name";
 }
