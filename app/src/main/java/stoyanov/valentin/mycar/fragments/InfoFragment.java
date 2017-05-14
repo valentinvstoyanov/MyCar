@@ -24,6 +24,8 @@ import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class InfoFragment extends Fragment {
 
+    public static final String TAG = "InfoFragment";
+
     private View view;
 
     public InfoFragment() {}

@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.InterstitialAd;
@@ -58,12 +59,11 @@ public abstract class NewBaseActivity extends BaseActivity
         Intent intent = getIntent();
         vehicleId = intent.getStringExtra(RealmTable.ID);
         vehicleOdometer = intent.getLongExtra(RealmTable.ODOMETER, 0);
-       /* interstitialAd = new InterstitialAd(getApplicationContext());
+        /*interstitialAd = new InterstitialAd(getApplicationContext());
         interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
         interstitialAd.loadAd(adRequest);*/
-
         myRealm = Realm.getDefaultInstance();
     }
 

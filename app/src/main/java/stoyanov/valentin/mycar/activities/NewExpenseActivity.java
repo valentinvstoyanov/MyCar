@@ -60,10 +60,10 @@ public class NewExpenseActivity extends NewBaseActivity {
                 item.setEnabled(true);
             }
             return true;
-        }else if(id == android.R.id.home) {
+        }/*else if(id == android.R.id.home) {
             onBackPressed();
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

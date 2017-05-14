@@ -26,6 +26,8 @@ import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class ListFragment extends Fragment {
 
+    public static final String TAG = "ListFragment";
+
     private Realm myRealm;
     private BaseRealmAdapter adapter;
     private VehicleRecyclerViewAdapter vehicleAdapter;

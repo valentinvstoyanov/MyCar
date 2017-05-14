@@ -108,7 +108,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"/>
     </LinearLayout>
-
+<!--
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:gravity="center_vertical"
@@ -118,7 +118,7 @@
         <ImageView
             android:src="@drawable/ic_monetization_black_24px"
             android:layout_width="24dp"
-            android:layout_height="24dp" />
+            android:layout_height="24dp" />-->
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_insurance_price"
             android:layout_width="match_parent"
@@ -126,12 +126,13 @@
 
             <android.support.design.widget.TextInputEditText
                 android:inputType="number"
+                android:drawableLeft="@drawable/ic_monetization_black_24px"
+                android:drawablePadding="16dp"
                 android:maxLines="1"
                 android:maxLength="8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/price"/>
         </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
     <include layout="@layout/til_note"/>
 </LinearLayout>

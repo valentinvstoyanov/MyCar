@@ -65,7 +65,6 @@ public class MainActivity extends BaseActivity
                     spinnerAdapter.clear();
                     spinnerAdapter.addAll(spinnerDataSet);
                     spinnerAdapter.notifyDataSetChanged();
-                    //TODO this should not be like this
                     if (spinnerAdapter.getCount() > 0) {
                         spnChooseVehicle.setSelection(0);
                     }

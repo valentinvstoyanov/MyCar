@@ -30,6 +30,8 @@ import stoyanov.valentin.mycar.utils.ChartUtils;
 
 public class LineChartFragment extends Fragment {
 
+    public static final String TAG = "LineChartFragment";
+
    // private Realm myRealm;
 
     @Nullable

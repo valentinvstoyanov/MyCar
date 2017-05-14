@@ -18,6 +18,8 @@ import stoyanov.valentin.mycar.R;
 
 public class StatisticsFragment extends Fragment {
 
+    public static final String TAG = "StatisticsFragment";
+
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
 
