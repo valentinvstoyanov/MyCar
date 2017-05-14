@@ -108,6 +108,19 @@ public class DateUtils {
         return false;
     }
 
+    public static String getDateFromInts(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        return DateUtils.dateToString(calendar.getTime());
+    }
+
+    public static String getTimeFromInts(int hour, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        return DateUtils.timeToString(calendar.getTime());
+    }
+
     public static Date dateTime(Date date, Date time) {
         Calendar cDate = Calendar.getInstance();
         Calendar cTime = Calendar.getInstance();

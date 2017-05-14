@@ -16,9 +16,9 @@ public class DateTimePickerUtils {
 
     public static void addDatePickerListener(final Context context, TextInputLayout til,
                                              final Date date, final PickerLimits limits) {
-        final TextInputEditText tiet = (TextInputEditText) til.getEditText();
-        if (tiet != null) {
-            tiet.setOnClickListener(new View.OnClickListener() {
+        final TextInputEditText textInputEditText = (TextInputEditText) til.getEditText();
+        if (textInputEditText != null) {
+            textInputEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     final Calendar calendar = Calendar.getInstance();
@@ -26,7 +26,7 @@ public class DateTimePickerUtils {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                             calendar.set(year, month, day);
-                            tiet.setText(DateUtils.dateToString(calendar.getTime()));
+                            textInputEditText.setText(DateUtils.dateToString(calendar.getTime()));
                         }
                     };
                     DatePickerDialog datePickerDialog = new DatePickerDialog
@@ -51,9 +51,9 @@ public class DateTimePickerUtils {
     }
 
     public static void addTimePickerListener(final Context context, TextInputLayout til) {
-        final TextInputEditText tiet = (TextInputEditText) til.getEditText();
-        if (tiet != null) {
-            tiet.setOnClickListener(new View.OnClickListener() {
+        final TextInputEditText textInputEditText = (TextInputEditText) til.getEditText();
+        if (textInputEditText != null) {
+            textInputEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     final Calendar calendar = Calendar.getInstance();
@@ -62,7 +62,7 @@ public class DateTimePickerUtils {
                         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                             calendar.set(Calendar.HOUR_OF_DAY, hour);
                             calendar.set(Calendar.MINUTE, minute);
-                            tiet.setText(DateUtils.timeToString(calendar.getTime()));
+                            textInputEditText.setText(DateUtils.timeToString(calendar.getTime()));
                         }
                     };
                     TimePickerDialog timePickerDialog = new TimePickerDialog(context, timeListener,
@@ -75,5 +75,24 @@ public class DateTimePickerUtils {
 
     public enum PickerLimits {
         MIN, MAX
+    }
+
+    public static void showDatePicker(Context context, DatePickerDialog.OnDateSetListener listener) {
+        Calendar dateTime = Calendar.getInstance();
+        int day = dateTime.get(Calendar.DAY_OF_MONTH);
+        int month = dateTime.get(Calendar.MONTH);
+        int year = dateTime.get(Calendar.YEAR);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, listener, year, month, day);
+        datePickerDialog.show();
+    }
+
+    public static void showTimePicker(Context context, TimePickerDialog.OnTimeSetListener listener) {
+        Calendar dateTime = Calendar.getInstance();
+        int hour = dateTime.get(Calendar.HOUR_OF_DAY);
+        int minute = dateTime.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(context, listener, hour, minute, true);
+        timePickerDialog.show();
     }
 }

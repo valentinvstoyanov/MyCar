@@ -14,6 +14,33 @@
     tools:showIn="@layout/activity_new_insurance">
 
     <LinearLayout
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/spn_new_insurance_company_name"
+            android:popupBackground="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:layout_weight="1"
+            android:layout_gravity="end"
+            android:id="@+id/img_btn_add_company"
+            android:background="@null"
+            android:src="@drawable/ic_add_circle_outline_black_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
+    </LinearLayout>
+
+    <include layout="@layout/view_base"/>
+
+
+<!--    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -83,31 +110,7 @@
         android:id="@+id/tv_new_insurance_current_odometer"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Spinner
-            android:id="@+id/spn_new_insurance_company_name"
-            android:popupBackground="@color/colorAccent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:layout_height="wrap_content" />
-
-        <ImageButton
-            android:layout_weight="1"
-            android:layout_gravity="end"
-            android:id="@+id/img_btn_add_company"
-            android:background="@null"
-            android:src="@drawable/ic_add_circle_outline_black_24dp"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
-    </LinearLayout>
+        android:layout_height="wrap_content" />-->
 <!--
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -119,7 +122,7 @@
             android:src="@drawable/ic_monetization_black_24px"
             android:layout_width="24dp"
             android:layout_height="24dp" />-->
-        <android.support.design.widget.TextInputLayout
+<!--        <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_insurance_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -134,5 +137,5 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/price"/>
         </android.support.design.widget.TextInputLayout>
-    <include layout="@layout/til_note"/>
+    <include layout="@layout/til_note"/>-->
 </LinearLayout>

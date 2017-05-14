@@ -13,6 +13,15 @@
     tools:context="stoyanov.valentin.mycar.activities.NewExpenseActivity"
     tools:showIn="@layout/activity_new_expense">
 
+    <Spinner
+        android:id="@+id/spn_new_expense_type"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:popupBackground="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <include layout="@layout/view_base"/>
+<!--
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -37,6 +46,7 @@
                 android:layout_height="wrap_content" />
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
+-->
 
 <!--    <LinearLayout
         android:visibility="visible"
@@ -66,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp" />
     </LinearLayout>-->
-
+<!--
     <Spinner
         android:id="@+id/spn_new_expense_type"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -82,16 +92,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-<!--    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:src="@drawable/ic_monetization_black_24px"
-            android:layout_width="24dp"
-            android:layout_height="24dp" />-->
         <android.support.design.widget.TextInputLayout
             android:id="@+id/til_new_expense_price"
             android:layout_width="match_parent"
@@ -108,6 +108,6 @@
                 android:hint="@string/price"/>
         </android.support.design.widget.TextInputLayout>
 
-    <include layout="@layout/til_note" />
+    <include layout="@layout/til_note" />-->
 </LinearLayout>
 
