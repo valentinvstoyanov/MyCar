@@ -52,6 +52,16 @@ public class NewRefuelingActivity extends NewBaseActivity {
     }
 
     @Override
+    public void saveToRealm() {
+
+    }
+
+    @Override
+    public void setContent() {
+
+    }
+
+ /*   @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         item.setEnabled(false);
         int id = item.getItemId();
@@ -247,5 +257,5 @@ public class NewRefuelingActivity extends NewBaseActivity {
     private FuelTank getFuelTankFromSpinner() {
         int position = spnFuelTanks.getSelectedItemPosition();
         return results.get(position);
-    }
+    }*/
 }

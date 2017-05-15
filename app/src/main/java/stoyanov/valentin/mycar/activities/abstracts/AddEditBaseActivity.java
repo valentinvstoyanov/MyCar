@@ -6,22 +6,21 @@ import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.AsyncTask;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.Date;
-
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
@@ -38,15 +37,21 @@ import stoyanov.valentin.mycar.utils.TextUtils;
 public abstract class AddEditBaseActivity extends BaseActivity implements INewBaseActivity {
 
     private long vehicleOdometer;
-    private String vehicleId;
-    private String itemId;
+    protected String vehicleId;
+    protected String itemId;
     protected Realm myRealm;
+    protected ProgressBar progressBar;
     protected Button btnDate;
     protected Button btnTime;
     protected TextView tvCurrentOdometer;
     protected TextInputLayout tilOdometer;
     protected TextInputLayout tilPrice;
     protected TextInputLayout tilNote;
+
+    protected abstract void populateNewItem();
+    protected abstract void populateExistingItem();
+    protected abstract void saveItem(Realm realm);
+    protected abstract void onItemSaved();
 
     @Override
     public void initComponents() {
@@ -59,6 +64,7 @@ public abstract class AddEditBaseActivity extends BaseActivity implements INewBa
         tilOdometer = (TextInputLayout) findViewById(R.id.til_add_edit_odometer);
         tilPrice = (TextInputLayout) findViewById(R.id.til_add_edit_price);
         tilNote = (TextInputLayout) findViewById(R.id.til_add_edit_note);
+        progressBar = (ProgressBar) findViewById(R.id.pb_add_edit);
         Intent intent = getIntent();
         vehicleId = intent.getStringExtra(RealmTable.ID);
         itemId = intent.getStringExtra(RealmTable.EXPENSES + RealmTable.ID);
@@ -98,6 +104,11 @@ public abstract class AddEditBaseActivity extends BaseActivity implements INewBa
     public void setContent() {
         String text = String.format(getString(R.string.current_odometer_placeholder), vehicleOdometer);
         tvCurrentOdometer.setText(String.valueOf(text));
+        if (isNewItem()) {
+            populateNewItem();
+        }else {
+            populateExistingItem();
+        }
     }
 
     @Override
@@ -119,6 +130,7 @@ public abstract class AddEditBaseActivity extends BaseActivity implements INewBa
             valid = false;
             showMessage("Invalid date");
         }
+
         if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilOdometer))) {
             valid = false;
             tilOdometer.setError("Numeric value expected");
@@ -128,19 +140,110 @@ public abstract class AddEditBaseActivity extends BaseActivity implements INewBa
                 tilOdometer.setError("Odometer cannot be negative");
             }
         }
+
         if (TextUtils.getTextFromTil(tilNote).length() > 256) {
             valid = false;
             tilNote.setError("Too many characters");
         }
+
+        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilPrice))) {
+            valid = false;
+            tilPrice.setError("Price should be number");
+        }
+
         return valid;
+    }
+
+    @Override
+    public void saveToRealm() {
+        myRealm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                saveItem(realm);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                new ServiceNotifyingAsyncTask().execute();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                progressBar.setIndeterminate(false);
+                showMessage("Something went wrong...");
+                error.printStackTrace();
+            }
+        });
     }
 
     public void setVehicleOdometer(long vehicleOdometer) {
         this.vehicleOdometer = vehicleOdometer;
-        onOdometerChange();
+       // onOdometerChange();
     }
 
-    public void onOdometerChange() {
+    public long getVehicleOdometer() {
+        return vehicleOdometer;
+    }
+
+   /* public void onOdometerChange() {
+        new ServiceNotifyingAsyncTask().execute();
+    }*/
+
+    public boolean isNewItem() {
+        return itemId == null;
+    }
+
+    private class ServiceNotifyingAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Realm realmDb = Realm.getDefaultInstance();
+            RealmSettings settings = realmDb.where(RealmSettings.class).findFirst();
+            long targetOdometer = vehicleOdometer + settings.getDistanceInAdvance();
+            RealmResults<Service> services = realmDb
+                    .where(Service.class)
+                    .equalTo(RealmTable.SHOULD_NOTIFY, true)
+                    .equalTo(RealmTable.IS_ODOMETER_TRIGGERED, false)
+                    .notEqualTo(RealmTable.TARGET_ODOMETER, 0)
+                    .lessThanOrEqualTo(RealmTable.TARGET_ODOMETER, targetOdometer)
+                    .findAll();
+            String text = "%s should be revised at %d " + settings.getLengthUnit();
+            int i = 0;
+            for (final Service service : services) {
+                Notification notification = NotificationUtils.createNotification
+                        (
+                                getApplicationContext(), vehicleId,
+                                RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                                ActivityType.SERVICE, ViewActivity.class, "Service",
+                                String.format(text, service.getType().getName(),
+                                        service.getTargetOdometer()),
+                                R.drawable.ic_services_black
+                        );
+                NotificationManager manager = (NotificationManager) getApplicationContext()
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.notify(i, notification);
+                realmDb.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        service.setOdometerTriggered(true);
+                    }
+                });
+                i++;
+            }
+            realmDb.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressBar.setIndeterminate(false);
+            onItemSaved();
+        }
+    }
+}
+
+/*
         RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
         long targetOdometer = vehicleOdometer + settings.getDistanceInAdvance();
         RealmResults<Service> services = myRealm
@@ -172,10 +275,4 @@ public abstract class AddEditBaseActivity extends BaseActivity implements INewBa
                 }
             });
             i++;
-        }
-    }
-
-    public boolean isNewItem() {
-        return itemId == null;
-    }
-}
+        }*/

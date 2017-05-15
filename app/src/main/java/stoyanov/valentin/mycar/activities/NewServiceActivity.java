@@ -62,6 +62,16 @@ public class NewServiceActivity extends NewBaseActivity {
     }
 
     @Override
+    public void saveToRealm() {
+
+    }
+
+    @Override
+    public void setContent() {
+
+    }
+/*
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         item.setEnabled(false);
         int id = item.getItemId();
@@ -321,5 +331,5 @@ public class NewServiceActivity extends NewBaseActivity {
             arrayList.add(type.getName());
         }
         return arrayList;
-    }
+    }*/
 }

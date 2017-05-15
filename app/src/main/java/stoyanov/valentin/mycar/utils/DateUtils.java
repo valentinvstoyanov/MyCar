@@ -9,18 +9,18 @@ import java.util.Locale;
 
 public class DateUtils {
 
-    private static final String manufacturePattern = "MMM yyyy";
-    private static final String pattern = "dd.MM.yyyy";
-    private static final String timePattern = "HH:mm";
-    private static final String datePattern = pattern + " " + timePattern;
+    private static final String MANUFACTURE_PATTERN = "MMM yyyy";
+    private static final String PATTERN = "dd.MM.yyyy";
+    private static final String TIME_PATTERN = "HH:mm";
+    private static final String DATE_PATTERN = PATTERN + " " + TIME_PATTERN;
 
     public static String manufactureDateToString(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat(manufacturePattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(MANUFACTURE_PATTERN, Locale.getDefault());
         return dateFormat.format(date);
     }
 
     public static Date manufactureStringToDate(String date) {
-        DateFormat dateFormat = new SimpleDateFormat(manufacturePattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(MANUFACTURE_PATTERN, Locale.getDefault());
         Date parsedDate = new Date();
         try {
             parsedDate = dateFormat.parse(date);
@@ -31,12 +31,12 @@ public class DateUtils {
     }
 
     public static String dateToString(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(PATTERN, Locale.getDefault());
         return dateFormat.format(date);
     }
 
     public static Date stringToDate(String date) {
-        DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(PATTERN, Locale.getDefault());
         Date parsedDate = new Date();
         try {
             parsedDate = dateFormat.parse(date);
@@ -47,12 +47,12 @@ public class DateUtils {
     }
 
     public static String timeToString(Date time) {
-        DateFormat dateFormat = new SimpleDateFormat(timePattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(TIME_PATTERN, Locale.getDefault());
         return dateFormat.format(time);
     }
 
     public static Date stringToTime(String time) {
-        DateFormat dateFormat = new SimpleDateFormat(timePattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(TIME_PATTERN, Locale.getDefault());
         Date parsedDate = new Date();
         try {
             parsedDate = dateFormat.parse(time);
@@ -63,12 +63,12 @@ public class DateUtils {
     }
 
     public static String datetimeToString(Date datetime) {
-        DateFormat dateFormat = new SimpleDateFormat(datePattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         return dateFormat.format(datetime);
     }
 
     public static Date stringToDatetime(String date, String time) {
-        DateFormat dateFormat = new SimpleDateFormat(datePattern, Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         Date parsedDate = new Date();
         try {
             parsedDate = dateFormat.parse(date + " " + time);
@@ -85,6 +85,22 @@ public class DateUtils {
         return today.compareTo(date) < 0;
     }
 
+    public static boolean isDateInFuture(String strDate) {
+        Calendar now = Calendar.getInstance();
+        Calendar date = Calendar.getInstance();
+        date.setTime(stringToDate(strDate));
+
+        now.set(Calendar.HOUR_OF_DAY, 0);
+        now.set(Calendar.MINUTE, 0);
+        now.set(Calendar.SECOND, 0);
+
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.HOUR_OF_DAY, 0);
+
+        return now.compareTo(date) < 0;
+    }
+
     public static boolean isDateInPast(String strDate, String strTime) {
         Calendar now = Calendar.getInstance();
         Date today = now.getTime();
@@ -95,9 +111,9 @@ public class DateUtils {
     public static boolean isNotValidDate(String date, boolean time) {
         SimpleDateFormat dateFormat;
         if (time) {
-            dateFormat = new SimpleDateFormat(datePattern, Locale.getDefault());
+            dateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         }else {
-            dateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+            dateFormat = new SimpleDateFormat(PATTERN, Locale.getDefault());
         }
         try {
             dateFormat.parse(date);
@@ -131,5 +147,14 @@ public class DateUtils {
         cDate.set(Calendar.SECOND, 0);
         cDate.set(Calendar.MILLISECOND, 0);
         return cDate.getTime();
+    }
+
+    public static boolean isExpirationDateValid(String date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar parsedDate = Calendar.getInstance();
+        parsedDate.setTime(stringToDate(date));
+
+        return parsedDate.compareTo(calendar) >= 0;
     }
 }
