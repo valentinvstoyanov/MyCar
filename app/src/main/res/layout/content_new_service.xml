@@ -31,6 +31,47 @@
             android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:layout_marginTop="8dp"
+        android:text="@string/select_notification_method"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ToggleButton
+        android:drawableLeft="@drawable/ic_swap_horiz_black_24dp"
+        android:drawablePadding="16dp"
+        android:id="@+id/toggle_btn_new_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOn="@string/by_date"
+        android:textOff="@string/by_odometer"/>
+
+    <android.support.design.widget.TextInputLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/til_odometer_notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:inputType="number"
+            android:maxLines="1"
+            android:maxLength="16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/target_odometer"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:layout_margin="5dp"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:background="@color/colorPrimaryLight"
+        android:id="@+id/btn_new_service_notification_date"
+        android:drawableTop="@drawable/ic_calendar_black_24dp"
+        android:text="@string/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <include layout="@layout/view_base"/>
 
 <!--    <LinearLayout

@@ -47,6 +47,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
     private Spinner spnCompanies;
     private RealmResults<Company> results;
     private ArrayAdapter<String> companiesAdapter;
+    private String companyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         if (id == R.id.action_save) {
             progressBar.setIndeterminate(true);
             if (isInputValid()) {
+                companyId = results.get(spnCompanies.getSelectedItemPosition()).getId();
                 saveToRealm();
             }else {
                 item.setEnabled(true);
@@ -157,20 +159,16 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         if (DateUtils.isNotValidDate(btnTime.getText().toString(), false)) {
             valid = false;
             showMessage("Invalid expiration date");
-        }
-
-        if (!DateUtils.isExpirationDateValid(btnTime.getText().toString())) {
+        }else if (!DateUtils.isExpirationDateValid(btnTime.getText().toString())) {
             valid = false;
             showMessage("Expiration day must be at least one day later");
         }
+
         return super.isInputValid() && valid;
     }
 
     @Override
     protected void saveItem(Realm realm) {
-        //TODO: // FIXME: 15.05.17 
-        final String companyId = results.get(spnCompanies.getSelectedItemPosition()).getId();
-
         Vehicle vehicle = realm.where(Vehicle.class)
                 .equalTo(RealmTable.ID, vehicleId)
                 .findFirst();
@@ -178,15 +176,15 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         Insurance insurance = new Insurance();
 
         if (isNewItem()) {
-            itemId = UUID.randomUUID().toString();
+            insurance.setId(UUID.randomUUID().toString());
         } else {
             Insurance oldInsurance = vehicle.getInsurances()
                     .where()
                     .equalTo(RealmTable.ID, itemId)
                     .findFirst();
             RealmUtils.deleteProperty(oldInsurance, ActivityType.INSURANCE);
+            insurance.setId(itemId);
         }
-        insurance.setId(itemId);
 
         Date date = DateUtils.stringToDate(btnDate.getText().toString());
         insurance.setDate(date);
@@ -222,6 +220,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                 .findFirst();
         insurance.setCompany(company);
         vehicle.getInsurances().add(realm.copyToRealmOrUpdate(insurance));
+        setNotification(insurance);
     }
 
     @Override
@@ -237,15 +236,10 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
             startActivity(intent);
         }
 
-        setNotification();
         finish();
     }
 
-    private void setNotification() {
-        Insurance insurance = myRealm.where(Insurance.class)
-                .equalTo(RealmTable.ID, itemId)
-                .findFirst();
-
+    private void setNotification(Insurance insurance) {
         Date notificationDate = insurance.getNotification().getDate();
 
         Notification notification = NotificationUtils.createNotification(getApplicationContext(),
