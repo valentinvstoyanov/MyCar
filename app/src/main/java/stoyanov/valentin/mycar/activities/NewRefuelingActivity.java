@@ -3,14 +3,11 @@ package stoyanov.valentin.mycar.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -22,21 +19,17 @@ import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.abstracts.AddEditBaseActivity;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
-import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
-import stoyanov.valentin.mycar.utils.RealmUtils;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
-public class NewRefuelingActivity extends AddEditBaseActivity {
+public class NewRefuelingActivity extends NewBaseActivity {
 
     private TextInputLayout tilQuantity;
     private Spinner spnFuelTanks;
@@ -79,7 +72,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
         switchIsFull = (Switch) findViewById(R.id.switch_new_refueling_is_full);
         spnFuelTanks = (Spinner) findViewById(R.id.spn_new_refueling_fuel_tanks);
         results = myRealm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst()
                 .getFuelTanks()
                 .where()
@@ -141,7 +134,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
     @Override
     protected void populateExistingItem() {
         Refueling refueling = myRealm.where(Refueling.class)
-                .equalTo(RealmTable.ID, itemId)
+                .equalTo(Constants.ID, itemId)
                 .findFirst();
         FuelTank fuelTank = refueling.getFuelTank();
         spnFuelTanks.setSelection(results.indexOf(fuelTank));
@@ -161,7 +154,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
     @Override
     protected void saveItem(Realm realm) {
         Vehicle vehicle = realm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst();
         Refueling refueling = new Refueling();
 
@@ -170,14 +163,14 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
         }else {
             vehicle.getRefuelings()
                     .where()
-                    .equalTo(RealmTable.ID, itemId)
+                    .equalTo(Constants.ID, itemId)
                     .findFirst()
                     .deleteFromRealm();
             refueling.setId(itemId);
         }
 
         FuelTank fuelTank = realm.where(FuelTank.class)
-                .equalTo(RealmTable.ID, fuelTankId)
+                .equalTo(Constants.ID, fuelTankId)
                 .findFirst();
         refueling.setFuelTank(fuelTank);
 
@@ -209,9 +202,9 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
         }else {
             showMessage("Refueling updated!");
             Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-            intent.putExtra(RealmTable.ID, vehicleId);
-            intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, itemId);
-            intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
+            intent.putExtra(Constants.ID, vehicleId);
+            intent.putExtra(Constants.ITEM_ID, itemId);
+            intent.putExtra(Constants.TYPE, Constants.ActivityType.REFUELING.ordinal());
             startActivity(intent);
         }
 
@@ -252,7 +245,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
-        refuelingId = getIntent().getStringExtra(RealmTable.REFUELINGS + RealmTable.ID);
+        refuelingId = getIntent().getStringExtra(Constants.REFUELINGS + Constants.ID);
         if (refuelingId != null) {
             setUpdate(true);
         }
@@ -262,7 +255,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
         toggleButton = (ToggleButton) findViewById(R.id.toggle_btn_new_refueling_full_ft);
         spnFuelTanks = (Spinner) findViewById(R.id.spn_new_refueling_fuel_tanks);
         results = myRealm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, getVehicleId())
+                .equalTo(Constants.ID, getVehicleId())
                 .findFirst().getFuelTanks().where().findAll();
         ArrayList<String> fuelTypeNames = getFuelTypeNamesFromResults();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
@@ -297,7 +290,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
         setCurrentOdometer(tvCurrentOdometer);
         if (isUpdate()) {
             Refueling refueling = myRealm.where(Refueling.class)
-                    .equalTo(RealmTable.ID, refuelingId)
+                    .equalTo(Constants.ID, refuelingId)
                     .findFirst();
             FuelTank fuelTank = refueling.getFuelTank();
             spnFuelTanks.setSelection(results.indexOf(fuelTank));
@@ -350,14 +343,14 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
             @Override
             public void execute(Realm realm) {
                 Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
+                        .equalTo(Constants.ID, getVehicleId())
                         .findFirst();
                 Refueling refueling = new Refueling();
 
                 if (isUpdate()) {
                     vehicle.getRefuelings()
                             .where()
-                            .equalTo(RealmTable.ID, refuelingId)
+                            .equalTo(Constants.ID, refuelingId)
                             .findFirst()
                             .deleteFromRealm();
                     refueling.setId(refuelingId);
@@ -366,7 +359,7 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
                 }
 
                 FuelTank fuelTank = realm.where(FuelTank.class)
-                        .equalTo(RealmTable.ID, fuelTankId)
+                        .equalTo(Constants.ID, fuelTankId)
                         .findFirst();
                 refueling.setFuelTank(fuelTank);
 
@@ -396,9 +389,9 @@ public class NewRefuelingActivity extends AddEditBaseActivity {
                 if (isUpdate()) {
                     showMessage("Refueling updated!");
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(RealmTable.ID, getVehicleId());
-                    intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refuelingId);
-                    intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
+                    intent.putExtra(Constants.ID, getVehicleId());
+                    intent.putExtra(Constants.REFUELINGS + Constants.ID, refuelingId);
+                    intent.putExtra(Constants.TYPE, ActivityType.REFUELING.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New refueling saved!");

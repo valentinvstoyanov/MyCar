@@ -4,16 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
-
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,16 +19,14 @@ import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.abstracts.AddEditBaseActivity;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
 import stoyanov.valentin.mycar.dialogs.NewCompanyDialog;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Company;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Insurance;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
@@ -41,7 +34,7 @@ import stoyanov.valentin.mycar.utils.NotificationUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
-public class NewInsuranceActivity extends AddEditBaseActivity {
+public class NewInsuranceActivity extends NewBaseActivity {
 /*
     private ImageButton imgBtnAddCompany;*/
     private Spinner spnCompanies;
@@ -82,7 +75,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
     public void initComponents() {
         super.initComponents();
         spnCompanies = (Spinner) findViewById(R.id.spn_new_insurance_company_name);
-        results = myRealm.where(Company.class).findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+        results = myRealm.where(Company.class).findAllSorted(Constants.NAME, Sort.ASCENDING);
         companiesAdapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.textview_spinner, getCompanyNames());
         companiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -112,7 +105,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                     @Override
                     public void onAddCompany(String companyName) {
                         dialog.dismiss();
-                        results = myRealm.where(Company.class).findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+                        results = myRealm.where(Company.class).findAllSorted(Constants.NAME, Sort.ASCENDING);
                         ArrayList<String> spinnerDataSet = getCompanyNames();
                         int index = spinnerDataSet.indexOf(companyName);
                         companiesAdapter.clear();
@@ -137,7 +130,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
     @Override
     protected void populateExistingItem() {
         Insurance insurance = myRealm.where(Insurance.class)
-                .equalTo(RealmTable.ID, itemId)
+                .equalTo(Constants.ID, itemId)
                 .findFirst();
         btnDate.setText(DateUtils.dateToString(insurance.getDate()));
         btnTime.setText(DateUtils.dateToString(insurance.getNotification().getDate()));
@@ -170,7 +163,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
     @Override
     protected void saveItem(Realm realm) {
         Vehicle vehicle = realm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst();
 
         Insurance insurance = new Insurance();
@@ -180,9 +173,9 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         } else {
             Insurance oldInsurance = vehicle.getInsurances()
                     .where()
-                    .equalTo(RealmTable.ID, itemId)
+                    .equalTo(Constants.ID, itemId)
                     .findFirst();
-            RealmUtils.deleteProperty(oldInsurance, ActivityType.INSURANCE);
+            RealmUtils.deleteProperty(oldInsurance, Constants.ActivityType.INSURANCE);
             insurance.setId(itemId);
         }
 
@@ -202,7 +195,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         insurance.setNote(TextUtils.getTextFromTil(tilNote));
 
         DateNotification notification = realm.createObject(DateNotification.class, UUID.randomUUID().toString());
-        Number number = realm.where(DateNotification.class).max(RealmTable.NOTIFICATION_ID);
+        Number number = realm.where(DateNotification.class).max(Constants.NOTIFICATION_ID);
         int notificationId;
         if (number == null) {
             notificationId = 0;
@@ -216,7 +209,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         insurance.setNotification(notification);
 
         Company company = realm.where(Company.class)
-                .equalTo(RealmTable.ID, companyId)
+                .equalTo(Constants.ID, companyId)
                 .findFirst();
         insurance.setCompany(company);
         vehicle.getInsurances().add(realm.copyToRealmOrUpdate(insurance));
@@ -230,9 +223,9 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         }else {
             showMessage("Insurance updated!");
             Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-            intent.putExtra(RealmTable.ID, vehicleId);
-            intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, itemId);
-            intent.putExtra(RealmTable.TYPE, ActivityType.INSURANCE.ordinal());
+            intent.putExtra(Constants.ID, vehicleId);
+            intent.putExtra(Constants.ITEM_ID, itemId);
+            intent.putExtra(Constants.TYPE, Constants.ActivityType.INSURANCE.ordinal());
             startActivity(intent);
         }
 
@@ -243,8 +236,8 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         Date notificationDate = insurance.getNotification().getDate();
 
         Notification notification = NotificationUtils.createNotification(getApplicationContext(),
-                vehicleId, RealmTable.INSURANCES + RealmTable.ID, insurance.getId(),
-                ActivityType.INSURANCE, ViewActivity.class, "Insurance",
+                vehicleId, Constants.INSURANCES + Constants.ID, insurance.getId(),
+                Constants.ActivityType.INSURANCE, ViewActivity.class, "Insurance",
                 insurance.getCompany().getName() + " insurance is expiring on " +
                         DateUtils.datetimeToString(insurance.getNotification().getDate()),
                 R.drawable.ic_insurance_black);
@@ -279,7 +272,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
-        insuranceId = getIntent().getStringExtra(RealmTable.INSURANCES + RealmTable.ID);
+        insuranceId = getIntent().getStringExtra(Constants.INSURANCES + Constants.ID);
         if (insuranceId != null) {
             setUpdate(true);
         }
@@ -289,7 +282,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         spnCompanies = (Spinner) findViewById(R.id.spn_new_insurance_company_name);
         imgBtnAddCompany = (ImageButton) findViewById(R.id.img_btn_add_company);
         tilPrice = (TextInputLayout) findViewById(R.id.til_new_insurance_price);
-        results = myRealm.where(Company.class).findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+        results = myRealm.where(Company.class).findAllSorted(Constants.NAME, Sort.ASCENDING);
         companiesAdapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.textview_spinner, getCompanyNames());
         companiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -311,7 +304,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                     @Override
                     public void onAddCompany(String companyName) {
                         dialog.dismiss();
-                        results = myRealm.where(Company.class).findAllSorted(RealmTable.NAME, Sort.ASCENDING);
+                        results = myRealm.where(Company.class).findAllSorted(Constants.NAME, Sort.ASCENDING);
                         ArrayList<String> spinnerDataSet = getCompanyNames();
                         int index = spinnerDataSet.indexOf(companyName);
                         companiesAdapter.clear();
@@ -334,7 +327,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
         setCurrentOdometer(tvCurrentOdometer);
         if (isUpdate()) {
             Insurance insurance = myRealm.where(Insurance.class)
-                    .equalTo(RealmTable.ID, insuranceId).findFirst();
+                    .equalTo(Constants.ID, insuranceId).findFirst();
             TextUtils.setTextToTil(tilDate, DateUtils.dateToString(insurance.getDate()));
             TextUtils.setTextToTil(tilTime, DateUtils.timeToString(insurance.getDate()));
             TextUtils.setTextToTil(tilExpirationDate, DateUtils
@@ -381,13 +374,13 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
             @Override
             public void execute(Realm realm) {
                 Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
+                        .equalTo(Constants.ID, getVehicleId())
                         .findFirst();
                 Insurance insurance = new Insurance();
                 if (isUpdate()) {
                     Insurance oldInsurance = vehicle.getInsurances()
                             .where()
-                            .equalTo(RealmTable.ID, insuranceId)
+                            .equalTo(Constants.ID, insuranceId)
                             .findFirst();
                     RealmUtils.deleteProperty(oldInsurance, ActivityType.INSURANCE);
                 }else {
@@ -411,7 +404,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                         UUID.randomUUID().toString());
                 int notificationId;
                 Number number = realm.where(DateNotification.class)
-                        .max(RealmTable.NOTIFICATION_ID);
+                        .max(Constants.NOTIFICATION_ID);
                 if (number == null) {
                     notificationId = 0;
                 }else {
@@ -425,7 +418,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                 insurance.setNotification(notification);
 
                 Company company = realm.where(Company.class)
-                        .equalTo(RealmTable.ID, companyId)
+                        .equalTo(Constants.ID, companyId)
                         .findFirst();
                 insurance.setCompany(company);
                 vehicle.getInsurances().add(realm.copyToRealmOrUpdate(insurance));
@@ -434,7 +427,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
             @Override
             public void onSuccess() {
                 Insurance insurance = myRealm.where(Insurance.class)
-                        .equalTo(RealmTable.ID, insuranceId).findFirst();
+                        .equalTo(Constants.ID, insuranceId).findFirst();
 
 
                 Date notificationDate = insurance.getNotification().getDate();
@@ -442,7 +435,7 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                 //calendar.setTime(notificationDate);
 
                 Notification notification = NotificationUtils.createNotification(getApplicationContext(),
-                        getVehicleId(), RealmTable.INSURANCES + RealmTable.ID, insurance.getId(),
+                        getVehicleId(), Constants.INSURANCES + Constants.ID, insurance.getId(),
                         ActivityType.INSURANCE, ViewActivity.class, "Insurance",
                         insurance.getCompany().getName() + " insurance is expiring on " +
                                 DateUtils.datetimeToString(insurance.getNotification().getDate()),
@@ -454,9 +447,9 @@ public class NewInsuranceActivity extends AddEditBaseActivity {
                 if (isUpdate()) {
                     showMessage("Insurance updated!");
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(RealmTable.ID, getVehicleId());
-                    intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insuranceId);
-                    intent.putExtra(RealmTable.TYPE, ActivityType.INSURANCE.ordinal());
+                    intent.putExtra(Constants.ID, getVehicleId());
+                    intent.putExtra(Constants.INSURANCES + Constants.ID, insuranceId);
+                    intent.putExtra(Constants.TYPE, ActivityType.INSURANCE.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New insurance saved!");

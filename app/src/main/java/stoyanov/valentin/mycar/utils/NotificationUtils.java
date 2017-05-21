@@ -10,24 +10,23 @@ import android.graphics.BitmapFactory;
 import android.provider.Settings;
 
 import io.realm.Realm;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.broadcasts.NotificationReceiver;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class NotificationUtils {
 
     public static Notification createNotification(Context context, String vehicleId,
                                                   String propertyKey, String propertyId,
-                                                  ActivityType activityType, Class aClass,
+                                                  Constants.ActivityType activityType, Class aClass,
                                                   String title, String content,
                                                   int smallIcon) {
 
         Intent resultIntent = new Intent(context, aClass);
-        resultIntent.putExtra(RealmTable.ID, vehicleId);
+        resultIntent.putExtra(Constants.ID, vehicleId);
         resultIntent.putExtra(propertyKey, propertyId);
-        resultIntent.putExtra(RealmTable.TYPE, activityType.ordinal());
+        resultIntent.putExtra(Constants.TYPE, activityType.ordinal());
 
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(
@@ -54,7 +53,7 @@ public class NotificationUtils {
                                            Notification notification) {
         final Realm myRealm = Realm.getDefaultInstance();
         final DateNotification dateNotification = myRealm.where(DateNotification.class)
-                .equalTo(RealmTable.NOTIFICATION_ID, notificationId)
+                .equalTo(Constants.NOTIFICATION_ID, notificationId)
                 .findFirst();
         if (!dateNotification.isTriggered()) {
             NotificationManager manager = (NotificationManager)

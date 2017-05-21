@@ -12,32 +12,26 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.abstracts.AddEditBaseActivity;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
@@ -45,7 +39,7 @@ import stoyanov.valentin.mycar.utils.NotificationUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
-public class NewServiceActivity extends AddEditBaseActivity {
+public class NewServiceActivity extends NewBaseActivity {
 
     private TextInputLayout tilType;
     private ToggleButton toggleButton;
@@ -154,7 +148,7 @@ public class NewServiceActivity extends AddEditBaseActivity {
     @Override
     protected void populateExistingItem() {
         Service service = myRealm.where(Service.class)
-                .equalTo(RealmTable.ID, itemId)
+                .equalTo(Constants.ID, itemId)
                 .findFirst();
         TextUtils.setTextToAutoComplete(tilType, service.getType().getName());
         btnDate.setText(DateUtils.dateToString(service.getDate()));
@@ -216,22 +210,22 @@ public class NewServiceActivity extends AddEditBaseActivity {
     protected void saveItem(Realm realm) {
         final boolean isChecked = toggleButton.isChecked();
         Vehicle vehicle = realm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst();
         Service service = new Service();
         if (isNewItem()) {
             service.setId(UUID.randomUUID().toString());
         }else {
             Service oldService = realm.where(Service.class)
-                    .equalTo(RealmTable.ID, itemId)
+                    .equalTo(Constants.ID, itemId)
                     .findFirst();
-            RealmUtils.deleteProperty(oldService, ActivityType.SERVICE);
+            RealmUtils.deleteProperty(oldService, Constants.ActivityType.SERVICE);
             service.setId(itemId);
         }
 
         String typeText = TextUtils.getTextFromAutoComplete(tilType);
         ServiceType type = realm.where(ServiceType.class)
-                .equalTo(RealmTable.NAME, typeText)
+                .equalTo(Constants.NAME, typeText)
                 .findFirst();
         if (type == null) {
             type = realm.createObject(ServiceType.class, UUID.randomUUID().toString());
@@ -262,7 +256,7 @@ public class NewServiceActivity extends AddEditBaseActivity {
 
             int notificationId;
             Number number = realm.where(DateNotification.class)
-                    .max(RealmTable.NOTIFICATION_ID);
+                    .max(Constants.NOTIFICATION_ID);
             if (number == null) {
                 notificationId = 0;
             }else {
@@ -286,9 +280,9 @@ public class NewServiceActivity extends AddEditBaseActivity {
         }else {
             showMessage("Service updated!");
             Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-            intent.putExtra(RealmTable.ID, vehicleId);
-            intent.putExtra(RealmTable.SERVICES + RealmTable.ID, itemId);
-            intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
+            intent.putExtra(Constants.ID, vehicleId);
+            intent.putExtra(Constants.SERVICES + Constants.ID, itemId);
+            intent.putExtra(Constants.TYPE, Constants.ActivityType.SERVICE.ordinal());
             startActivity(intent);
         }
 
@@ -301,8 +295,8 @@ public class NewServiceActivity extends AddEditBaseActivity {
         Notification notification = NotificationUtils.createNotification
                 (
                         getApplicationContext(), vehicleId,
-                        RealmTable.SERVICES + RealmTable.ID, service.getId(),
-                        ActivityType.SERVICE, ViewActivity.class,
+                        Constants.SERVICES + Constants.ID, service.getId(),
+                        Constants.ActivityType.SERVICE, ViewActivity.class,
                         "Service", service.getType().getName() +
                                 " should be revised at " + DateUtils.datetimeToString
                                 (
@@ -344,7 +338,7 @@ public class NewServiceActivity extends AddEditBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
-        serviceId = getIntent().getStringExtra(RealmTable.SERVICES + RealmTable.ID);
+        serviceId = getIntent().getStringExtra(Constants.SERVICES + Constants.ID);
         if(serviceId != null) {
             setUpdate(true);
         }
@@ -403,7 +397,7 @@ public class NewServiceActivity extends AddEditBaseActivity {
         setCurrentOdometer(tvCurrentOdometer);
         if (isUpdate()) {
             Service service = myRealm.where(Service.class)
-                    .equalTo(RealmTable.ID, serviceId)
+                    .equalTo(Constants.ID, serviceId)
                     .findFirst();
             TextUtils.setTextToAutoComplete(tilType, service.getType().getName());
             TextUtils.setTextToTil(tilDate, DateUtils.dateToString(service.getDate()));
@@ -464,12 +458,12 @@ public class NewServiceActivity extends AddEditBaseActivity {
             @Override
             public void execute(Realm realm) {
                 Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
+                        .equalTo(Constants.ID, getVehicleId())
                         .findFirst();
                 Service service = new Service();
                 if (isUpdate()) {
                     Service oldService = realm.where(Service.class)
-                            .equalTo(RealmTable.ID, serviceId)
+                            .equalTo(Constants.ID, serviceId)
                             .findFirst();
                     RealmUtils.deleteProperty(oldService, ActivityType.SERVICE);
                 }else {
@@ -479,7 +473,7 @@ public class NewServiceActivity extends AddEditBaseActivity {
 
                 String typeText = TextUtils.getTextFromAutoComplete(tilType);
                 ServiceType type = realm.where(ServiceType.class)
-                        .equalTo(RealmTable.NAME, typeText)
+                        .equalTo(Constants.NAME, typeText)
                         .findFirst();
                 if (type == null) {
                     type = realm.createObject(ServiceType.class, UUID.randomUUID().toString());
@@ -512,7 +506,7 @@ public class NewServiceActivity extends AddEditBaseActivity {
                     notification.setDate(DateUtils.dateTime(date, time));
                     int notificationId;
                     Number number = realm.where(DateNotification.class)
-                            .max(RealmTable.NOTIFICATION_ID);
+                            .max(Constants.NOTIFICATION_ID);
                     if (number == null) {
                         notificationId = 0;
                     }else {
@@ -533,14 +527,14 @@ public class NewServiceActivity extends AddEditBaseActivity {
             public void onSuccess() {
                 if (isChecked) {
                     Service service = myRealm.where(Service.class)
-                            .equalTo(RealmTable.ID, serviceId)
+                            .equalTo(Constants.ID, serviceId)
                             .findFirst();
                     Date notificationDate = service.getDateNotification().getDate();
 
                     Notification notification = NotificationUtils.createNotification
                             (
                                     getApplicationContext(), getVehicleId(),
-                                    RealmTable.SERVICES + RealmTable.ID, service.getId(),
+                                    Constants.SERVICES + Constants.ID, service.getId(),
                                     ActivityType.SERVICE, ViewActivity.class,
                                     "Service", service.getType().getName() +
                                     " should be revised at " + DateUtils.datetimeToString
@@ -557,9 +551,9 @@ public class NewServiceActivity extends AddEditBaseActivity {
                 if (isUpdate()) {
                     showMessage("Service updated!");
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(RealmTable.ID, getVehicleId());
-                    intent.putExtra(RealmTable.SERVICES + RealmTable.ID, serviceId);
-                    intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
+                    intent.putExtra(Constants.ID, getVehicleId());
+                    intent.putExtra(Constants.SERVICES + Constants.ID, serviceId);
+                    intent.putExtra(Constants.TYPE, ActivityType.SERVICE.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New service saved!");

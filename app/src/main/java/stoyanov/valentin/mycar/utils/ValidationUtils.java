@@ -8,7 +8,7 @@ public class ValidationUtils {
     public static final String NUMBERS_REGEX = "\\d+";
 
     public static boolean isInputValid(String input) {
-        return StringUtils.isAlphanumericSpace(input);
+        return input != null && !input.isEmpty() && StringUtils.isAlphanumericSpace(input);
     }
 
     public static boolean isNumeric(String input) {

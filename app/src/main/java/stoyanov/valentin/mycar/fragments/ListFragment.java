@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.MainActivity;
 import stoyanov.valentin.mycar.adapters.BaseRealmAdapter;
@@ -20,9 +18,9 @@ import stoyanov.valentin.mycar.adapters.InsuranceRecyclerViewAdapter;
 import stoyanov.valentin.mycar.adapters.RefuelingRecyclerViewAdapter;
 import stoyanov.valentin.mycar.adapters.ServiceRecyclerViewAdapter;
 import stoyanov.valentin.mycar.adapters.VehicleRecyclerViewAdapter;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class ListFragment extends Fragment {
 
@@ -46,16 +44,16 @@ public class ListFragment extends Fragment {
         if (id == R.id.nav_my_cars) {
             RealmResults<Vehicle> vehicles = myRealm
                     .where(Vehicle.class)
-                    .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
+                    .findAllSortedAsync(Constants.NAME, Sort.ASCENDING);
             vehicleAdapter = new VehicleRecyclerViewAdapter(getContext(),
                     vehicles, true, true);
             vehicleAdapter.addCallback();
             recyclerView.setAdapter(vehicleAdapter);
             vehicleAdapter.setViewForSnackbar(recyclerView);
         }else {
-            vehicleId = bundle.getString(RealmTable.ID);
+            vehicleId = bundle.getString(Constants.ID);
             vehicle = myRealm.where(Vehicle.class)
-                    .equalTo(RealmTable.ID, vehicleId)
+                    .equalTo(Constants.ID, vehicleId)
                     .findFirst();
             if (vehicle != null) {
                 switch (id) {
@@ -63,33 +61,33 @@ public class ListFragment extends Fragment {
                         adapter = new ServiceRecyclerViewAdapter(getContext(),
                                 vehicle.getServices()
                                         .where()
-                                        .findAllSortedAsync(RealmTable.DATE, Sort.DESCENDING)
+                                        .findAllSortedAsync(Constants.DATE, Sort.DESCENDING)
                                 , false, true);
-                        adapter.setDeleteType(ActivityType.SERVICE);
+                        adapter.setDeleteType(Constants.ActivityType.SERVICE);
                         break;
                     case R.id.nav_expenses:
                         adapter = new ExpenseRecyclerViewAdapter(getContext(),
                                 vehicle.getExpenses()
                                         .where()
-                                        .findAllSortedAsync(RealmTable.TYPE, Sort.ASCENDING),
+                                        .findAllSortedAsync(Constants.TYPE, Sort.ASCENDING),
                                 false, true);
-                        adapter.setDeleteType(ActivityType.EXPENSE);
+                        adapter.setDeleteType(Constants.ActivityType.EXPENSE);
                         break;
                     case R.id.nav_refuelings:
                         adapter = new RefuelingRecyclerViewAdapter(getContext(),
                                 vehicle.getRefuelings()
                                         .where()
-                                        .findAllSortedAsync(RealmTable.DATE, Sort.DESCENDING)
+                                        .findAllSortedAsync(Constants.DATE, Sort.DESCENDING)
                                 , false, true);
-                        adapter.setDeleteType(ActivityType.REFUELING);
+                        adapter.setDeleteType(Constants.ActivityType.REFUELING);
                         break;
                     case R.id.nav_insurances:
                         adapter = new InsuranceRecyclerViewAdapter(getContext(),
                                 vehicle.getInsurances()
                                         .where()
-                                        .findAllSortedAsync(RealmTable.DATE, Sort.DESCENDING),
+                                        .findAllSortedAsync(Constants.DATE, Sort.DESCENDING),
                                 false, true);
-                        adapter.setDeleteType(ActivityType.INSURANCE);
+                        adapter.setDeleteType(Constants.ActivityType.INSURANCE);
                         break;
                 }
                 if (adapter != null) {

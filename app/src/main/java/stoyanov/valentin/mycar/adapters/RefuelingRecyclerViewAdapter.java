@@ -11,12 +11,11 @@ import java.math.BigDecimal;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Refueling;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class RefuelingRecyclerViewAdapter extends BaseRealmAdapter<Refueling,
@@ -56,9 +55,9 @@ public class RefuelingRecyclerViewAdapter extends BaseRealmAdapter<Refueling,
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, getVehicleId());
-                intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
-                intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
+                intent.putExtra(Constants.ID, getVehicleId());
+                intent.putExtra(Constants.ITEM_ID, refueling.getId());
+                intent.putExtra(Constants.TYPE, Constants.ActivityType.REFUELING.ordinal());
                 getContext().startActivity(intent);
             }
         });

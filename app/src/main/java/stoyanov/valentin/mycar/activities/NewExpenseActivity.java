@@ -3,33 +3,30 @@ package stoyanov.valentin.mycar.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
+
 import org.apache.commons.lang3.math.NumberUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+
 import io.realm.Realm;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.abstracts.AddEditBaseActivity;
 import stoyanov.valentin.mycar.activities.abstracts.NewBaseActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
-import stoyanov.valentin.mycar.utils.DateTimePickerUtils;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
-import stoyanov.valentin.mycar.utils.RealmUtils;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
-public class NewExpenseActivity extends AddEditBaseActivity {
+public class NewExpenseActivity extends NewBaseActivity {
 
     private Spinner spnType;
     private ArrayList<String> expenseTypes;
@@ -81,7 +78,7 @@ public class NewExpenseActivity extends AddEditBaseActivity {
     @Override
     protected void populateExistingItem() {
         Expense expense = myRealm.where(Expense.class)
-                .equalTo(RealmTable.ID, itemId)
+                .equalTo(Constants.ID, itemId)
                 .findFirst();
         spnType.setSelection(expenseTypes.indexOf(expense.getType()));
         btnDate.setText(DateUtils.dateToString(expense.getDate()));
@@ -106,7 +103,7 @@ public class NewExpenseActivity extends AddEditBaseActivity {
     @Override
     protected void saveItem(Realm realm) {
         Vehicle vehicle = realm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst();
         Expense expense = new Expense();
 
@@ -115,7 +112,7 @@ public class NewExpenseActivity extends AddEditBaseActivity {
         }else {
             vehicle.getExpenses()
                     .where()
-                    .equalTo(RealmTable.ID, itemId)
+                    .equalTo(Constants.ID, itemId)
                     .findFirst()
                     .deleteFromRealm();
             expense.setId(itemId);
@@ -148,9 +145,9 @@ public class NewExpenseActivity extends AddEditBaseActivity {
         }else {
             showMessage("Expense updated!");
             Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-            intent.putExtra(RealmTable.ID, vehicleId);
-            intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, itemId);
-            intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
+            intent.putExtra(Constants.ID, vehicleId);
+            intent.putExtra(Constants.ITEM_ID, itemId);
+            intent.putExtra(Constants.TYPE, Constants.ActivityType.EXPENSE.ordinal());
             startActivity(intent);
         }
         finish();
@@ -162,14 +159,14 @@ public class NewExpenseActivity extends AddEditBaseActivity {
             @Override
             public void execute(Realm realm) {
                 Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
+                        .equalTo(Constants.ID, getVehicleId())
                         .findFirst();
                 Expense expense = new Expense();
 
                 if (isUpdate()) {
                     vehicle.getExpenses()
                             .where()
-                            .equalTo(RealmTable.ID, expenseId)
+                            .equalTo(Constants.ID, expenseId)
                             .findFirst()
                             .deleteFromRealm();
                     expense.setId(expenseId);
@@ -202,9 +199,9 @@ public class NewExpenseActivity extends AddEditBaseActivity {
                 if (isUpdate()) {
                     showMessage("Expense updated!");
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(RealmTable.ID, getVehicleId());
-                    intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expenseId);
-                    intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
+                    intent.putExtra(Constants.ID, getVehicleId());
+                    intent.putExtra(Constants.EXPENSES + Constants.ID, expenseId);
+                    intent.putExtra(Constants.TYPE, ActivityType.EXPENSE.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New expense saved!");
@@ -263,7 +260,7 @@ public class NewExpenseActivity extends AddEditBaseActivity {
     @Override
     public void initComponents() {
         super.initComponents();
-        expenseId = getIntent().getStringExtra(RealmTable.EXPENSES + RealmTable.ID);
+        expenseId = getIntent().getStringExtra(Constants.EXPENSES + Constants.ID);
         if (expenseId != null) {
             setUpdate(true);
         }
@@ -290,7 +287,7 @@ public class NewExpenseActivity extends AddEditBaseActivity {
         setCurrentOdometer(tvCurrentOdometer);
         if (isUpdate()) {
             Expense expense = myRealm.where(Expense.class)
-                    .equalTo(RealmTable.ID, expenseId)
+                    .equalTo(Constants.ID, expenseId)
                     .findFirst();
             spnType.setSelection(expenseTypes.indexOf(expense.getType()));
             TextUtils.setTextToTil(tilDate, DateUtils.dateToString(expense.getDate()));
@@ -325,14 +322,14 @@ public class NewExpenseActivity extends AddEditBaseActivity {
             @Override
             public void execute(Realm realm) {
                 Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, getVehicleId())
+                        .equalTo(Constants.ID, getVehicleId())
                         .findFirst();
                 Expense expense = new Expense();
 
                 if (isUpdate()) {
                     vehicle.getExpenses()
                             .where()
-                            .equalTo(RealmTable.ID, expenseId)
+                            .equalTo(Constants.ID, expenseId)
                             .findFirst()
                             .deleteFromRealm();
                     expense.setId(expenseId);
@@ -365,9 +362,9 @@ public class NewExpenseActivity extends AddEditBaseActivity {
                 if (isUpdate()) {
                     showMessage("Expense updated!");
                     Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(RealmTable.ID, getVehicleId());
-                    intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expenseId);
-                    intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
+                    intent.putExtra(Constants.ID, getVehicleId());
+                    intent.putExtra(Constants.EXPENSES + Constants.ID, expenseId);
+                    intent.putExtra(Constants.TYPE, ActivityType.EXPENSE.ordinal());
                     startActivity(intent);
                 }else {
                     showMessage("New expense saved!");

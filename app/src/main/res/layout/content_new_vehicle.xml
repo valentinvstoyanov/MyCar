@@ -66,7 +66,22 @@
             android:hint="@string/car_model" />
     </android.support.design.widget.TextInputLayout>
 
-    <include layout="@layout/til_odometer" />
+    <android.support.design.widget.TextInputLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/til_odometer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:inputType="number"
+            android:drawableLeft="@drawable/ic_odometer"
+            android:drawablePadding="16dp"
+            android:maxLines="1"
+            android:maxLength="16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/odometer"/>
+    </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_vehicle_horse_power"
@@ -96,33 +111,42 @@
             android:hint="@string/cubic_centimeters" />
     </android.support.design.widget.TextInputLayout>
 
-    <include layout="@layout/til_date" />
-
     <LinearLayout
+        android:background="@color/colorPrimaryLight"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:gravity="center_vertical"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:text="Color:"
-            android:onClick="colorPicker"
-            android:layout_width="wrap_content"
+        <Button
+            android:drawablePadding="4dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/color"
+            android:drawableTop="@drawable/ic_palette_black_24dp"
+            android:id="@+id/btn_new_vehicle_color"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content" />
 
-        <ImageButton
-            android:id="@+id/img_btn_new_vehicle_color"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            app:srcCompat="@drawable/ic_palette_black_24dp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:onClick="colorPicker"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+        <Button
+            android:drawablePadding="4dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/manufacture_date"
+            android:drawableTop="@drawable/ic_calendar_black_24dp"
+            android:id="@+id/btn_new_vehicle_manufacture_date"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:drawablePadding="4dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/fuel_tank"
+            android:drawableTop="@drawable/ic_menu_refueling"
+            android:id="@+id/btn_new_vehicle_add_fuel_tank"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -133,22 +157,13 @@
         android:layout_height="wrap_content">
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_new_vehicle_add_ft"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@color/colorPrimaryLight"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_fuel_tank"/>
-
     <android.support.design.widget.TextInputLayout
         android:id="@+id/til_new_vehicle_registration_plate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
-            android:inputType="textCapCharacters|number"
+            android:inputType="textCapCharacters"
             android:maxLength="12"
             android:maxLines="1"
             android:layout_width="match_parent"
@@ -162,7 +177,7 @@
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
-            android:inputType="textCapCharacters|number"
+            android:inputType="textCapCharacters"
             android:maxLength="17"
             android:maxLines="1"
             android:layout_width="match_parent"
@@ -170,5 +185,19 @@
             android:hint="@string/vin_plate"/>
     </android.support.design.widget.TextInputLayout>
 
-    <include layout="@layout/til_note" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:drawableLeft="@drawable/ic_note_black_24px"
+            android:inputType="textMultiLine"
+            android:drawablePadding="16dp"
+            android:maxLines="16"
+            android:maxLength="256"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/notes"/>
+    </android.support.design.widget.TextInputLayout>
 </LinearLayout>

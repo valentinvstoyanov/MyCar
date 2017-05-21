@@ -4,7 +4,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.RealmObject;
-import stoyanov.valentin.mycar.ActivityType;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Brand;
 import stoyanov.valentin.mycar.realm.models.Color;
 import stoyanov.valentin.mycar.realm.models.Company;
@@ -16,11 +16,10 @@ import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 
 public class RealmUtils {
 
-    public static void deleteProperty(RealmModel model, ActivityType type) {
+    public static void deleteProperty(RealmModel model, Constants.ActivityType type) {
         switch (type) {
             case SERVICE:
                 Service service = (Service) model;
@@ -63,25 +62,25 @@ public class RealmUtils {
         //Reverse iteration due to an error
         RealmList<Service> services = vehicle.getServices();
         for (int i = services.size() - 1; i >= 0; i--) {
-            deleteProperty(services.get(i), ActivityType.SERVICE);
+            deleteProperty(services.get(i), Constants.ActivityType.SERVICE);
         }
         services.deleteAllFromRealm();
 
         RealmList<Insurance> insurances = vehicle.getInsurances();
         for (int i = insurances.size() - 1; i >= 0; i--) {
-            deleteProperty(insurances.get(i), ActivityType.INSURANCE);
+            deleteProperty(insurances.get(i), Constants.ActivityType.INSURANCE);
         }
         insurances.deleteAllFromRealm();
 
         RealmList<Refueling> refuelings = vehicle.getRefuelings();
         for (int i = refuelings.size() - 1; i >= 0; i--) {
-            deleteProperty(refuelings.get(i), ActivityType.REFUELING);
+            deleteProperty(refuelings.get(i), Constants.ActivityType.REFUELING);
         }
         refuelings.deleteAllFromRealm();
 
         RealmList<Expense> expenses = vehicle.getExpenses();
         for (int i = expenses.size() - 1; i >= 0; i--) {
-            deleteProperty(expenses.get(i), ActivityType.EXPENSE);
+            deleteProperty(expenses.get(i), Constants.ActivityType.EXPENSE);
         }
         expenses.deleteAllFromRealm();
 
@@ -96,11 +95,11 @@ public class RealmUtils {
             @Override
             public void execute(Realm realm) {
                 if (exists) {
-                    deleteVehicle(realm.where(Vehicle.class).equalTo(RealmTable.NAME, vehicle.getName())
+                    deleteVehicle(realm.where(Vehicle.class).equalTo(Constants.NAME, vehicle.getName())
                             .findFirst());
                 }
                 Brand brand = realm.where(Brand.class)
-                        .equalTo(RealmTable.NAME, vehicle.getBrand().getName())
+                        .equalTo(Constants.NAME, vehicle.getBrand().getName())
                         .findFirst();
                 if (brand == null) {
                     brand = vehicle.getBrand();
@@ -108,7 +107,7 @@ public class RealmUtils {
                 vehicle.setBrand(brand);
 
                 Model model = realm.where(Model.class)
-                        .equalTo(RealmTable.NAME, vehicle.getModel().getName())
+                        .equalTo(Constants.NAME, vehicle.getModel().getName())
                         .findFirst();
                 if (model == null) {
                     model = vehicle.getModel();
@@ -116,7 +115,7 @@ public class RealmUtils {
                 vehicle.setModel(model);
 
                 Color color = realm.where(Color.class)
-                        .equalTo(RealmTable.COLOR, vehicle.getColor().getColor())
+                        .equalTo(Constants.COLOR, vehicle.getColor().getColor())
                         .findFirst();
                 if (color == null) {
                     color = vehicle.getColor();
@@ -124,7 +123,7 @@ public class RealmUtils {
                 vehicle.setColor(color);
 
                /* VehicleType vehicleType = realm.where(VehicleType.class)
-                        .equalTo(RealmTable.NAME, vehicle.getType().getName())
+                        .equalTo(Constants.NAME, vehicle.getType().getName())
                         .findFirst();
                 if (vehicleType == null) {
                     vehicleType = vehicle.getType();
@@ -133,7 +132,7 @@ public class RealmUtils {
 
                 /*for (Expense expense : vehicle.getExpenses()) {
                     ExpenseType expenseType = realm.where(ExpenseType.class)
-                            .equalTo(RealmTable.NAME, expense.getType().getName())
+                            .equalTo(Constants.NAME, expense.getType().getName())
                             .findFirst();
                     if (expenseType == null) {
                         expenseType = expense.getType();
@@ -143,7 +142,7 @@ public class RealmUtils {
 
                 /*for (FuelTank fuelTank : vehicle.getFuelTanks()) {
                     FuelType fuelType = realm.where(FuelType.class)
-                            .equalTo(RealmTable.NAME, fuelTank.getFuelType().getName())
+                            .equalTo(Constants.NAME, fuelTank.getFuelType().getName())
                             .findFirst();
                     if (fuelType == null) {
                         fuelType = fuelTank.getFuelType();
@@ -153,7 +152,7 @@ public class RealmUtils {
 
                 for (Insurance insurance : vehicle.getInsurances()) {
                     Company company = realm.where(Company.class)
-                            .equalTo(RealmTable.NAME, insurance.getCompany().getName())
+                            .equalTo(Constants.NAME, insurance.getCompany().getName())
                             .findFirst();
                     if (company == null) {
                         company = insurance.getCompany();
@@ -163,7 +162,7 @@ public class RealmUtils {
 
                 for (Service service : vehicle.getServices()) {
                     ServiceType serviceType = realm.where(ServiceType.class)
-                            .equalTo(RealmTable.NAME, service.getType().getName())
+                            .equalTo(Constants.NAME, service.getType().getName())
                             .findFirst();
                     if (serviceType == null) {
                         serviceType = service.getType();

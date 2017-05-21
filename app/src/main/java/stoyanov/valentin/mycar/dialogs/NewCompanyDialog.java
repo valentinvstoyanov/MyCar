@@ -16,8 +16,8 @@ import java.util.UUID;
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.interfaces.INewBaseActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Company;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.TextUtils;
 
 public class NewCompanyDialog extends DialogFragment implements INewBaseActivity{
@@ -83,7 +83,7 @@ public class NewCompanyDialog extends DialogFragment implements INewBaseActivity
             @Override
             public void execute(Realm realm) {
                 Company company = realm.where(Company.class)
-                        .equalTo(RealmTable.NAME, companyName).findFirst();
+                        .equalTo(Constants.NAME, companyName).findFirst();
                 if (company == null) {
                     company = realm.createObject(Company.class, UUID.randomUUID().toString());
                     company.setName(companyName);

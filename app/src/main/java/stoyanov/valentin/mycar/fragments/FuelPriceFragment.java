@@ -1,15 +1,12 @@
 package stoyanov.valentin.mycar.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -22,8 +19,8 @@ import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Refueling;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
 public class FuelPriceFragment extends Fragment {
@@ -41,7 +38,7 @@ public class FuelPriceFragment extends Fragment {
                 Realm myRealm = Realm.getDefaultInstance();
                 RealmResults<Refueling> refuelings = myRealm
                         .where(Refueling.class)
-                        .equalTo(RealmTable.FUEL_TYPE, "Diesel")
+                        .equalTo(Constants.FUEL_TYPE, "Diesel")
                         .findAll();
 
                 ArrayList<Entry> dDataSet = new ArrayList<>();
@@ -64,7 +61,7 @@ public class FuelPriceFragment extends Fragment {
 
                 refuelings = myRealm
                         .where(Refueling.class)
-                        .equalTo(RealmTable.FUEL_TYPE, "Petrol")
+                        .equalTo(Constants.FUEL_TYPE, "Petrol")
                         .findAll();
                 ArrayList<Entry> pEntries = new ArrayList<>();
                 i = 0;
@@ -86,7 +83,7 @@ public class FuelPriceFragment extends Fragment {
 
                 refuelings = myRealm
                         .where(Refueling.class)
-                        .equalTo(RealmTable.FUEL_TYPE, "Autogas")
+                        .equalTo(Constants.FUEL_TYPE, "Autogas")
                         .findAll();
                 ArrayList<Entry> aEntries = new ArrayList<>();
                 i = 0;
@@ -108,7 +105,7 @@ public class FuelPriceFragment extends Fragment {
 
                 refuelings = myRealm
                         .where(Refueling.class)
-                        .equalTo(RealmTable.FUEL_TYPE, "Electric")
+                        .equalTo(Constants.FUEL_TYPE, "Electric")
                         .findAll();
                 ArrayList<Entry> eEntries = new ArrayList<>();
                 i = 0;

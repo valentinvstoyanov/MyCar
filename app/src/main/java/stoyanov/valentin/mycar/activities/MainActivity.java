@@ -38,8 +38,8 @@ import stoyanov.valentin.mycar.dialogs.SettingsDialog;
 import stoyanov.valentin.mycar.fragments.InfoFragment;
 import stoyanov.valentin.mycar.fragments.ListFragment;
 import stoyanov.valentin.mycar.fragments.StatisticsFragment;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.FileUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 
@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity
                     final Vehicle vehicle = new Gson().fromJson(content, Vehicle.class);
                     if (vehicle != null) {
                         if (myRealm.where(Vehicle.class)
-                                .equalTo(RealmTable.NAME, vehicle.getName())
+                                .equalTo(Constants.NAME, vehicle.getName())
                                 .findFirst() != null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setTitle("Conflict");
@@ -215,7 +215,7 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
         myRealm = Realm.getDefaultInstance();
         results = myRealm.where(Vehicle.class)
-                .findAllSortedAsync(RealmTable.NAME, Sort.ASCENDING);
+                .findAllSortedAsync(Constants.NAME, Sort.ASCENDING);
         spinnerDataSet = getVehicleNamesFromResults();
         spinnerAdapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.textview_spinner_white, spinnerDataSet);
@@ -279,8 +279,8 @@ public class MainActivity extends BaseActivity
                 if (valid || menuItem.getItemId() == R.id.action_add_car) {
                     intent = new Intent(getApplicationContext(), aClass);
                     if (vehicleId != null) {
-                        intent.putExtra(RealmTable.ID, vehicleId);
-                        intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
+                        intent.putExtra(Constants.ID, vehicleId);
+                        intent.putExtra(Constants.ODOMETER, vehicleOdometer);
                     }
                     startActivity(intent);
                 }
@@ -297,7 +297,7 @@ public class MainActivity extends BaseActivity
             String vehicleId = results.get(spnChooseVehicle.getSelectedItemPosition()).getId();
             Fragment fragment;
             Bundle bundle = new Bundle();
-            bundle.putString(RealmTable.ID, vehicleId);
+            bundle.putString(Constants.ID, vehicleId);
             if (menuId == R.id.nav_statistics) {
                 fragment = new StatisticsFragment();
             }else if (menuId == R.id.nav_info) {

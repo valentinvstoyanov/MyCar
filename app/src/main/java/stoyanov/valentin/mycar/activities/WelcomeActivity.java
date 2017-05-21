@@ -161,7 +161,7 @@ public class WelcomeActivity extends BaseActivity
                                 Color color = realm.where(Color.class).findAll().get(2);
                                 vehicle.setColor(color);
                                 VehicleType vehicleType = realm.where(VehicleType.class)
-                                        .equalTo(RealmTable.NAME, "Car")
+                                        .equalTo(Constants.NAME, "Car")
                                         .findFirst();
                                 vehicle.setType(vehicleType);
                                 vehicle.setName(String.valueOf(Math.abs(new Random().nextInt())));
@@ -173,7 +173,7 @@ public class WelcomeActivity extends BaseActivity
                                 vehicle.setCubicCentimeter(1400);
 
                                 String brandName = "Abarth";
-                                Brand brand = realm.where(Brand.class).equalTo(RealmTable.NAME, brandName).findFirst();
+                                Brand brand = realm.where(Brand.class).equalTo(Constants.NAME, brandName).findFirst();
                                 if (brand == null) {
                                     brand = realm.createObject(Brand.class, UUID.randomUUID().toString());
                                     brand.setName(brandName);
@@ -181,7 +181,7 @@ public class WelcomeActivity extends BaseActivity
                                 vehicle.setBrand(brand);
 
                                 String modelName = "A10";
-                                Model model = realm.where(Model.class).equalTo(RealmTable.NAME, modelName).findFirst();
+                                Model model = realm.where(Model.class).equalTo(Constants.NAME, modelName).findFirst();
                                 if (model == null) {
                                     model = realm.createObject(Model.class, UUID.randomUUID().toString());
                                     model.setName(modelName);

@@ -93,7 +93,7 @@
         <TextView
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:gravity="center_horizontal"
-            android:text="@string/manifacture_date"
+            android:text="@string/manufacture_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

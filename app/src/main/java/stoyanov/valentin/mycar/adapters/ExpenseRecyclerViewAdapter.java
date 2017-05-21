@@ -10,11 +10,10 @@ import java.math.BigDecimal;
 
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Expense;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
@@ -48,9 +47,9 @@ public class ExpenseRecyclerViewAdapter extends
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, getVehicleId());
-                intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
-                intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
+                intent.putExtra(Constants.ID, getVehicleId());
+                intent.putExtra(Constants.ITEM_ID, expense.getId());
+                intent.putExtra(Constants.TYPE, Constants.ActivityType.EXPENSE.ordinal());
                 getContext().startActivity(intent);
             }
         });

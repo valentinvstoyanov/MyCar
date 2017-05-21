@@ -26,10 +26,10 @@ import java.io.File;
 import io.realm.Realm;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.FileUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
@@ -64,7 +64,7 @@ public class ViewVehicleActivity extends BaseActivity {
     public void setContent() {
         Realm myRealm = Realm.getDefaultInstance();
         final Vehicle vehicle = myRealm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst();
         myRealm.close();
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_view_vehicle);
@@ -145,7 +145,7 @@ public class ViewVehicleActivity extends BaseActivity {
         if (dir != null) {
             Realm myRealm = Realm.getDefaultInstance();
             Vehicle vehicle = myRealm.where(Vehicle.class)
-                    .equalTo(RealmTable.ID, vehicleId).findFirst();
+                    .equalTo(Constants.ID, vehicleId).findFirst();
             vehicle = myRealm.copyFromRealm(vehicle);
             String content = new Gson().toJson(vehicle);
             myRealm.close();
@@ -183,7 +183,7 @@ public class ViewVehicleActivity extends BaseActivity {
             storage.createDirectory(DIRNAME, true);
             Realm myRealm = Realm.getDefaultInstance();
             Vehicle vehicle = myRealm.where(Vehicle.class)
-                    .equalTo(RealmTable.ID, vehicleId).findFirst();
+                    .equalTo(Constants.ID, vehicleId).findFirst();
             vehicle = myRealm.copyFromRealm(vehicle);
             String content = new Gson().toJson(vehicle);
             myRealm.close();
@@ -212,7 +212,7 @@ public class ViewVehicleActivity extends BaseActivity {
                                 @Override
                                 public void execute(Realm realm) {
                                     Vehicle vehicle = realm.where(Vehicle.class)
-                                            .equalTo(RealmTable.ID, vehicleId)
+                                            .equalTo(Constants.ID, vehicleId)
                                             .findFirst();
                                     RealmUtils.deleteVehicle(vehicle);
                                 }
@@ -257,7 +257,7 @@ public class ViewVehicleActivity extends BaseActivity {
         tvNotes = (TextView) findViewById(R.id.tv_view_vehicle_notes);
         llFuelTanks = (LinearLayout) findViewById(R.id.ll_view_vehicle_fuel_tanks);
         Intent intent = getIntent();
-        vehicleId = intent.getStringExtra(RealmTable.ID);
+        vehicleId = intent.getStringExtra(Constants.ID);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class ViewVehicleActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NewVehicleActivity.class);
-                intent.putExtra(RealmTable.ID, vehicleId);
+                intent.putExtra(Constants.ID, vehicleId);
                 startActivity(intent);
                 finish();
             }

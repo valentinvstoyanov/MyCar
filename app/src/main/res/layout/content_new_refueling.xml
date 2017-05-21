@@ -78,7 +78,7 @@
             android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>-->
 
-    <include layout="@layout/view_base"/>
+    <include layout="@layout/new_item_base_view"/>
 
 <!--    <LinearLayout
         android:orientation="horizontal"

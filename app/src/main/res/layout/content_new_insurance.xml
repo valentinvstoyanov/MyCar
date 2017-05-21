@@ -37,7 +37,7 @@
             android:layout_height="24dp"/>
     </LinearLayout>
 
-    <include layout="@layout/view_base"/>
+    <include layout="@layout/new_item_base_view"/>
 
 
 <!--    <LinearLayout

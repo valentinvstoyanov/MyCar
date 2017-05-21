@@ -17,10 +17,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import io.realm.Realm;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.abstracts.AddEditBaseActivity;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
 import stoyanov.valentin.mycar.realm.models.Insurance;
@@ -28,7 +27,6 @@ import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.realm.models.Refueling;
 import stoyanov.valentin.mycar.realm.models.Service;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
@@ -36,10 +34,9 @@ import stoyanov.valentin.mycar.utils.RealmUtils;
 public class ViewActivity extends BaseActivity {
 
     private String id;
-    private ActivityType type;
+    private Constants.ActivityType type;
     private Class aClass;
     private long vehicleOdometer;
-    private String typeStr;
     private String vehicleId;
 
     @Override
@@ -95,25 +92,25 @@ public class ViewActivity extends BaseActivity {
                                     switch (type) {
                                         case INSURANCE:
                                             Insurance insurance = realm.where(Insurance.class)
-                                                    .equalTo(RealmTable.ID, id)
+                                                    .equalTo(Constants.ID, id)
                                                     .findFirst();
                                             RealmUtils.deleteProperty(insurance, type);
                                             break;
                                         case EXPENSE:
                                             Expense expense = realm.where(Expense.class)
-                                                    .equalTo(RealmTable.ID, id)
+                                                    .equalTo(Constants.ID, id)
                                                     .findFirst();
                                             RealmUtils.deleteProperty(expense, type);
                                             break;
                                         case SERVICE:
                                             Service service = realm.where(Service.class)
-                                                    .equalTo(RealmTable.ID, id)
+                                                    .equalTo(Constants.ID, id)
                                                     .findFirst();
                                             RealmUtils.deleteProperty(service, type);
                                             break;
                                         case REFUELING:
                                             Refueling refueling = realm.where(Refueling.class)
-                                                    .equalTo(RealmTable.ID, id)
+                                                    .equalTo(Constants.ID, id)
                                                     .findFirst();
                                             RealmUtils.deleteProperty(refueling, type);
                                             break;
@@ -130,7 +127,6 @@ public class ViewActivity extends BaseActivity {
                                 public void onError(Throwable error) {
                                     error.printStackTrace();
                                     showMessage("Something went wrong...");
-                                    finish();
                                 }
                             });
 
@@ -147,8 +143,8 @@ public class ViewActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setBackNavigation();
-        type = ActivityType.values()[getIntent().getIntExtra(RealmTable.TYPE, 0)];
-        vehicleId = getIntent().getStringExtra(RealmTable.ID);
+        type = Constants.ActivityType.values()[getIntent().getIntExtra(Constants.TYPE, 0)];
+        vehicleId = getIntent().getStringExtra(Constants.ID);
     }
 
     @Override
@@ -158,9 +154,9 @@ public class ViewActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), aClass);
-                intent.putExtra(RealmTable.ID, vehicleId);
-                intent.putExtra(AddEditBaseActivity.ITEM_ID, id);
-                intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
+                intent.putExtra(Constants.ID, vehicleId);
+                intent.putExtra(Constants.ITEM_ID, id);
+                intent.putExtra(Constants.ODOMETER, vehicleOdometer);
                 startActivity(intent);
                 finish();
             }
@@ -169,7 +165,7 @@ public class ViewActivity extends BaseActivity {
 
     @Override
     public void setContent() {
-        Intent intent = getIntent();
+        id = getIntent().getStringExtra(Constants.ITEM_ID);
         Realm myRealm = Realm.getDefaultInstance();
         Date date;
         long price;
@@ -177,14 +173,13 @@ public class ViewActivity extends BaseActivity {
         RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
         switch (type) {
             case INSURANCE:
-                typeStr = RealmTable.INSURANCES;
-                id = intent.getStringExtra(typeStr + RealmTable.ID);
                 final Insurance insurance = myRealm.where(Insurance.class)
-                        .equalTo(RealmTable.ID, id).findFirst();
+                        .equalTo(Constants.ID, id).findFirst();
                 setToolbarTitle(insurance.getCompany().getName());
                 date = insurance.getDate();
+                displayView(getString(R.string.date), DateUtils.dateToString(date));
                 displayView(getString(R.string.expiration_date),
-                        DateUtils.datetimeToString(insurance.getNotification().getDate()));
+                        DateUtils.dateToString(insurance.getNotification().getDate()));
                 displayView(getString(R.string.company_name), insurance.getCompany().getName());
                 vehicleOdometer = insurance.getOdometer();
                 price = insurance.getPrice();
@@ -192,10 +187,8 @@ public class ViewActivity extends BaseActivity {
                 aClass = NewInsuranceActivity.class;
                 break;
             case EXPENSE:
-                typeStr = RealmTable.EXPENSES;
-                id = intent.getStringExtra(typeStr + RealmTable.ID);
                 Expense expense = myRealm.where(Expense.class)
-                        .equalTo(RealmTable.ID, id).findFirst();
+                        .equalTo(Constants.ID, id).findFirst();
                 setToolbarTitle(expense.getType());
                 date = expense.getDate();
                 vehicleOdometer = expense.getOdometer();
@@ -204,10 +197,8 @@ public class ViewActivity extends BaseActivity {
                 aClass = NewExpenseActivity.class;
                 break;
             case REFUELING:
-                typeStr = RealmTable.REFUELINGS;
-                id = intent.getStringExtra(typeStr + RealmTable.ID);
                 Refueling refueling = myRealm.where(Refueling.class)
-                        .equalTo(RealmTable.ID, id).findFirst();
+                        .equalTo(Constants.ID, id).findFirst();
                 FuelTank fuelTank = refueling.getFuelTank();
                 setToolbarTitle(fuelTank.getType());
                 date = refueling.getDate();
@@ -218,13 +209,10 @@ public class ViewActivity extends BaseActivity {
                         MoneyUtils.longToString(new BigDecimal(refueling.getFuelPrice())));
                 note = refueling.getNote();
                 aClass = NewRefuelingActivity.class;
-                typeStr = RealmTable.REFUELINGS;
                 break;
             default:
-                typeStr = RealmTable.SERVICES;
-                id = intent.getStringExtra(typeStr + RealmTable.ID);
                 Service service = myRealm.where(Service.class)
-                        .equalTo(RealmTable.ID, id).findFirst();
+                        .equalTo(Constants.ID, id).findFirst();
                 setToolbarTitle(service.getType().getName());
                 if (service.shouldNotify()) {
                     if (service.getDateNotification() == null) {
@@ -232,7 +220,7 @@ public class ViewActivity extends BaseActivity {
                                 String.valueOf(service.getTargetOdometer() + settings.getLengthUnit()));
                     }else {
                         displayView("Notification date",
-                                DateUtils.datetimeToString(service.getDateNotification().getDate()));
+                                DateUtils.dateToString(service.getDateNotification().getDate()));
                     }
                 }
                 date = service.getDate();
@@ -242,12 +230,14 @@ public class ViewActivity extends BaseActivity {
                 aClass = NewServiceActivity.class;
                 break;
         }
-        displayView(getString(R.string.date), DateUtils.datetimeToString(date));
+        if (type != Constants.ActivityType.INSURANCE) {
+            displayView(getString(R.string.date), DateUtils.datetimeToString(date));
+        }
         displayView(getString(R.string.odometer), String.valueOf(vehicleOdometer) + settings.getLengthUnit());
         displayView(getString(R.string.price), MoneyUtils.longToString(new BigDecimal(price)) + settings.getCurrencyUnit());
         displayView(getString(R.string.notes), note);
         vehicleOdometer = myRealm.where(Vehicle.class)
-                .equalTo(RealmTable.ID, vehicleId)
+                .equalTo(Constants.ID, vehicleId)
                 .findFirst()
                 .getOdometer();
         myRealm.close();

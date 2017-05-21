@@ -17,8 +17,8 @@ import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewVehicleActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.ImageViewUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
@@ -61,7 +61,7 @@ public class VehicleRecyclerViewAdapter extends
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewVehicleActivity.class);
-                intent.putExtra(RealmTable.ID, vehicle.getId());
+                intent.putExtra(Constants.ID, vehicle.getId());
                 getContext().startActivity(intent);
             }
         });

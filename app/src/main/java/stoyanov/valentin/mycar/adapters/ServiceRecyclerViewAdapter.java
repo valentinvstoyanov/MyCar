@@ -10,12 +10,11 @@ import java.math.BigDecimal;
 
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
 import stoyanov.valentin.mycar.activities.ViewActivity;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.DateNotification;
 import stoyanov.valentin.mycar.realm.models.Service;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.DateUtils;
 import stoyanov.valentin.mycar.utils.MoneyUtils;
 
@@ -53,9 +52,9 @@ public class ServiceRecyclerViewAdapter extends BaseRealmAdapter<Service, Servic
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), ViewActivity.class);
-                intent.putExtra(RealmTable.ID, getVehicleId());
-                intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
-                intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
+                intent.putExtra(Constants.ID, getVehicleId());
+                intent.putExtra(Constants.ITEM_ID, service.getId());
+                intent.putExtra(Constants.TYPE, Constants.ActivityType.SERVICE.ordinal());
                 getContext().startActivity(intent);
             }
         });

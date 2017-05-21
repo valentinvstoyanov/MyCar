@@ -8,7 +8,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmModel;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
-import stoyanov.valentin.mycar.ActivityType;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.RealmSettings;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 
@@ -18,7 +18,7 @@ public abstract class BaseRealmAdapter<T extends RealmModel, VH extends RealmVie
     private int color;
     private String vehicleId;
     private RealmSettings realmSettings;
-    private ActivityType deleteType;
+    private Constants.ActivityType deleteType;
     private RealmChangeListener<RealmResults<T>> callback = new RealmChangeListener<RealmResults<T>>() {
         @Override
         public void onChange(RealmResults<T> element) {
@@ -77,7 +77,7 @@ public abstract class BaseRealmAdapter<T extends RealmModel, VH extends RealmVie
         return realmSettings;
     }
 
-    public void setDeleteType(ActivityType deleteType) {
+    public void setDeleteType(Constants.ActivityType deleteType) {
         this.deleteType = deleteType;
     }
 }

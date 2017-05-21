@@ -19,7 +19,7 @@
     <string name="odometer">Odometer</string>
     <string name="horse_power">Horse power</string>
     <string name="cubic_centimeters">Cubic centimeters</string>
-    <string name="manifacture_date">Manifacture date</string>
+    <string name="manufacture_date">Manifacture date</string>
     <string name="capacity">Capacity</string>
     <string name="consumption">Consumption</string>
     <string name="registration_plate">Registration plate</string>
@@ -116,4 +116,5 @@
     <string name="currency_unit">Currency unit:</string>
     <string name="costs">Costs</string>
     <string name="nothing_to_show">There is nothing to show here. Please add something ...</string>
+    <string name="color">Color</string>
 </resources>

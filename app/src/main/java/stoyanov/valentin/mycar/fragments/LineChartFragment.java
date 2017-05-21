@@ -1,6 +1,5 @@
 package stoyanov.valentin.mycar.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,24 +7,18 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
 import java.util.ArrayList;
+
 import io.realm.Realm;
-import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
-import stoyanov.valentin.mycar.activities.ViewActivity;
-import stoyanov.valentin.mycar.realm.models.Expense;
-import stoyanov.valentin.mycar.realm.models.Insurance;
-import stoyanov.valentin.mycar.realm.models.Refueling;
-import stoyanov.valentin.mycar.realm.models.Service;
+import stoyanov.valentin.mycar.realm.Constants;
 import stoyanov.valentin.mycar.realm.models.Vehicle;
-import stoyanov.valentin.mycar.realm.table.RealmTable;
 import stoyanov.valentin.mycar.utils.ChartUtils;
 
 public class LineChartFragment extends Fragment {
@@ -43,10 +36,10 @@ public class LineChartFragment extends Fragment {
             @Override
             public void run() {
                 Bundle bundle = getArguments();
-                final String vehicleId = bundle.getString(RealmTable.ID);
+                final String vehicleId = bundle.getString(Constants.ID);
                 Realm myRealm = Realm.getDefaultInstance();
                 final Vehicle vehicle = myRealm.where(Vehicle.class)
-                        .equalTo(RealmTable.ID, vehicleId).findFirst();
+                        .equalTo(Constants.ID, vehicleId).findFirst();
 
                 ArrayList<Float> values = ChartUtils.getPricesFromServices(vehicle.getServices());
                 ArrayList<Entry> entries = new ArrayList<>(values.size());
@@ -135,26 +128,26 @@ public class LineChartFragment extends Fragment {
                                 switch (label) {
                                     case "Insurances":
                                         Insurance insurance = vehicle.getInsurances().get(index);
-                                        intent.putExtra(RealmTable.INSURANCES + RealmTable.ID, insurance.getId());
-                                        intent.putExtra(RealmTable.TYPE, ActivityType.INSURANCE.ordinal());
+                                        intent.putExtra(Constants.INSURANCES + Constants.ID, insurance.getId());
+                                        intent.putExtra(Constants.TYPE, ActivityType.INSURANCE.ordinal());
                                         break;
                                     case "Expenses":
                                         Expense expense = vehicle.getExpenses().get(index);
-                                        intent.putExtra(RealmTable.EXPENSES + RealmTable.ID, expense.getId());
-                                        intent.putExtra(RealmTable.TYPE, ActivityType.EXPENSE.ordinal());
+                                        intent.putExtra(Constants.EXPENSES + Constants.ID, expense.getId());
+                                        intent.putExtra(Constants.TYPE, ActivityType.EXPENSE.ordinal());
                                         break;
                                     case "Refuelings":
                                         Refueling refueling = vehicle.getRefuelings().get(index);
-                                        intent.putExtra(RealmTable.REFUELINGS + RealmTable.ID, refueling.getId());
-                                        intent.putExtra(RealmTable.TYPE, ActivityType.REFUELING.ordinal());
+                                        intent.putExtra(Constants.REFUELINGS + Constants.ID, refueling.getId());
+                                        intent.putExtra(Constants.TYPE, ActivityType.REFUELING.ordinal());
                                         break;
                                     default:
                                         Service service = vehicle.getServices().get(index);
-                                        intent.putExtra(RealmTable.SERVICES + RealmTable.ID, service.getId());
-                                        intent.putExtra(RealmTable.TYPE, ActivityType.SERVICE.ordinal());
+                                        intent.putExtra(Constants.SERVICES + Constants.ID, service.getId());
+                                        intent.putExtra(Constants.TYPE, ActivityType.SERVICE.ordinal());
                                         break;
                                 }
-                                intent.putExtra(RealmTable.ID, vehicleId);
+                                intent.putExtra(Constants.ID, vehicleId);
                                 startActivity(intent);
                             }
 
