@@ -19,6 +19,7 @@ import java.util.Date;
 import io.realm.Realm;
 import stoyanov.valentin.mycar.ActivityType;
 import stoyanov.valentin.mycar.R;
+import stoyanov.valentin.mycar.activities.abstracts.AddEditBaseActivity;
 import stoyanov.valentin.mycar.activities.abstracts.BaseActivity;
 import stoyanov.valentin.mycar.realm.models.Expense;
 import stoyanov.valentin.mycar.realm.models.FuelTank;
@@ -158,7 +159,7 @@ public class ViewActivity extends BaseActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), aClass);
                 intent.putExtra(RealmTable.ID, vehicleId);
-                intent.putExtra(typeStr + RealmTable.ID, id);
+                intent.putExtra(AddEditBaseActivity.ITEM_ID, id);
                 intent.putExtra(RealmTable.ODOMETER, vehicleOdometer);
                 startActivity(intent);
                 finish();

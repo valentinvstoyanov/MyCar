@@ -36,6 +36,8 @@ import stoyanov.valentin.mycar.utils.TextUtils;
 
 public abstract class AddEditBaseActivity extends BaseActivity implements INewBaseActivity {
 
+    public static final String ITEM_ID = "ITEM_ID";
+
     private long vehicleOdometer;
     protected String vehicleId;
     protected String itemId;
@@ -67,7 +69,7 @@ public abstract class AddEditBaseActivity extends BaseActivity implements INewBa
         progressBar = (ProgressBar) findViewById(R.id.pb_add_edit);
         Intent intent = getIntent();
         vehicleId = intent.getStringExtra(RealmTable.ID);
-        itemId = intent.getStringExtra(RealmTable.EXPENSES + RealmTable.ID);
+        itemId = intent.getStringExtra(ITEM_ID);
         vehicleOdometer = intent.getLongExtra(RealmTable.ODOMETER, 0);
         myRealm = Realm.getDefaultInstance();
     }

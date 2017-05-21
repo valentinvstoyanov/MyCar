@@ -275,7 +275,6 @@ public class NewServiceActivity extends AddEditBaseActivity {
             service.setTargetOdometer(NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometerNotification)));
             service.setOdometerTriggered(false);
         }
-
         service.setNote(TextUtils.getTextFromTil(tilNote));
         vehicle.getServices().add(realm.copyToRealmOrUpdate(service));
     }
