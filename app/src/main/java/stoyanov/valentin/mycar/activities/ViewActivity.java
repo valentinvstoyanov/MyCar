@@ -1,17 +1,25 @@
 package stoyanov.valentin.mycar.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -47,20 +55,15 @@ public class ViewActivity extends BaseActivity {
         setContent();
         setComponentListeners();
 
-        /*ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
-            Log.d("ads", "onCreate: ");
             MobileAds.initialize(getApplicationContext(), "ca-app-pub-5561372550558397~2312873861");
-            AdView mAdView = (AdView) findViewById(R.id.adView_view);
+            AdView mAdView = (AdView) findViewById(R.id.ad_view);
             AdRequest adRequest = new AdRequest.Builder().build();
             mAdView.loadAd(adRequest);
-        }*/
+        }
     }
 
     @Override
@@ -72,11 +75,7 @@ public class ViewActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int menuId = item.getItemId();
-
-        if(menuId == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }else if (menuId == R.id.action_delete) {
+        if (menuId == R.id.action_delete) {
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewActivity.this);
             builder.setTitle(getToolbarTitle());
             builder.setMessage("Are you sure you want to delete it?");

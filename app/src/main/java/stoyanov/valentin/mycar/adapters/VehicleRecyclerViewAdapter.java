@@ -78,7 +78,6 @@ public class VehicleRecyclerViewAdapter extends
                 RealmUtils.deleteVehicle(managedVehicle);
             }
         });
-//        super.onItemSwipedDismiss(position);
         String text = vehicle.getType() + " " + vehicle.getName() + " deleted";
         Snackbar snackbar = Snackbar.make(viewForSnackbar, text, Snackbar.LENGTH_LONG);
         snackbar.setAction("Undo", new View.OnClickListener() {

@@ -24,12 +24,6 @@ public class FileUtils {
         return Environment.MEDIA_MOUNTED.equals(state);
     }
 
-    public static boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
-    }
-
     public static Uri getFileUri(File file) {
         return Uri.fromFile(file);
     }
@@ -79,7 +73,6 @@ public class FileUtils {
     }
 
     public static String[] getParsedCsv(InputStream inputStream) {
-        //InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         Scanner scanner = new Scanner(inputStream).useDelimiter(",");
         ArrayList<String> values = new ArrayList<>();
         while (scanner.hasNext()) {

@@ -23,7 +23,7 @@ import stoyanov.valentin.mycar.utils.TextUtils;
 public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
 
     private View view;
-    private Spinner spnFTfuelType;
+    private Spinner spnFuelTankFuelType;
     private TextInputLayout tilFTCapacity;
     private TextInputLayout tilFTConsumption;
     private Button btnAdd;
@@ -47,7 +47,7 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
     public void initComponents() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_new_fuel_tank, null);
-        spnFTfuelType = (Spinner) view.findViewById(R.id.spn_new_ft_fuel_type);
+        spnFuelTankFuelType = (Spinner) view.findViewById(R.id.spn_new_ft_fuel_type);
         tilFTCapacity = (TextInputLayout) view.findViewById(R.id.til_new_ft_capacity);
         tilFTConsumption = (TextInputLayout) view.findViewById(R.id.til_new_ft_consumption);
         btnAdd = (Button) view.findViewById(R.id.btn_dialog_new_ft_add);
@@ -60,9 +60,7 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
             public void onClick(View view) {
                 if (isInputValid()) {
                     FuelTank fuelTank = new FuelTank();
-                    //FuelType fuelType = new FuelType();
-                    //fuelType.setName(spnFTfuelType.getSelectedItem().toString());
-                    fuelTank.setType(spnFTfuelType.getSelectedItem().toString());
+                    fuelTank.setType(spnFuelTankFuelType.getSelectedItem().toString());
                     fuelTank.setCapacity(Integer.parseInt(TextUtils.getTextFromTil(tilFTCapacity)));
                     fuelTank.setConsumption(Integer.parseInt(TextUtils.getTextFromTil(tilFTConsumption)));
                     listener.onAddFuelTank(fuelTank);
@@ -76,7 +74,7 @@ public class NewFuelTankDialog extends DialogFragment implements IBaseActivity {
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.textview_spinner, possibleFuelTypes);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnFTfuelType.setAdapter(spinnerAdapter);
+        spnFuelTankFuelType.setAdapter(spinnerAdapter);
     }
 
     private boolean isInputValid() {

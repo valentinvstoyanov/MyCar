@@ -23,43 +23,24 @@ public class RealmUtils {
         switch (type) {
             case SERVICE:
                 Service service = (Service) model;
-               // service.getNote().deleteFromRealm();
                 DateNotification dateNotification = service.getDateNotification();
                 if (dateNotification != null) {
                     dateNotification.deleteFromRealm();
                 }
-                //service.getAction().deleteFromRealm();
-                //Stop ALARM IF NEEDED
                 service.deleteFromRealm();
                 break;
             case INSURANCE:
                 Insurance insurance = (Insurance) model;
                 insurance.getNotification().deleteFromRealm();
-                //STOP ALARM
                 insurance.deleteFromRealm();
                 break;
             default:
                 ((RealmObject)model).deleteFromRealm();
                 break;
-           /* case REFUELING:
-                Refueling refueling = (Refueling) model;
-               // refueling.getNote().deleteFromRealm();
-               // refueling.getAction().deleteFromRealm();
-                refueling.deleteFromRealm();
-                break;
-            case EXPENSE:
-                Expense expense = (Expense) model;
-                //expense.getNote().deleteFromRealm();
-                //expense.getAction().deleteFromRealm();
-                expense.deleteFromRealm();
-                break;*/
         }
     }
 
     public static void deleteVehicle(Vehicle vehicle) {
-       // vehicle.getNote().deleteFromRealm();
-
-        //Reverse iteration due to an error
         RealmList<Service> services = vehicle.getServices();
         for (int i = services.size() - 1; i >= 0; i--) {
             deleteProperty(services.get(i), Constants.ActivityType.SERVICE);
@@ -121,34 +102,6 @@ public class RealmUtils {
                     color = vehicle.getColor();
                 }
                 vehicle.setColor(color);
-
-               /* VehicleType vehicleType = realm.where(VehicleType.class)
-                        .equalTo(Constants.NAME, vehicle.getType().getName())
-                        .findFirst();
-                if (vehicleType == null) {
-                    vehicleType = vehicle.getType();
-                }*/
-                //vehicle.setType(vehicleType);
-
-                /*for (Expense expense : vehicle.getExpenses()) {
-                    ExpenseType expenseType = realm.where(ExpenseType.class)
-                            .equalTo(Constants.NAME, expense.getType().getName())
-                            .findFirst();
-                    if (expenseType == null) {
-                        expenseType = expense.getType();
-                    }
-                    expense.setType(expenseType);
-                }*/
-
-                /*for (FuelTank fuelTank : vehicle.getFuelTanks()) {
-                    FuelType fuelType = realm.where(FuelType.class)
-                            .equalTo(Constants.NAME, fuelTank.getFuelType().getName())
-                            .findFirst();
-                    if (fuelType == null) {
-                        fuelType = fuelTank.getFuelType();
-                    }
-                    fuelTank.setFuelType(fuelType);
-                }*/
 
                 for (Insurance insurance : vehicle.getInsurances()) {
                     Company company = realm.where(Company.class)

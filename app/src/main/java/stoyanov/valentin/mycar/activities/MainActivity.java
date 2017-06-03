@@ -43,8 +43,7 @@ import stoyanov.valentin.mycar.realm.models.Vehicle;
 import stoyanov.valentin.mycar.utils.FileUtils;
 import stoyanov.valentin.mycar.utils.RealmUtils;
 
-public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String FRAGMENT_TYPE = "fragment_type";
     public static final String STATISTIC_TYPE = "statistic_type";

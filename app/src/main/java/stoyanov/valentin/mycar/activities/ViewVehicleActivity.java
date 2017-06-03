@@ -165,10 +165,7 @@ public class ViewVehicleActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }else if (id == R.id.action_export){
+        if (id == R.id.action_export){
             if (FileUtils.isExternalStorageWritable()) {
                 if (PermissionUtils.hasWriteExternalStoragePermission(ViewVehicleActivity.this)) {
                     exportVehicle();
@@ -179,24 +176,6 @@ public class ViewVehicleActivity extends BaseActivity {
             }else {
                 showMessage("No external storage");
             }
-            /*Storage storage = SimpleStorage.getExternalStorage();
-            storage.createDirectory(DIRNAME, true);
-            Realm myRealm = Realm.getDefaultInstance();
-            Vehicle vehicle = myRealm.where(Vehicle.class)
-                    .equalTo(Constants.ID, vehicleId).findFirst();
-            vehicle = myRealm.copyFromRealm(vehicle);
-            String content = new Gson().toJson(vehicle);
-            myRealm.close();
-            storage.createFile(DIRNAME, FILENAME, content);
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            File file = storage.getFile(DIRNAME, FILENAME);
-            Uri uri = Uri.fromFile(file);
-            Log.d("URI : ", uri.toString() + " *** " + uri.getPath());
-            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            shareIntent.setType("text/plain");
-            shareIntent.setPackage("com.android.bluetooth");
-            startActivity(Intent.createChooser(shareIntent, "Send to"));*/
             return true;
         }else if (id == R.id.action_delete){
             AlertDialog.Builder builder = new AlertDialog.Builder(ViewVehicleActivity.this);

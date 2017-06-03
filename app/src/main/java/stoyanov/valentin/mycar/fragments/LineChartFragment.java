@@ -25,8 +25,6 @@ public class LineChartFragment extends Fragment {
 
     public static final String TAG = "LineChartFragment";
 
-   // private Realm myRealm;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,14 +58,14 @@ public class LineChartFragment extends Fragment {
                 final LineData lineData = new LineData(servicesDataSet);
 
 
-                ArrayList<Float> ivalues = ChartUtils.getPricesFromInsurances(vehicle.getInsurances());
-                ArrayList<Entry> ientries = new ArrayList<>(ivalues.size());
+                ArrayList<Float> iValues = ChartUtils.getPricesFromInsurances(vehicle.getInsurances());
+                ArrayList<Entry> iEntries = new ArrayList<>(iValues.size());
                 i = 0;
-                for (Float f : ivalues) {
-                    ientries.add(new Entry(i, f));
+                for (Float f : iValues) {
+                    iEntries.add(new Entry(i, f));
                     i += 10;
                 }
-                LineDataSet iDataSet = new LineDataSet(ientries, "Insurances");
+                LineDataSet iDataSet = new LineDataSet(iEntries, "Insurances");
                 color = ResourcesCompat.getColor(getResources(), R.color.green, null);
                 iDataSet.setLineWidth(1.75f);
                 iDataSet.setCircleRadius(5f);
@@ -79,14 +77,14 @@ public class LineChartFragment extends Fragment {
                 lineData.addDataSet(iDataSet);
 
 
-                final ArrayList<Float> rvalues = ChartUtils.getPricesFromRefuelings(vehicle.getRefuelings());
-                ArrayList<Entry> rentries = new ArrayList<>(rvalues.size());
+                final ArrayList<Float> rValues = ChartUtils.getPricesFromRefuelings(vehicle.getRefuelings());
+                ArrayList<Entry> rEntries = new ArrayList<>(rValues.size());
                 i = 0;
-                for (Float f : rvalues) {
-                    rentries.add(new Entry(i, f));
+                for (Float f : rValues) {
+                    rEntries.add(new Entry(i, f));
                     i += 10;
                 }
-                LineDataSet rDataSet = new LineDataSet(rentries, "Refuelings");
+                LineDataSet rDataSet = new LineDataSet(rEntries, "Refuelings");
                 color = ResourcesCompat.getColor(getResources(), R.color.orange, null);
                 rDataSet.setLineWidth(1.75f);
                 rDataSet.setCircleRadius(5f);
@@ -97,14 +95,14 @@ public class LineChartFragment extends Fragment {
                 rDataSet.setDrawValues(false);
                 lineData.addDataSet(rDataSet);
 
-                ArrayList<Float> evalues = ChartUtils.getPricesFromExpenses(vehicle.getExpenses());
-                ArrayList<Entry> eentries = new ArrayList<>(evalues.size());
+                ArrayList<Float> eValues = ChartUtils.getPricesFromExpenses(vehicle.getExpenses());
+                ArrayList<Entry> eEntries = new ArrayList<>(eValues.size());
                 i = 0;
-                for (Float f : evalues) {
-                    eentries.add(new Entry(i, f));
+                for (Float f : eValues) {
+                    eEntries.add(new Entry(i, f));
                     i += 10;
                 }
-                LineDataSet eDataSet = new LineDataSet(eentries, "Expenses");
+                LineDataSet eDataSet = new LineDataSet(eEntries, "Expenses");
                 color = ResourcesCompat.getColor(getResources(), R.color.red, null);
                 eDataSet.setLineWidth(1.75f);
                 eDataSet.setCircleRadius(5f);
@@ -118,44 +116,6 @@ public class LineChartFragment extends Fragment {
                     @Override
                     public void run() {
                         lineChart.setData(lineData);
-                        /*lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-                            @Override
-                            public void onValueSelected(Entry e, Highlight h) {
-                                ILineDataSet d = lineData.getDataSetForEntry(e);
-                                String label = d.getLabel();
-                                int index = d.getEntryIndex(e);
-                                Intent intent = new Intent(getContext(), ViewActivity.class);
-                                switch (label) {
-                                    case "Insurances":
-                                        Insurance insurance = vehicle.getInsurances().get(index);
-                                        intent.putExtra(Constants.INSURANCES + Constants.ID, insurance.getId());
-                                        intent.putExtra(Constants.TYPE, ActivityType.INSURANCE.ordinal());
-                                        break;
-                                    case "Expenses":
-                                        Expense expense = vehicle.getExpenses().get(index);
-                                        intent.putExtra(Constants.EXPENSES + Constants.ID, expense.getId());
-                                        intent.putExtra(Constants.TYPE, ActivityType.EXPENSE.ordinal());
-                                        break;
-                                    case "Refuelings":
-                                        Refueling refueling = vehicle.getRefuelings().get(index);
-                                        intent.putExtra(Constants.REFUELINGS + Constants.ID, refueling.getId());
-                                        intent.putExtra(Constants.TYPE, ActivityType.REFUELING.ordinal());
-                                        break;
-                                    default:
-                                        Service service = vehicle.getServices().get(index);
-                                        intent.putExtra(Constants.SERVICES + Constants.ID, service.getId());
-                                        intent.putExtra(Constants.TYPE, ActivityType.SERVICE.ordinal());
-                                        break;
-                                }
-                                intent.putExtra(Constants.ID, vehicleId);
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onNothingSelected() {
-
-                            }
-                        });*/
                         lineChart.invalidate();
                     }
                 });
@@ -164,10 +124,4 @@ public class LineChartFragment extends Fragment {
         }).start();
         return view;
     }
-
-  /*  @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        myRealm.close();
-    }*/
 }

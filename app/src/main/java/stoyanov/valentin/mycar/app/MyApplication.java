@@ -14,12 +14,6 @@ public class MyApplication extends Application {
         RealmConfiguration config = new RealmConfiguration
                 .Builder()
                 .deleteRealmIfMigrationNeeded()
-                /*.initialData(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-
-                    }
-                })*/
                 .build();
         Realm.setDefaultConfiguration(config);
     }

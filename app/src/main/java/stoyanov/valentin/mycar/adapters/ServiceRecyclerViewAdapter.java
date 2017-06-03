@@ -42,7 +42,7 @@ public class ServiceRecyclerViewAdapter extends BaseRealmAdapter<Service, Servic
         if (dateNotification == null) {
             text += service.getTargetOdometer() + getRealmSettings().getLengthUnit();
         }else {
-            text += DateUtils.datetimeToString(service.getDateNotification().getDate());
+            text += DateUtils.dateToString(service.getDateNotification().getDate());
         }
         viewHolder.tvNotifDatetime.setText(text);
         text = MoneyUtils.longToString(new BigDecimal(service.getPrice())) +

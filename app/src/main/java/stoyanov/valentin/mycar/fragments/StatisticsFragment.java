@@ -28,31 +28,31 @@ public class StatisticsFragment extends Fragment {
 
     class ViewPagerAdapter extends FragmentPagerAdapter{
 
-        private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
-        private final ArrayList<String> mFragmentTitleList = new ArrayList<>();
+        private final ArrayList<Fragment> fragmentList = new ArrayList<>();
+        private final ArrayList<String> fragmentTitleList = new ArrayList<>();
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
+            fragmentList.add(fragment);
+            fragmentTitleList.add(title);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return mFragmentList.get(position);
+            return fragmentList.get(position);
         }
 
         @Override
         public int getCount() {
-            return mFragmentList.size();
+            return fragmentList.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
+            return fragmentTitleList.get(position);
         }
     }
 

@@ -9,10 +9,8 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String DATE = "date";
     public static final String COLOR = "color";
-    public static final String EXPENSES = "expenses";
     public static final String INSURANCES = "insurances";
     public static final String SERVICES = "services";
-    public static final String REFUELINGS = "refuelings";
     public static final String NOTIFICATION_ID = "notificationId";
     public static final String IS_TRIGGERED = "isTriggered";
     public static final String TARGET_ODOMETER = "targetOdometer";

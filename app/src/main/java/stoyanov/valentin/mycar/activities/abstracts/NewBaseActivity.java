@@ -204,16 +204,11 @@ public abstract class NewBaseActivity extends BaseActivity implements INewBaseAc
             int i = 0;
             for (final Service service : services) {
                 Notification notification = NotificationUtils.createNotification
-                        (
-                                getApplicationContext(), vehicleId,
-                                Constants.SERVICES + Constants.ID, service.getId(),
-                                Constants.ActivityType.SERVICE, ViewActivity.class, "Service",
-                                String.format(text, service.getType().getName(),
-                                        service.getTargetOdometer()),
-                                R.drawable.ic_services_black
-                        );
-                NotificationManager manager = (NotificationManager) getApplicationContext()
-                        .getSystemService(Context.NOTIFICATION_SERVICE);
+                        (getApplicationContext(), vehicleId, service.getId(), Constants.ActivityType.SERVICE,
+                                "Service", String.format(text, service.getType().getName(),
+                                service.getTargetOdometer()), R.drawable.ic_services_black);
+
+                NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                 manager.notify(i, notification);
                 realmDb.executeTransaction(new Realm.Transaction() {
                     @Override
@@ -235,37 +230,3 @@ public abstract class NewBaseActivity extends BaseActivity implements INewBaseAc
         }
     }
 }
-
-/*
-        RealmSettings settings = myRealm.where(RealmSettings.class).findFirst();
-        long targetOdometer = vehicleOdometer + settings.getDistanceInAdvance();
-        RealmResults<Service> services = myRealm
-                .where(Service.class)
-                .equalTo(Constants.SHOULD_NOTIFY, true)
-                .equalTo(Constants.IS_ODOMETER_TRIGGERED, false)
-                .notEqualTo(Constants.TARGET_ODOMETER, 0)
-                .lessThanOrEqualTo(Constants.TARGET_ODOMETER, targetOdometer)
-                .findAll();
-        String text = "%s should be revised at %d " + settings.getLengthUnit();
-        int i = 0;
-        for (final Service service : services) {
-            Notification notification = NotificationUtils.createNotification
-                    (
-                            getApplicationContext(), vehicleId,
-                            Constants.SERVICES + Constants.ID, service.getId(),
-                            ActivityType.SERVICE, ViewActivity.class, "Service",
-                            String.format(text, service.getType().getName(),
-                                    service.getTargetOdometer()),
-                            R.drawable.ic_services_black
-                    );
-            NotificationManager manager = (NotificationManager) getApplicationContext()
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify(i, notification);
-            myRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    service.setOdometerTriggered(true);
-                }
-            });
-            i++;
-        }*/

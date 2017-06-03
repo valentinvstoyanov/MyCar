@@ -34,8 +34,7 @@ import stoyanov.valentin.mycar.realm.models.ServiceType;
 import stoyanov.valentin.mycar.utils.ColorUtils;
 import stoyanov.valentin.mycar.utils.FileUtils;
 
-public class WelcomeActivity extends BaseActivity
-                        implements ViewPager.OnPageChangeListener{
+public class WelcomeActivity extends BaseActivity implements ViewPager.OnPageChangeListener{
 
     private PreferenceManager preferenceManager;
     private ViewPager viewPager;
@@ -59,7 +58,7 @@ public class WelcomeActivity extends BaseActivity
                     ResourcesCompat.getColor(getResources(),
                             R.color.colorAccent, null), PorterDuff.Mode.MULTIPLY);
             progressBar.setProgress(50);
-            Thread thread = new Thread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     InputStream inputStream = getResources().openRawResource(R.raw.brands);
@@ -74,64 +73,32 @@ public class WelcomeActivity extends BaseActivity
                         e.printStackTrace();
                     }
                     progressBar.setProgress(20);
-                    final String[] vehicleTypes = getResources().getStringArray(R.array.vehicle_types);
-                    final String[] fuelTypes = getResources().getStringArray(R.array.fuel_types);
-                    final String[] fuelUnit = getResources().getStringArray(R.array.fuel_units);
+
                     final TypedArray primaryColors = getResources().obtainTypedArray(R.array.vehicles_primary_colors);
                     final TypedArray darkColors = getResources().obtainTypedArray(R.array.vehicles_dark_colors);
-                    final String[] expenseTypes = getResources().getStringArray(R.array.expense_types);
                     final Realm myRealm = Realm.getDefaultInstance();
-                    myRealm.executeTransactionAsync(new Realm.Transaction() {
+
+                    myRealm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
                             for (String brandName : brandNames) {
                                 Brand brand = realm.createObject(Brand.class,
                                         UUID.randomUUID().toString());
                                 brand.setName(brandName);
-                                Log.d("Brands", "execute: ");
                             }
                             progressBar.incrementProgressBy(10);
                             for (String typeName : serviceTypeNames) {
                                 ServiceType serviceType = realm.createObject(ServiceType.class,
                                         UUID.randomUUID().toString());
                                 serviceType.setName(typeName);
-                                Log.d("Service types", "execute: ");
                             }
-                            progressBar.incrementProgressBy(10);
-                            /*for (String typeName : vehicleTypes) {
-                                VehicleType vehicleType = realm.createObject(VehicleType.class,
-                                        UUID.randomUUID().toString());
-                                vehicleType.setName(typeName);
-                                vehicleType.setDrawableName(ImageViewUtils
-                                        .getDrawableNameByVehicleType(typeName));
-                                Log.d("vehicle type", "execute: ");
-                            }*/
-                            progressBar.incrementProgressBy(10);
+                            progressBar.incrementProgressBy(20);
                             for (String companyName : companies) {
                                 Company company = realm.createObject(Company.class,
                                         UUID.randomUUID().toString());
                                 company.setName(companyName);
-                                Log.d("Company", "execute: ");
                             }
-                            progressBar.incrementProgressBy(10);
-                            /*for (String fuelName : fuelTypes) {
-                                FuelType fuelType = realm.createObject(FuelType.class,
-                                        UUID.randomUUID().toString());
-                                fuelType.setName(fuelName);
-                                String unit;
-                                if (fuelName.equals("Diesel") || fuelName.equals("Petrol")) {
-                                    unit = fuelUnit[0];
-                                } else {
-                                    if (fuelName.equals("Electric")) {
-                                        unit = fuelUnit[1];
-                                    } else {
-                                        unit = fuelUnit[2];
-                                    }
-                                }
-                                fuelType.setUnit(unit);
-                                Log.d("fuel type", "execute: ");
-                            }*/
-                            progressBar.incrementProgressBy(20);
+                            progressBar.incrementProgressBy(30);
                             for (int i = 0; i < primaryColors.length(); i++) {
                                 Color color = realm.createObject(Color.class, UUID.randomUUID().toString());
                                 color.setColor(primaryColors.getColor(i, 0));
@@ -139,87 +106,20 @@ public class WelcomeActivity extends BaseActivity
                                 color.setTextIconsColor(ColorUtils
                                         .pickColorByBackground(getApplicationContext(),
                                                 color.getColor()));
-                                Log.d("Color", "execute: ");
                             }
-                            progressBar.incrementProgressBy(10);
-                            /*for (String expenseTypeName : expenseTypes) {
-                                ExpenseType expenseType = realm.createObject(ExpenseType.class,
-                                        UUID.randomUUID().toString());
-                                expenseType.setName(expenseTypeName);
-                                Log.d("Expense type", "execute: ");
-                            }*/
-                            progressBar.incrementProgressBy(5);
+                            progressBar.incrementProgressBy(15);
                             RealmSettings settings = realm.createObject(RealmSettings.class);
                             settings.setLengthUnit("km");
                             settings.setDistanceInAdvance(1000);
                             settings.setCurrencyUnit("BGN");
-                            Log.d("Settings", "execute: ");
                             progressBar.incrementProgressBy(5);
-
-                           /* for (int i = 0; i < 90; i++) {
-                                Vehicle vehicle = realm.createObject(Vehicle.class, UUID.randomUUID().toString());
-                                Color color = realm.where(Color.class).findAll().get(2);
-                                vehicle.setColor(color);
-                                VehicleType vehicleType = realm.where(VehicleType.class)
-                                        .equalTo(Constants.NAME, "Car")
-                                        .findFirst();
-                                vehicle.setType(vehicleType);
-                                vehicle.setName(String.valueOf(Math.abs(new Random().nextInt())));
-                                vehicle.setManufactureDate(DateUtils.stringToDate("22.08.2016"));
-                                vehicle.setRegistrationPlate("asdasdsa");
-                                vehicle.setVinPlate("asdasdsa");
-                                vehicle.setOdometer(455);
-                                vehicle.setHorsePower(44);
-                                vehicle.setCubicCentimeter(1400);
-
-                                String brandName = "Abarth";
-                                Brand brand = realm.where(Brand.class).equalTo(Constants.NAME, brandName).findFirst();
-                                if (brand == null) {
-                                    brand = realm.createObject(Brand.class, UUID.randomUUID().toString());
-                                    brand.setName(brandName);
-                                }
-                                vehicle.setBrand(brand);
-
-                                String modelName = "A10";
-                                Model model = realm.where(Model.class).equalTo(Constants.NAME, modelName).findFirst();
-                                if (model == null) {
-                                    model = realm.createObject(Model.class, UUID.randomUUID().toString());
-                                    model.setName(modelName);
-                                }
-                                vehicle.setModel(model);
-                                String notes = "asdasdasdsadasdasdadjfhiweo;lkhqwit;qiowrelnfashdfiosdlcHIDOLhISOclZHDIasdihaosdlasdhinxzhOIxalsnaodlasdadalndkasdasdaldashidolnadhoialdashidoasdlnadhioasldahiodasldahsiodlahdiolnad";
-                                Note note = realm.createObject(Note.class, UUID.randomUUID().toString());
-                                note.setContent(notes);
-                                vehicle.setNote(note);
-                                Log.d("Vehicles", "execute: ");
-                            }*/
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            myRealm.close();
-                            primaryColors.recycle();
-                            darkColors.recycle();
-                        }
-                    }, new Realm.Transaction.OnError() {
-                        @Override
-                        public void onError(Throwable error) {
-                            error.printStackTrace();
-                            myRealm.close();
-                            primaryColors.recycle();
-                            darkColors.recycle();
                         }
                     });
-                    /*myRealm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-
-                        }
-                    });
-                    myRealm.close();*/
+                    myRealm.close();
+                    primaryColors.recycle();
+                    darkColors.recycle();
                 }
-            });
-            thread.run();
+            }).start();
             initComponents();
             setComponentListeners();
             WelcomeViewPagerAdapter viewPagerAdapter = new WelcomeViewPagerAdapter();
@@ -265,12 +165,10 @@ public class WelcomeActivity extends BaseActivity
     }
 
     private void setStatusBarColor(int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(color);
-        }
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(color);
     }
 
     private void launchMainActivity() {
@@ -352,8 +250,7 @@ public class WelcomeActivity extends BaseActivity
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
+            container.removeView((View) object);
         }
     }
 }

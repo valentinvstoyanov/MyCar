@@ -146,6 +146,7 @@ public class DateUtils {
         cDate.set(Calendar.MINUTE, cTime.get(Calendar.MINUTE));
         cDate.set(Calendar.SECOND, 0);
         cDate.set(Calendar.MILLISECOND, 0);
+
         return cDate.getTime();
     }
 

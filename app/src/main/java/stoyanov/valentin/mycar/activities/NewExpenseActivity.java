@@ -48,7 +48,7 @@ public class NewExpenseActivity extends NewBaseActivity {
             progressBar.setIndeterminate(true);
             if (isInputValid()) {
                 saveToRealm();
-            }else {
+            } else {
                 item.setEnabled(true);
                 progressBar.setIndeterminate(false);
             }
@@ -109,7 +109,7 @@ public class NewExpenseActivity extends NewBaseActivity {
 
         if (isNewItem()) {
             expense.setId(UUID.randomUUID().toString());
-        }else {
+        } else {
             vehicle.getExpenses()
                     .where()
                     .equalTo(Constants.ID, itemId)
@@ -142,7 +142,7 @@ public class NewExpenseActivity extends NewBaseActivity {
     protected void onItemSaved() {
         if (isNewItem()) {
             showMessage("New expense saved!");
-        }else {
+        } else {
             showMessage("Expense updated!");
             Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
             intent.putExtra(Constants.ID, vehicleId);
@@ -152,233 +152,4 @@ public class NewExpenseActivity extends NewBaseActivity {
         }
         finish();
     }
-
-    /*    @Override
-    public void saveToRealm() {
-        myRealm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(Constants.ID, getVehicleId())
-                        .findFirst();
-                Expense expense = new Expense();
-
-                if (isUpdate()) {
-                    vehicle.getExpenses()
-                            .where()
-                            .equalTo(Constants.ID, expenseId)
-                            .findFirst()
-                            .deleteFromRealm();
-                    expense.setId(expenseId);
-                }else {
-                    expense.setId(UUID.randomUUID().toString());
-                }
-
-                expense.setType(spnType.getSelectedItem().toString());
-
-                Date date = DateUtils.stringToDate(btnDate.getText().toString());
-                Date time = DateUtils.stringToTime(btnTime.getText().toString());
-                expense.setDate(DateUtils.dateTime(date, time));
-
-                long odometer = NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometer));
-                expense.setOdometer(odometer);
-                if (odometer > getVehicleOdometer()) {
-                    vehicle.setOdometer(odometer);
-                    setVehicleOdometer(odometer);
-                }
-
-                long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
-                expense.setPrice(price);
-
-                expense.setNote(TextUtils.getTextFromTil(tilNote));
-                vehicle.getExpenses().add(realm.copyToRealmOrUpdate(expense));
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                if (isUpdate()) {
-                    showMessage("Expense updated!");
-                    Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(Constants.ID, getVehicleId());
-                    intent.putExtra(Constants.EXPENSES + Constants.ID, expenseId);
-                    intent.putExtra(Constants.TYPE, ActivityType.EXPENSE.ordinal());
-                    startActivity(intent);
-                }else {
-                    showMessage("New expense saved!");
-                }
-                odometerChanged(getVehicleOdometer());
-                finish();
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                showMessage("Something went wrong...");
-                error.printStackTrace();
-                finish();
-            }
-        });
-    }*/
-
- /*   private Spinner spnType;
-    private TextInputLayout tilTime, tilPrice;
-    private String expenseId;
-    private ArrayList<String> expenseTypes;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_expense);
-        initComponents();
-        setContent();
-        setComponentListeners();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        item.setEnabled(false);
-        int id = item.getItemId();
-        if (id == R.id.action_save) {
-            if (isInputValid()) {
-                *//*if (getInterstitialAd().isLoaded()) {
-                    showMessage("ad");
-                    getInterstitialAd().show();
-                }else {
-                    showMessage("not ad");
-                }*//*
-                saveToRealm();
-            }else {
-                item.setEnabled(true);
-            }
-            return true;
-        }*//*else if(id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }*//*
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void initComponents() {
-        super.initComponents();
-        expenseId = getIntent().getStringExtra(Constants.EXPENSES + Constants.ID);
-        if (expenseId != null) {
-            setUpdate(true);
-        }
-        tilTime = (TextInputLayout) findViewById(R.id.til_new_expense_time);
-        tilPrice = (TextInputLayout) findViewById(R.id.til_new_expense_price);
-        spnType = (Spinner) findViewById(R.id.spn_new_expense_type);
-        expenseTypes = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.expense_types)));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                R.layout.textview_spinner, expenseTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnType.setAdapter(adapter);
-    }
-
-    @Override
-    public void setComponentListeners() {
-        super.setComponentListeners();
-        DateTimePickerUtils.addTimePickerListener(NewExpenseActivity.this, tilTime);
-    }
-
-    @Override
-    public void setContent() {
-        tilDate.setHint("Date");
-        TextView tvCurrentOdometer = (TextView) findViewById(R.id.tv_new_expense_current_odometer);
-        setCurrentOdometer(tvCurrentOdometer);
-        if (isUpdate()) {
-            Expense expense = myRealm.where(Expense.class)
-                    .equalTo(Constants.ID, expenseId)
-                    .findFirst();
-            spnType.setSelection(expenseTypes.indexOf(expense.getType()));
-            TextUtils.setTextToTil(tilDate, DateUtils.dateToString(expense.getDate()));
-            TextUtils.setTextToTil(tilTime, DateUtils.timeToString(expense.getDate()));
-            TextUtils.setTextToTil(tilOdometer, String.valueOf(expense.getOdometer()));
-            TextUtils.setTextToTil(tilPrice, MoneyUtils.longToString(new BigDecimal(expense.getPrice())));
-            TextUtils.setTextToTil(tilNote, expense.getNote());
-        }else {
-            Calendar calendar = Calendar.getInstance();
-            TextUtils.setTextToTil(tilTime, DateUtils.timeToString(calendar.getTime()));
-        }
-    }
-
-    @Override
-    public boolean isInputValid() {
-        boolean valid = true;
-        if (DateUtils.isDateInFuture(TextUtils.getTextFromTil(tilDate),
-                TextUtils.getTextFromTil(tilTime))) {
-            valid = false;
-            tilDate.setError("The date is in the future");
-        }
-        if (!NumberUtils.isCreatable(TextUtils.getTextFromTil(tilPrice))) {
-            valid = false;
-            tilPrice.setError("Price should be number");
-        }
-        return super.isInputValid() && valid;
-    }
-
-    @Override
-    public void saveToRealm() {
-        myRealm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Vehicle vehicle = realm.where(Vehicle.class)
-                        .equalTo(Constants.ID, getVehicleId())
-                        .findFirst();
-                Expense expense = new Expense();
-
-                if (isUpdate()) {
-                    vehicle.getExpenses()
-                            .where()
-                            .equalTo(Constants.ID, expenseId)
-                            .findFirst()
-                            .deleteFromRealm();
-                    expense.setId(expenseId);
-                }else {
-                    expense.setId(UUID.randomUUID().toString());
-                }
-
-                expense.setType(spnType.getSelectedItem().toString());
-
-                Date date = DateUtils.stringToDate(TextUtils.getTextFromTil(tilDate));
-                Date time = DateUtils.stringToTime(TextUtils.getTextFromTil(tilTime));
-                expense.setDate(DateUtils.dateTime(date, time));
-
-                long odometer = NumberUtils.createLong(TextUtils.getTextFromTil(tilOdometer));
-                expense.setOdometer(odometer);
-                if (odometer > getVehicleOdometer()) {
-                    vehicle.setOdometer(odometer);
-                    setVehicleOdometer(odometer);
-                }
-
-                long price = MoneyUtils.stringToLong(TextUtils.getTextFromTil(tilPrice));
-                expense.setPrice(price);
-
-                expense.setNote(TextUtils.getTextFromTil(tilNote));
-                vehicle.getExpenses().add(realm.copyToRealmOrUpdate(expense));
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                if (isUpdate()) {
-                    showMessage("Expense updated!");
-                    Intent intent = new Intent(getApplicationContext(), ViewActivity.class);
-                    intent.putExtra(Constants.ID, getVehicleId());
-                    intent.putExtra(Constants.EXPENSES + Constants.ID, expenseId);
-                    intent.putExtra(Constants.TYPE, ActivityType.EXPENSE.ordinal());
-                    startActivity(intent);
-                }else {
-                    showMessage("New expense saved!");
-                }
-                odometerChanged(getVehicleOdometer());
-                finish();
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                showMessage("Something went wrong...");
-                error.printStackTrace();
-                finish();
-            }
-        });
-    }*/
 }

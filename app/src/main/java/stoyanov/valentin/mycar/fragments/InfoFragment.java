@@ -63,26 +63,21 @@ public class InfoFragment extends Fragment {
         RealmQuery<Insurance> insurances = myRealm.where(Insurance.class);
         displayView("Total insurances", String.valueOf(insurances.count()), inflater);
         bigDecimal = new BigDecimal(insurances.sum(Constants.PRICE).toString());
-        //text = MoneyUtils.longToString(bigDecimal);
         totalCost = totalCost.add(bigDecimal);
         displayView("Money spent for insurances", String.format(text, MoneyUtils.longToString(bigDecimal)), inflater);
 
         RealmQuery<Refueling> refuelings = myRealm.where(Refueling.class);
         displayView("Total refuelings", String.valueOf(refuelings.count()), inflater);
         bigDecimal = new BigDecimal(refuelings.sum(Constants.PRICE).toString());
-        //text = MoneyUtils.longToString(bigDecimal);
         totalCost = totalCost.add(bigDecimal);
         displayView("Money spent for refuelings", String.format(text, MoneyUtils.longToString(bigDecimal)), inflater);
 
         RealmQuery<Expense> expenses = myRealm.where(Expense.class);
         displayView("Total expenses", String.valueOf(expenses.count()), inflater);
         bigDecimal = new BigDecimal(expenses.sum(Constants.PRICE).toString());
-        //text = MoneyUtils.longToString(bigDecimal);
         displayView("Money spent for expenses", String.format(text, MoneyUtils.longToString(bigDecimal)), inflater);
         totalCost = totalCost.add(bigDecimal);
 
-        /*text = MoneyUtils.longToString(new BigDecimal(myRealm.where(Action.class)
-                .sum(Constants.PRICE).longValue()));*/
         displayView("TOTAL COSTS", String.format(text, MoneyUtils.longToString(totalCost)), inflater);
         myRealm.close();
     }

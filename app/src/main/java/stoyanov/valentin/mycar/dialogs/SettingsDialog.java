@@ -113,14 +113,12 @@ public class SettingsDialog extends DialogFragment implements INewBaseActivity{
             @Override
             public void onSuccess() {
                 myRealm.close();
-                Log.i("Settings onSuccess: ", "saved!");
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
                 error.printStackTrace();
                 myRealm.close();
-                Log.i("Settings onError: ", "something went wrong...");
             }
         });
     }

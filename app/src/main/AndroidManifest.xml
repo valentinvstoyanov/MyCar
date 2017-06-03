@@ -72,6 +72,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".broadcasts.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
         <service android:name=".services.ResetAlarmManagerService" />
     </application>
 </manifest>
